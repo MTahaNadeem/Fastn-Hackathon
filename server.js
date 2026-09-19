@@ -196,8 +196,8 @@ async function recordAuditToGitHub(entry) {
     }
   } catch (e) {}
 
-  if (!currentContent) {
-    currentContent = '# 📜 Fastn Publisher — Automatic GitHub Audit Log\n> Live audit logs synced automatically on every publish action from fourfrontlab-hackathon.vercel.app\n\n| Timestamp (UTC) | Post ID | Title | Platforms & Status | Overall Status | Slack ID / Permalink | GitHub Commit |\n| :--- | :--- | :--- | :--- | :---: | :--- | :---: |\n';
+  if (!currentContent || !currentContent.includes('| Timestamp (UTC)')) {
+    currentContent = '# 📜 Fastn Publisher — Automatic GitHub Audit Log\n> **Repository:** [MTahaNadeem/Fastn-Hackathon](https://github.com/MTahaNadeem/Fastn-Hackathon)\n> **Live Site:** [fourfrontlab-hackathon.vercel.app](https://fourfrontlab-hackathon.vercel.app/)\n\n## 📊 Live Execution Audit Trail\n\n| Timestamp (UTC) | Post ID | Title | Platforms & Status | Overall Status | Slack ID / Permalink |\n| :--- | :--- | :--- | :--- | :---: | :--- |\n';
   }
 
   const slackId = (entry.destinations && entry.destinations.slack) ? entry.destinations.slack.id : 'None';
@@ -208,15 +208,14 @@ async function recordAuditToGitHub(entry) {
   if (entry.destinations) {
     for (const [pName, pVal] of Object.entries(entry.destinations)) {
       if (pVal && typeof pVal === 'object') {
-        const ok = pVal.success ? 'OK' : (pVal.error ? 'ERR' : '-');
+        const ok = pVal.success ? '✓ OK' : (pVal.error ? '✗' : '-');
         platforms.push(pName + ': ' + ok);
       }
     }
   }
-  const summaryStr = platforms.length > 0 ? platforms.join(' | ') : 'None';
-  const commitPlaceholder = '[PENDING]';
+  const summaryStr = platforms.length > 0 ? platforms.join(' \\| ') : 'None';
   const cleanTitle = (entry.title || 'Untitled').substring(0, 35).replace(/\|/g, '-');
-  const newRow = '| ' + entry.timestamp + ' | ' + entry.row_id + ' | ' + cleanTitle + ' | ' + summaryStr + ' | **' + entry.overall_status + '** | ' + slackDisplay + ' | ' + commitPlaceholder + ' |\n';
+  const newRow = '| ' + entry.timestamp + ' | ' + entry.row_id + ' | ' + cleanTitle + ' | ' + summaryStr + ' | **' + entry.overall_status + '** | ' + slackDisplay + ' |\n';
   const updatedContent = currentContent + newRow;
 
   try {
