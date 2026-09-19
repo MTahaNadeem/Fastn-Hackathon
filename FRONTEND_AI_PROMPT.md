@@ -1,0 +1,115 @@
+# Cross-Platform Social Publisher Frontend Prompt
+*Production-ready prompt for Claude 3.7 Sonnet, v0.dev, Bolt.new, Lovable.dev, or Cursor*
+
+---
+
+```markdown
+# PROMPT: Cross-Platform Social Publisher Frontend (Track 04)
+
+**Role:** You are a senior frontend engineer building a polished, enterprise-grade SaaS web app.
+
+**Project:** Build a responsive web application called **"Cross-Platform Social Publisher"** for **FourFrontLab** — a broadcast automation tool that fans out one post to Slack, Discord, Facebook, Twitter/X, and Google Sheets simultaneously via the Fastn MCP Gateway (`wf_6cfc644efb9d`), with isolated fault tolerance (one platform failing never blocks the others).
+
+---
+
+### Tech Stack & Design System
+- **Framework:** Next.js 14+ (App Router) or React 18+ Vite with TypeScript
+- **Styling:** Tailwind CSS + shadcn/ui components (Card, Tabs, Button, Badge, Input, Textarea, Dialog, Alert)
+- **Icons:** `lucide-react`
+- **Animations:** `framer-motion` for transitions, pulse rings, and publish-state animations
+- **Theme:** Dark-mode-first (`bg-slate-950`, `text-slate-100`), accent colors: Indigo (`#4f46e5`), Cyan (`#06b6d4`), and Emerald (`#10b981`)
+- **Typography:** Inter or Plus Jakarta Sans for body, JetBrains Mono for code/logs
+
+---
+
+### Key System Architecture & Backend Contract
+The frontend connects to the **Fastn Orchestration Engine**:
+- **Production Webhook Trigger:** `https://webhooks.fastn.dev/prod/triggers/personal_29e5272ccca34fc5d046/webhooks/671bf3f9-9d68-4e14-a2d9-89830c7e2e3b`
+- **Payload Schema:**
+  ```json
+  {
+    "title": "Hackathon Launch Announcement",
+    "content": "FourFrontLab has launched the Cross-Platform Social Publisher on Fastn!",
+    "image_url": "https://images.unsplash.com/photo-1522071820081-009f0129c71c",
+    "tags": "fastn, hackathon, ai, mcp",
+    "status": "Ready to Publish"
+  }
+  ```
+- **Execution Engine:** Fastn Workflow `wf_6cfc644efb9d` running parallel fan-out via `Promise.allSettled`.
+- **Destinations Dispatched:**
+  1. **Slack:** Channel `#social` (`C0C278R4PRD`) via Block Kit (`blocks` array with mrkdwn & image).
+  2. **Discord:** Webhook with rich embeds, hex color `#5865F2`, title, description, and footer.
+  3. **Facebook:** Automated relay via Make.com webhook.
+  4. **Twitter / X:** API v2 call with isolated 402/403/401 fault handling.
+  5. **Google Sheets:** Row auto-appended to 9-column tracking matrix (`1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s`).
+
+---
+
+### Build Exactly 3 Views (Connected via Sidebar or Top Tabs):
+
+#### View 1 — Composer & Live Platform Preview
+- **Left Column: Broadcast Composer**
+  - **Inputs:**
+    - Title (`input`)
+    - Content (`textarea` with 280-character Twitter warning and countdown badge)
+    - Image URL (`input` with instant thumbnail preview)
+    - Tags (`input`, e.g., `fastn, mcp, launch`)
+  - **Channel Selector / Toggles:**
+    - Slack (Checked by default)
+    - Discord (Checked by default)
+    - Facebook (Checked by default)
+    - Twitter/X (Checked by default)
+    - Google Sheets Audit (Locked/Always Active)
+  - **Publish Controls:**
+    - Primary CTA: **"Broadcast to All Channels"** (Trigger Fastn Webhook). Shows animated spinner and pulse ring during dispatch.
+    - Fault-Injection Toggle: Test sandbox failure (e.g., "Inject Twitter 402 Credits Depleted" or "Inject Telegram 401 Unauthorized") to prove that Slack & Discord still succeed.
+- **Right Column: Multi-Platform Live Preview Tabs**
+  - Tab 1: **Slack Preview** (Renders as realistic Slack message with avatar, bot name "Fastn Publisher", bold title, body, tags badge, image attachment).
+  - Tab 2: **Discord Preview** (Renders as Discord dark-theme embed with blue accent bar `#5865F2`, bot badge, formatted description, image).
+  - Tab 3: **Facebook Preview** (Renders as Facebook feed card with FourFrontLab page header, timestamp "Just now", post text, card image, Like/Comment/Share bar).
+  - Tab 4: **Twitter / X Preview** (Renders as X tweet card with handle `@FourFrontLab`, truncated text under 280 chars, hashtags, and character count indicator).
+
+---
+
+#### View 2 — Real-Time Delivery Monitor
+- **Top Metrics Row:**
+  - Total Broadcasts Dispatched
+  - Successful Deliveries (e.g. 98.4%)
+  - Isolated Failures Handled
+  - Average Fan-Out Latency (~420ms)
+- **Channel Delivery Grid (5 Cards):**
+  - **Slack:** Status Pill (Delivered / Idle), Channel `#social`, Message Timestamp / Permalink link.
+  - **Discord:** Status Pill (Delivered / Idle), Webhook confirmation ID, Latency badge.
+  - **Facebook:** Status Pill (Delivered / Queued), Relay ID, Webhook status.
+  - **Twitter / X:** Status Pill (Active / Sandboxed), Free-tier status badge, error explanation tooltip.
+  - **Google Sheets:** Status Pill (Synced), Row append confirmation, Auto-Audit indicator.
+- **Live Event Stream / Terminal:**
+  - Real-time scrolling console log showing timestamps, Fastn UCL schema adapters, `Promise.allSettled` status, and HTTP response codes (`200 OK`, `201 Created`, etc.).
+
+---
+
+#### View 3 — Google Sheets Audit Matrix Viewer
+- **Spreadsheet Metadata Bar:**
+  - Sheet Name: `Fastn_Track04_SocialPublisher_Matrix`
+  - Connected ID: `1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s`
+  - Direct Link Button: **"Open in Google Sheets"** (opens Google Sheets URL in new tab)
+  - Sync Status: "Auto-synced on every Fastn trigger"
+- **Audit Table (9 Columns):**
+  1. `Row ID` (#1 to #10)
+  2. `Timestamp` (ISO Format)
+  3. `Title`
+  4. `Content Preview`
+  5. `Slack Status / TS` (Badge with confirmation ts)
+  6. `Discord Status / ID` (Badge with embed id)
+  7. `Facebook Relay` (Badge with relay confirmation)
+  8. `Twitter Status` (Badge showing delivered or sandboxed)
+  9. `Overall Status` (`Published` in green, `Partially Published` in yellow, `Draft` in gray)
+- **Controls:** Search filter, Status filter (All / Published / Partially Published), and "Trigger Test Row" button.
+
+---
+
+### Special Polish Requirements:
+1. **Zero Mock Bottlenecks:** Include a toggle at the top right: `Mode: Live Fastn Engine` vs `Mode: Local Demo Simulator`. When set to Live, it dispatches an actual `POST` request to `https://webhooks.fastn.dev/prod/triggers/personal_29e5272ccca34fc5d046/webhooks/671bf3f9-9d68-4e14-a2d9-89830c7e2e3b`.
+2. **FourFrontLab Branding:** Display the FourFrontLab logo/badge and "Track 04: Build with Fastn Hackathon".
+3. **Responsive:** Seamless layout on both desktop (multi-column) and mobile (collapsible sidebar / stacked cards).
+```
