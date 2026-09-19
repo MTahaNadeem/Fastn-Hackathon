@@ -1515,7 +1515,7 @@ https://fastn.ai
             twBadge.style = 'background-color: var(--accent-bg); border-color: var(--accent-border);';
           }
           if (twDot) twDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-500';
-          if (twStatus) twStatus.innerText = data.results?.twitter_x?.error ? data.results.twitter_x.error.replace('X API ', '') : '403 (tweet.write missing)';
+          if (twStatus) twStatus.innerText = data.results?.twitter_x?.error ? String(data.results.twitter_x.error).replace('X API ', '') : '403 (tweet.write missing)';
         }
       }
 
@@ -1581,12 +1581,15 @@ https://fastn.ai
         }
 
         const slackCell = row.Slack_ID && row.Slack_ID !== 'FAILED'
-          ? `<a href="https://fourfrontlab.slack.com/archives/C0C278R4PRD/p${row.Slack_ID.replace('.', '')}" target="_blank" class="text-brand-accent hover:underline font-mono text-[11px]">${row.Slack_ID}</a>`
-          : `<span class="text-brand-failure font-mono text-[11px]">${row.Slack_ID}</span>`;
+          ? `<a href="https://fourfrontlab.slack.com/archives/C0C278R4PRD/p${String(row.Slack_ID).replace('.', '')}" target="_blank" class="text-brand-accent hover:underline font-mono text-[11px]">${escapeHtml(row.Slack_ID)}</a>`
+          : `<span class="text-brand-failure font-mono text-[11px]">${escapeHtml(row.Slack_ID || 'None')}</span>`;
+
+        const rawTime = row.Timestamp || row.Updated_At || '';
+        const timeStr = rawTime ? String(rawTime).replace('T', ' ').substring(0, 19) : new Date().toISOString().replace('T', ' ').substring(0, 19);
 
         return `
           <tr class="hover:bg-brand-panelHover/60 transition">
-            <td class="py-3 px-4 font-mono text-brand-muted text-[11px] whitespace-nowrap">${row.Timestamp.replace('T', ' ').substring(0, 19)}</td>
+            <td class="py-3 px-4 font-mono text-brand-muted text-[11px] whitespace-nowrap">${timeStr}</td>
             <td class="py-3 px-4 font-medium max-w-xs truncate" style="color: var(--text-primary);">${escapeHtml(row.Title)}</td>
             <td class="py-3 px-4 max-w-xs truncate text-[11px]" style="color: var(--text-secondary);">${escapeHtml(row.Content)}</td>
             <td class="py-3 px-4 font-mono text-[11px] text-brand-muted">${escapeHtml(row.Tags || 'None')}</td>
@@ -1595,8 +1598,8 @@ https://fastn.ai
             </td>
             <td class="py-3 px-4">${statusBadge}</td>
             <td class="py-3 px-4">${slackCell}</td>
-            <td class="py-3 px-4 font-mono text-[11px]" style="color: var(--text-primary);">${escapeHtml(row.Social_ID)}</td>
-            <td class="py-3 px-4 font-mono text-brand-muted text-[11px] max-w-xs truncate" title="${escapeHtml(row.Error_Log)}">${escapeHtml(row.Error_Log)}</td>
+            <td class="py-3 px-4 font-mono text-[11px]" style="color: var(--text-primary);">${escapeHtml(row.Social_ID || 'None')}</td>
+            <td class="py-3 px-4 font-mono text-brand-muted text-[11px] max-w-xs truncate" title="${escapeHtml(row.Error_Log || 'None')}">${escapeHtml(row.Error_Log || 'None')}</td>
           </tr>
         `;
       }).join('');
