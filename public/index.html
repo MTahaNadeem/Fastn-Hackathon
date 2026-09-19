@@ -879,6 +879,24 @@ https://fastn.ai
               </button>
             </div>
 
+            <!-- GitHub Card -->
+            <div class="bg-brand-panel border border-brand-border rounded-xl p-4 space-y-3 theme-transition">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <span id="cardDotGitHub" class="w-2.5 h-2.5 rounded-full bg-brand-success"></span>
+                  <span class="font-bold text-xs" style="color: var(--text-primary);">GitHub</span>
+                </div>
+                <span id="cardBadgeGitHub" class="text-[10px] font-mono px-2 py-0.5 rounded border text-brand-success" style="background-color: var(--success-bg); border-color: var(--success-border);">AUTOMATED</span>
+              </div>
+              <div class="space-y-1 text-xs font-mono">
+                <div class="text-brand-muted text-[11px]">Action: <span style="color: var(--text-primary);">createIssue</span></div>
+                <div class="text-brand-muted text-[11px]">Issue ID: <span id="cardIdGitHub" style="color: var(--text-secondary);">None</span></div>
+              </div>
+              <a id="cardLinkGitHub" href="https://github.com/MTahaNadeem/Fastn-Hackathon/issues" target="_blank" class="block text-center py-1.5 text-xs font-medium text-brand-accent bg-brand-bg hover:bg-brand-panelHover border border-brand-border rounded-lg transition theme-transition">
+                View GitHub Issue
+              </a>
+            </div>
+
           </div>
         </div>
 
@@ -1353,7 +1371,13 @@ https://fastn.ai
           logEvent(`[SLACK] Delivered to #social | TS: ${data.results?.slack?.id || 'None'}`, 'slate');
           logEvent(`[DISCORD] Embed ID: ${data.results?.discord?.id || 'None'}`, 'slate');
           logEvent(`[FACEBOOK] Relay ID: ${data.results?.facebook?.id || 'None'}`, 'slate');
-          logEvent(`[AUDIT] Logged to Google Sheet 1wquYVUl_...`, 'slate');\n          logEvent(`[GITHUB] Auto-recorded audit log to GitHub (${data.githubAudit?.commit_hash || 'COMMITTED'})`, 'green');
+          if (data.results?.github?.id) {
+            logEvent(`[GITHUB] Issue #${data.results.github.id} Created | ${data.results.github.permalink}`, 'slate');
+          }
+          if (data.githubAudit?.commit_hash) {
+            logEvent(`[GITHUB] Auto-recorded audit log to GitHub (${data.githubAudit.commit_hash})`, 'green');
+          }
+          logEvent(`[AUDIT] Logged to Google Sheet 1wquYVUl_...`, 'slate');
         }
 
         // Update Matrix dataset
@@ -1559,6 +1583,32 @@ https://fastn.ai
         liBadge.style = 'background-color: var(--accent-bg); border-color: var(--accent-border);';
         if (liDot) liDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-500';
         liId.innerText = 'Not Connected in Fastn';
+      }
+
+      // 7. GitHub Automation Check
+      const ghBadge = document.getElementById('cardBadgeGitHub');
+      const ghId = document.getElementById('cardIdGitHub');
+      const ghDot = document.getElementById('cardDotGitHub');
+      const ghLink = document.getElementById('cardLinkGitHub');
+      if (data.results?.github?.success && data.results?.github?.id) {
+        deliveredCount++;
+        if (ghBadge) {
+          ghBadge.innerText = 'DELIVERED';
+          ghBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-success';
+          ghBadge.style = 'background-color: var(--success-bg); border-color: var(--success-border);';
+        }
+        if (ghDot) ghDot.className = 'w-2.5 h-2.5 rounded-full bg-brand-success';
+        if (ghId) ghId.innerText = `Issue #${data.results.github.id}`;
+        if (ghLink && data.results.github.permalink) ghLink.href = data.results.github.permalink;
+      } else if (data.results?.github) {
+        isolatedCount++;
+        if (ghBadge) {
+          ghBadge.innerText = 'FAILED';
+          ghBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-failure';
+          ghBadge.style = 'background-color: var(--failure-bg); border-color: var(--failure-border);';
+        }
+        if (ghDot) ghDot.className = 'w-2.5 h-2.5 rounded-full bg-brand-failure';
+        if (ghId) ghId.innerText = data.results.github.error || 'Failed';
       }
 
       // Update Summary Statistics
