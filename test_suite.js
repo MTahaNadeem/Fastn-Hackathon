@@ -170,6 +170,36 @@ async function runAllTests() {
   }
   console.log('\n');
 
+  // TEST 5: AI-Powered Per-Platform Content Adaptation Engine
+  console.log('▶ [TEST 5] AI-Powered Per-Platform Content Adaptation Engine');
+  {
+    const { adaptContentForPlatforms } = require('./server');
+    const sourceContent = 'FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unified Context Layer! This long-form broadcast tests whether the AI adaptation engine properly synthesizes native variations for each destination without manual user fighting.';
+    const sourceTitle = '🚀 FourFrontLab Launch';
+    const sourceLink = 'https://fastn.ai';
+    const sourceTags = 'fastn, hackathon, ai, mcp';
+
+    const { adapted, engine } = await adaptContentForPlatforms({
+      title: sourceTitle,
+      content: sourceContent,
+      link: sourceLink,
+      tags: sourceTags,
+      platforms: ['twitter', 'linkedin', 'slack', 'discord', 'facebook']
+    });
+
+    assert(Boolean(adapted.twitter), 'Twitter adapted version generated');
+    assert(adapted.twitter.length <= 280, `Twitter version strictly <= 280 chars (Length: ${adapted.twitter.length})`);
+    assert(adapted.twitter.includes('#'), 'Twitter version includes inline hashtags');
+    assert(Boolean(adapted.slack), 'Slack adapted version generated');
+    assert(adapted.slack.includes('*'), 'Slack version contains mrkdwn formatting');
+    assert(Boolean(adapted.discord), 'Discord adapted version generated');
+    assert(adapted.discord.includes('⚡') || adapted.discord.includes('**'), 'Discord version contains embed/emoji formatting');
+    assert(Boolean(adapted.facebook), 'Facebook conversational version generated');
+    assert(Boolean(adapted.linkedin), 'LinkedIn professional version generated');
+    assert(adapted.linkedin.includes('Key Highlights'), 'LinkedIn version contains professional bullet structure');
+  }
+  console.log('\n');
+
   console.log('================================================================');
   console.log(`📊 TEST RESULTS: ${passed}/${total} assertions passed (${Math.round((passed/total)*100)}%)`);
   console.log('================================================================');
@@ -180,3 +210,4 @@ async function runAllTests() {
 }
 
 runAllTests().catch(console.error);
+

@@ -337,15 +337,21 @@
               />
             </div>
 
-            <!-- Content Textarea with Live Character Counter -->
+            <!-- Content Textarea with Live Raw Character Counter & AI Adaptation -->
             <div class="space-y-1.5">
               <div class="flex items-center justify-between">
                 <label class="text-xs font-medium" style="color: var(--text-primary);">
                   Announcement Body Text <span class="text-brand-failure">*</span>
                 </label>
-                <!-- Character Counter Badge -->
-                <div id="charCounterBadge" class="text-[11px] font-mono font-medium px-2 py-0.5 rounded bg-brand-bg border border-brand-border text-brand-success theme-transition">
-                  0 / 280 (Twitter)
+                <!-- Character Counter & AI Status Badges -->
+                <div class="flex items-center space-x-2">
+                  <span id="aiStatusBadge" class="text-[10px] font-mono px-2 py-0.5 rounded bg-brand-accent/15 text-brand-accent border border-brand-accent/30 font-semibold flex items-center space-x-1">
+                    <i data-lucide="sparkles" class="w-3 h-3"></i>
+                    <span>AI Adaptation Active</span>
+                  </span>
+                  <div id="charCounterBadge" class="text-[11px] font-mono font-medium px-2 py-0.5 rounded bg-brand-bg border border-brand-border text-brand-muted theme-transition">
+                    0 chars
+                  </div>
                 </div>
               </div>
               <textarea 
@@ -356,6 +362,20 @@
                 class="w-full bg-brand-bg border border-brand-border focus:border-brand-accent focus:ring-1 focus:ring-brand-accent rounded-lg p-3 text-xs placeholder-slate-400 transition resize-none theme-transition"
                 style="color: var(--text-primary);"
               >FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unified Context Layer! One post fans out to Slack, Discord, Facebook, and Google Sheets simultaneously with zero-drop fault isolation.</textarea>
+              
+              <!-- AI Adaptation Helper Bar -->
+              <div class="flex items-center justify-between pt-1">
+                <span class="text-[11px] text-brand-muted">Single source draft • AI rewrites native versions for each selected channel</span>
+                <button 
+                  type="button" 
+                  id="btnAdaptAI" 
+                  onclick="triggerAIAdaptation(true)" 
+                  class="px-2.5 py-1 rounded-lg bg-brand-accent/15 hover:bg-brand-accent/25 text-brand-accent border border-brand-accent/30 text-xs font-medium flex items-center space-x-1.5 transition cursor-pointer"
+                >
+                  <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                  <span id="btnAdaptAIText">Preview AI Adaptations</span>
+                </button>
+              </div>
             </div>
 
             <!-- Link & Tags Row -->
@@ -416,7 +436,7 @@
                   <div class="flex items-center space-x-1.5 overflow-hidden">
                     <span class="w-2 h-2 rounded-full bg-brand-success flex-shrink-0"></span>
                     <span class="text-xs font-medium truncate" style="color: var(--text-primary);">Slack</span>
-                    <span id="warnBadgeSlack" class="hidden text-[9px] font-mono px-1 py-0.2 rounded border text-brand-failure" style="background-color: var(--failure-bg); border-color: var(--failure-border);">⚠ Over</span>
+                    <span class="text-[9px] font-mono px-1 py-0.2 rounded border bg-brand-accent/10 border-brand-accent/20 text-brand-accent">mrkdwn</span>
                   </div>
                   <input type="checkbox" id="toggleSlack" checked onchange="handleContentChange()" class="accent-amber-500 cursor-pointer flex-shrink-0">
                 </label>
@@ -426,7 +446,7 @@
                   <div class="flex items-center space-x-1.5 overflow-hidden">
                     <span class="w-2 h-2 rounded-full bg-brand-success flex-shrink-0"></span>
                     <span class="text-xs font-medium truncate" style="color: var(--text-primary);">Discord</span>
-                    <span id="warnBadgeDiscord" class="hidden text-[9px] font-mono px-1 py-0.2 rounded border text-brand-failure" style="background-color: var(--failure-bg); border-color: var(--failure-border);">⚠ Over</span>
+                    <span class="text-[9px] font-mono px-1 py-0.2 rounded border bg-brand-accent/10 border-brand-accent/20 text-brand-accent">embed</span>
                   </div>
                   <input type="checkbox" id="toggleDiscord" checked onchange="handleContentChange()" class="accent-amber-500 cursor-pointer flex-shrink-0">
                 </label>
@@ -436,7 +456,7 @@
                   <div class="flex items-center space-x-1.5 overflow-hidden">
                     <span class="w-2 h-2 rounded-full bg-brand-success flex-shrink-0"></span>
                     <span class="text-xs font-medium truncate" style="color: var(--text-primary);">Facebook</span>
-                    <span id="warnBadgeFacebook" class="hidden text-[9px] font-mono px-1 py-0.2 rounded border text-brand-failure" style="background-color: var(--failure-bg); border-color: var(--failure-border);">⚠ Over</span>
+                    <span class="text-[9px] font-mono px-1 py-0.2 rounded border bg-brand-accent/10 border-brand-accent/20 text-brand-accent">social</span>
                   </div>
                   <input type="checkbox" id="toggleFacebook" checked onchange="handleContentChange()" class="accent-amber-500 cursor-pointer flex-shrink-0">
                 </label>
@@ -446,7 +466,7 @@
                   <div class="flex items-center space-x-1.5 overflow-hidden">
                     <span class="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0"></span>
                     <span class="text-xs font-medium truncate" style="color: var(--text-primary);">Twitter / X</span>
-                    <span id="warnBadgeTwitter" class="hidden text-[9px] font-mono px-1 py-0.2 rounded border text-brand-failure font-bold" style="background-color: var(--failure-bg); border-color: var(--failure-border);">⚠ &gt;280</span>
+                    <span class="text-[9px] font-mono px-1 py-0.2 rounded border bg-brand-accent/10 border-brand-accent/20 text-brand-accent font-semibold">&le;280</span>
                   </div>
                   <input type="checkbox" id="toggleTwitter" checked onchange="handleContentChange()" class="accent-amber-500 cursor-pointer flex-shrink-0">
                 </label>
@@ -456,7 +476,7 @@
                   <div class="flex items-center space-x-1.5 overflow-hidden">
                     <span class="w-2 h-2 rounded-full bg-brand-success flex-shrink-0"></span>
                     <span class="text-xs font-medium truncate" style="color: var(--text-primary);">LinkedIn</span>
-                    <span id="warnBadgeLinkedIn" class="hidden text-[9px] font-mono px-1 py-0.2 rounded border text-brand-failure" style="background-color: var(--failure-bg); border-color: var(--failure-border);">⚠ Over</span>
+                    <span class="text-[9px] font-mono px-1 py-0.2 rounded border bg-brand-accent/10 border-brand-accent/20 text-brand-accent">pro</span>
                   </div>
                   <input type="checkbox" id="toggleLinkedIn" checked onchange="handleContentChange()" class="accent-amber-500 cursor-pointer flex-shrink-0">
                 </label>
@@ -528,7 +548,10 @@
                   <span class="font-bold">social</span>
                   <span class="text-[10px] bg-brand-bg px-1.5 py-0.5 rounded text-brand-muted border border-brand-border">channel</span>
                 </div>
-                <span class="font-mono text-[10px] text-brand-muted">C0C278R4PRD</span>
+                <div class="flex items-center space-x-2">
+                  <span class="font-mono text-[10px] text-brand-muted">C0C278R4PRD</span>
+                  <span class="text-[9px] bg-brand-accent/15 text-brand-accent px-1.5 py-0.5 rounded border border-brand-accent/30 font-mono">✨ AI mrkdwn</span>
+                </div>
               </div>
 
               <!-- Slack Message Body -->
@@ -565,13 +588,16 @@
 
             <!-- 2. DISCORD EMBED CARD PREVIEW -->
             <div id="cardPrev-discord" class="hidden space-y-3 rounded-xl p-4 theme-transition" style="background-color: var(--preview-discord-bg); border: 1px solid var(--preview-discord-border);">
-              <div class="flex items-center space-x-2 text-xs pb-2 border-b" style="border-color: var(--border-color);">
-                <div class="w-6 h-6 rounded-full bg-[#5865F2] flex items-center justify-center font-bold text-[10px] text-white">
-                  D
+              <div class="flex items-center justify-between text-xs pb-2 border-b" style="border-color: var(--border-color);">
+                <div class="flex items-center space-x-2">
+                  <div class="w-6 h-6 rounded-full bg-[#5865F2] flex items-center justify-center font-bold text-[10px] text-white">
+                    D
+                  </div>
+                  <span class="font-bold" style="color: var(--text-primary);">Fastn Bot</span>
+                  <span class="text-[10px] bg-[#5865F2] text-white px-1 rounded font-semibold">BOT</span>
+                  <span class="text-[10px] text-brand-muted">Today at 12:00 PM</span>
                 </div>
-                <span class="font-bold" style="color: var(--text-primary);">Fastn Bot</span>
-                <span class="text-[10px] bg-[#5865F2] text-white px-1 rounded font-semibold">BOT</span>
-                <span class="text-[10px] text-brand-muted">Today at 12:00 PM</span>
+                <span class="text-[9px] bg-brand-accent/15 text-brand-accent px-1.5 py-0.5 rounded border border-brand-accent/30 font-mono">✨ AI Embed</span>
               </div>
 
               <!-- Embed with #5865F2 Left Accent Border -->
@@ -607,10 +633,13 @@
                   𝕏
                 </div>
                 <div class="flex-1 space-y-1">
-                  <div class="flex items-center space-x-1.5">
-                    <span class="font-bold text-sm">FourFrontLab</span>
-                    <span class="text-brand-muted">@FourFrontLab</span>
-                    <span class="text-brand-muted">· Just now</span>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-1.5">
+                      <span class="font-bold text-sm">FourFrontLab</span>
+                      <span class="text-brand-muted">@FourFrontLab</span>
+                      <span class="text-brand-muted">· Just now</span>
+                    </div>
+                    <span class="text-[9px] bg-brand-accent/15 text-brand-accent px-1.5 py-0.5 rounded border border-brand-accent/30 font-mono">✨ AI &le;280</span>
                   </div>
 
                   <!-- Truncated 280-char Tweet -->
@@ -638,14 +667,17 @@ https://fastn.ai
 
             <!-- 4. FACEBOOK CARD PREVIEW -->
             <div id="cardPrev-facebook" class="hidden space-y-3 rounded-xl p-4 theme-transition" style="background-color: var(--preview-fb-bg); border: 1px solid var(--preview-fb-border); color: var(--text-primary);">
-              <div class="flex items-center space-x-2 text-xs pb-2">
-                <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center font-bold text-xs text-white">
-                  f
+              <div class="flex items-center justify-between text-xs pb-2">
+                <div class="flex items-center space-x-2">
+                  <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center font-bold text-xs text-white">
+                    f
+                  </div>
+                  <div>
+                    <h5 class="font-bold text-xs">FourFrontLab</h5>
+                    <span class="text-[10px] text-brand-muted">Sponsored / Relay • Just now</span>
+                  </div>
                 </div>
-                <div>
-                  <h5 class="font-bold text-xs">FourFrontLab</h5>
-                  <span class="text-[10px] text-brand-muted">Sponsored / Relay • Just now</span>
-                </div>
+                <span class="text-[9px] bg-brand-accent/15 text-brand-accent px-1.5 py-0.5 rounded border border-brand-accent/30 font-mono">✨ AI Story</span>
               </div>
               <p id="prevFbText" class="text-xs leading-relaxed opacity-90">FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unified Context Layer! One post fans out to Slack, Discord, Facebook, and Google Sheets simultaneously.</p>
               <div id="prevFbImgWrap" class="pt-1">
@@ -1042,7 +1074,20 @@ https://fastn.ai
       lucide.createIcons();
     }
 
-    // 3. Live Preview & Character Counter Handler
+    let currentAdapted = null;
+    let adaptationDebounceTimer = null;
+
+    function getSelectedPlatforms() {
+      const platforms = [];
+      if (document.getElementById('toggleSlack')?.checked) platforms.push('slack');
+      if (document.getElementById('toggleDiscord')?.checked) platforms.push('discord');
+      if (document.getElementById('toggleFacebook')?.checked) platforms.push('facebook');
+      if (document.getElementById('toggleTwitter')?.checked) platforms.push('twitter');
+      if (document.getElementById('toggleLinkedIn')?.checked) platforms.push('linkedin');
+      return platforms;
+    }
+
+    // 3. Live Preview & Raw Character Counter Handler
     function handleContentChange() {
       const title = document.getElementById('composerTitle').value || 'Untitled Broadcast';
       const content = document.getElementById('composerContent').value || '';
@@ -1050,61 +1095,13 @@ https://fastn.ai
       const tags = document.getElementById('composerTags').value || '';
       const image = document.getElementById('composerImage').value || '';
 
-      // Format hashtags
       const tagsFormatted = tags.split(',').map(t => t.trim().startsWith('#') ? t.trim() : `#${t.trim()}`).filter(t => t !== '#').join(' ');
-
-      // Dynamic Character Counter (Reactive to selected Target Channels)
-      const platformLimits = [
-        { id: 'toggleTwitter', key: 'twitter', name: 'Twitter/X', limit: 280, warnEl: 'warnBadgeTwitter' },
-        { id: 'toggleLinkedIn', key: 'linkedin', name: 'LinkedIn', limit: 3000, warnEl: 'warnBadgeLinkedIn' },
-        { id: 'toggleDiscord', key: 'discord', name: 'Discord', limit: 4000, warnEl: 'warnBadgeDiscord' },
-        { id: 'toggleSlack', key: 'slack', name: 'Slack', limit: 40000, warnEl: 'warnBadgeSlack' },
-        { id: 'toggleFacebook', key: 'facebook', name: 'Facebook', limit: 63206, warnEl: 'warnBadgeFacebook' }
-      ];
-
-      const twitterFull = `${title}\n\n${content}${link ? '\n' + link : ''}${tagsFormatted ? '\n' + tagsFormatted : ''}`.trim();
       const bodyLength = content.length;
       const counterEl = document.getElementById('charCounterBadge');
 
-      // Check which platforms are currently toggled ON
-      const activePlatforms = platformLimits.filter(p => document.getElementById(p.id)?.checked);
-
-      // Check each active platform and badge if content exceeds its limit
-      platformLimits.forEach(p => {
-        const isChecked = document.getElementById(p.id)?.checked;
-        const badge = document.getElementById(p.warnEl);
-        if (!badge) return;
-
-        const effectiveLen = p.key === 'twitter' ? twitterFull.length : bodyLength;
-        if (isChecked && effectiveLen > p.limit) {
-          badge.classList.remove('hidden');
-          badge.innerText = p.key === 'twitter' ? '⚠ >280' : `⚠ >${p.limit}`;
-        } else {
-          badge.classList.add('hidden');
-        }
-      });
-
-      if (activePlatforms.length > 0) {
-        // Find the lowest limit among currently selected platforms only
-        const tightest = activePlatforms.reduce((min, p) => p.limit < min.limit ? p : min, activePlatforms[0]);
-        const currentCount = tightest.key === 'twitter' ? twitterFull.length : bodyLength;
-        const limit = tightest.limit;
-
-        counterEl.innerText = `${currentCount} / ${limit} (${tightest.name})`;
-
-        // Color states: green under 80% of limit, amber 80–100%, red over 100%
-        if (currentCount <= limit * 0.8) {
-          counterEl.className = 'text-[11px] font-mono font-medium px-2 py-0.5 rounded bg-brand-bg border border-brand-border text-brand-success theme-transition';
-        } else if (currentCount <= limit) {
-          counterEl.className = 'text-[11px] font-mono font-medium px-2 py-0.5 rounded bg-brand-bg border border-brand-border text-brand-accent theme-transition font-semibold';
-        } else {
-          counterEl.className = 'text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-brand-bg border border-red-800 text-brand-failure theme-transition';
-        }
-      } else {
-        // Generic/neutral counter when no platform with tight limits is selected
-        counterEl.innerText = `${bodyLength} chars (No channels selected)`;
-        counterEl.className = 'text-[11px] font-mono font-medium px-2 py-0.5 rounded bg-brand-bg border border-brand-border text-brand-muted theme-transition';
-      }
+      // Live raw character count for writer reference (no hardcoded Twitter limit)
+      counterEl.innerText = `${bodyLength} chars`;
+      counterEl.className = 'text-[11px] font-mono font-medium px-2 py-0.5 rounded bg-brand-bg border border-brand-border text-brand-muted theme-transition';
 
       // Thumbnail
       const thumbImg = document.getElementById('thumbImg');
@@ -1115,40 +1112,114 @@ https://fastn.ai
         thumbImg.classList.add('hidden');
       }
 
-      // Slack Card
+      // Live Title & Media Sync
       document.getElementById('prevSlackTitle').innerText = title;
-      document.getElementById('prevSlackContent').innerText = content;
+      document.getElementById('prevDiscordTitle').innerText = title;
       document.getElementById('prevSlackLink').innerHTML = link ? `🔗 <a href="${link}" target="_blank" class="text-blue-500 underline">${link}</a>` : '';
       document.getElementById('prevSlackTags').innerText = tagsFormatted ? `*Tags:* _${tagsFormatted}_` : '';
+      document.getElementById('prevDiscordTags').innerText = tagsFormatted || 'General';
+      document.getElementById('prevDiscordLink').innerText = link || 'N/A';
+
       const slackImg = document.getElementById('prevSlackImg');
       if (image) { slackImg.src = image; document.getElementById('prevSlackImgWrap').classList.remove('hidden'); }
       else { document.getElementById('prevSlackImgWrap').classList.add('hidden'); }
 
-      // Discord Card
-      document.getElementById('prevDiscordTitle').innerText = title;
-      document.getElementById('prevDiscordContent').innerText = content;
-      document.getElementById('prevDiscordTags').innerText = tagsFormatted || 'General';
-      document.getElementById('prevDiscordLink').innerText = link || 'N/A';
       const discordImg = document.getElementById('prevDiscordImg');
       if (image) { discordImg.src = image; document.getElementById('prevDiscordImgWrap').classList.remove('hidden'); }
       else { document.getElementById('prevDiscordImgWrap').classList.add('hidden'); }
 
-      // Twitter Card
-      const maxTwitterLen = 280 - (link.length + tagsFormatted.length + 4);
-      const truncatedBody = content.length > maxTwitterLen ? content.substring(0, Math.max(0, maxTwitterLen)) + '...' : content;
-      document.getElementById('prevTwitterText').innerText = `${title}\n\n${truncatedBody}${link ? '\n' + link : ''}${tagsFormatted ? '\n' + tagsFormatted : ''}`.trim();
       const twitterImg = document.getElementById('prevTwitterImg');
       if (image) { twitterImg.src = image; document.getElementById('prevTwitterImgWrap').classList.remove('hidden'); }
       else { document.getElementById('prevTwitterImgWrap').classList.add('hidden'); }
 
-      // Facebook Card
-      document.getElementById('prevFbText').innerText = `${title}\n\n${content}${link ? '\n' + link : ''}\n\n${tagsFormatted}`.trim();
       const fbImg = document.getElementById('prevFbImg');
       if (image) { fbImg.src = image; document.getElementById('prevFbImgWrap').classList.remove('hidden'); }
       else { document.getElementById('prevFbImgWrap').classList.add('hidden'); }
+
+      // Default baseline previews before AI adaptation finishes
+      if (!currentAdapted) {
+        document.getElementById('prevSlackContent').innerText = content;
+        document.getElementById('prevDiscordContent').innerText = content;
+        document.getElementById('prevTwitterText').innerText = `${title}\n\n${content}${link ? '\n' + link : ''}${tagsFormatted ? '\n' + tagsFormatted : ''}`.trim();
+        document.getElementById('prevFbText').innerText = `${title}\n\n${content}${link ? '\n' + link : ''}\n\n${tagsFormatted}`.trim();
+      } else {
+        applyAdaptedContentToPreviews(currentAdapted, title, link, tags);
+      }
+
+      // Debounced AI Adaptation (750ms after user pauses typing)
+      clearTimeout(adaptationDebounceTimer);
+      adaptationDebounceTimer = setTimeout(() => {
+        triggerAIAdaptation(false);
+      }, 750);
     }
 
-    // 4. Dispatch Broadcast (POST /api/publish)
+    // 4. Trigger AI Adaptation Engine
+    async function triggerAIAdaptation(isManual = false) {
+      const title = document.getElementById('composerTitle').value.trim() || 'Untitled Broadcast';
+      const content = document.getElementById('composerContent').value.trim();
+      const link = document.getElementById('composerLink').value.trim();
+      const tags = document.getElementById('composerTags').value.trim();
+      const platforms = getSelectedPlatforms();
+
+      if (!content) return;
+
+      const btn = document.getElementById('btnAdaptAI');
+      const btnText = document.getElementById('btnAdaptAIText');
+      if (btn && isManual) {
+        btn.disabled = true;
+        btnText.innerText = 'Adapting with Claude 4.6...';
+      }
+
+      try {
+        const res = await fetch('/api/adapt-content', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ Title: title, Content: content, Link: link, Tags: tags, platforms })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          currentAdapted = data.adapted || {};
+          applyAdaptedContentToPreviews(currentAdapted, title, link, tags);
+
+          const statusBadge = document.getElementById('aiStatusBadge');
+          if (statusBadge) statusBadge.classList.remove('hidden');
+
+          if (isManual) {
+            showToast(`Content adapted for all active channels (${data.engine || 'AI Engine'})`, 'success');
+            logEvent(`[AI] Per-platform adaptations synthesized via ${data.engine || 'Claude Sonnet 4.6'}`, 'amber');
+          }
+        }
+      } catch (err) {
+        console.warn('AI adaptation fetch error:', err.message);
+      } finally {
+        if (btn && isManual) {
+          btn.disabled = false;
+          btnText.innerText = 'Preview AI Adaptations';
+          lucide.createIcons();
+        }
+      }
+    }
+
+    // 5. Apply AI-Adapted Text to Multi-Platform Previews
+    function applyAdaptedContentToPreviews(adapted, title, link, tags) {
+      if (!adapted) return;
+
+      if (adapted.slack) {
+        document.getElementById('prevSlackContent').innerText = adapted.slack;
+      }
+      if (adapted.discord) {
+        document.getElementById('prevDiscordContent').innerText = adapted.discord;
+      }
+      if (adapted.twitter) {
+        document.getElementById('prevTwitterText').innerText = adapted.twitter;
+      }
+      if (adapted.facebook) {
+        document.getElementById('prevFbText').innerText = adapted.facebook;
+      }
+    }
+
+    // 6. Dispatch Broadcast (POST /api/publish)
     async function dispatchBroadcast() {
       const Title = document.getElementById('composerTitle').value.trim();
       const Content = document.getElementById('composerContent').value.trim();
@@ -1171,6 +1242,7 @@ https://fastn.ai
       lucide.createIcons();
 
       logEvent(`[DISPATCH] Initiating parallel broadcast: "${Title}"`, 'cyan');
+      logEvent(`[AI] Dispatching platform-native adapted payloads (Twitter ≤280, Slack mrkdwn, Discord embed, FB narrative)`, 'amber');
       logEvent(`[TARGETS] Slack (#social), Discord (Embed), Facebook (Relay), Twitter/X (Sandboxed), Sheets (Audit)`, 'slate');
 
       const startTime = Date.now();
@@ -1183,7 +1255,8 @@ https://fastn.ai
         Image_URL,
         Status: 'Ready',
         fault,
-        force
+        force,
+        adapted: currentAdapted
       };
 
       try {

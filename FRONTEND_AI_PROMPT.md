@@ -145,16 +145,17 @@ Dark mode is already implemented as the default. Add a **light mode** and a togg
 
 ---
 
-### Fix: Dynamic Character Counter (Content Body)
+### AI-Powered Per-Platform Content Adaptation
 
-The character counter must be **reactive to the selected Target Channels**, not hardcoded to Twitter/X.
+Replace the static character-limit table with an AI adaptation step. When the user writes one piece of content and hits Publish, send that single source text to an AI call (via the Claude API — model `claude-sonnet-4-6`) with a prompt like:
 
-**Logic:**
-- Define per-platform limits: Twitter/X = 280, LinkedIn = 3000, Discord = 4000, Slack = 40000, Facebook = 63206
-- On every keystroke, check which platforms are currently toggled ON
-- Counter displays against the **lowest limit among currently-selected platforms only**
-- Label next to the counter shows which platform that limit belongs to — e.g. `309 / 280 (Twitter/X)` only appears if Twitter/X is checked
-- If Twitter/X is unchecked, the counter should switch to the next-tightest selected platform's limit (e.g. `309 / 3000 (LinkedIn)`), or show a generic soft-limit counter with no platform label if none of the tightly-limited platforms are selected
-- If content exceeds a selected platform's limit, badge that platform's toggle itself with a small warning indicator (not just the counter) so it's clear *which* channel will get truncated
-- Color states apply to whichever limit is active: green under 80% of that limit, amber 80–100%, red over 100%
+> "Given this source content: `{content}`, `{title}`, `{link}`, `{tags}` — rewrite it as a separate, platform-native version for each of the following selected destinations: {list of toggled platforms}. For each, respect that platform's real constraints and conventions (e.g. Twitter/X: ≤280 chars, punchy, hashtags inline; LinkedIn: longer-form, professional tone, line breaks; Slack: mrkdwn formatting; Discord: embed-friendly with emoji; Facebook: conversational). Return strict JSON: `{ "platform_key": "adapted text" }` for only the selected platforms."
+
+The composer should then:
+- Show the raw source text as the single input (no manual per-platform limit fighting)
+- Display each platform's preview card populated with its own AI-adapted version, generated on submit or on a "Preview adaptations" button (debounced, not on every keystroke — that's too many API calls)
+- Still show a live raw character count on the source textarea itself for the writer's own reference, but drop the hardcoded "(Twitter)" label logic entirely — the AI adaptation is what actually enforces per-platform fit before publishing, not a pre-check
+
+This directly matches the hackathon judging criteria: destinations adapt content per-platform automatically, rather than the user manually fitting one draft into everyone's limits.
 ```
+

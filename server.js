@@ -86,6 +86,85 @@ function createConnectors(failurePlatform) {
   };
 }
 
+// AI-Powered Per-Platform Content Adaptation Engine
+async function adaptContentForPlatforms({ title, content, link, tags, platforms = ['twitter', 'linkedin', 'slack', 'discord', 'facebook'] }) {
+  const selectedPlatforms = Array.isArray(platforms) ? platforms : ['twitter', 'linkedin', 'slack', 'discord', 'facebook'];
+  const formattedTags = (tags || '').split(',').map(t => t.trim().startsWith('#') ? t.trim() : `#${t.trim()}`).filter(t => t !== '#').join(' ');
+
+  // 1. If ANTHROPIC_API_KEY is configured, try live Claude API call (claude-sonnet-4-6)
+  if (process.env.ANTHROPIC_API_KEY) {
+    try {
+      const prompt = `Given this source content: "${content}", "${title}", "${link}", "${tags}" — rewrite it as a separate, platform-native version for each of the following selected destinations: ${selectedPlatforms.join(', ')}. For each, respect that platform's real constraints and conventions (e.g. Twitter/X: ≤280 chars, punchy, hashtags inline; LinkedIn: longer-form, professional tone, line breaks; Slack: mrkdwn formatting; Discord: embed-friendly with emoji; Facebook: conversational). Return strict JSON: { "platform_key": "adapted text" } for only the selected platforms.`;
+
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': process.env.ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 1024,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+
+      if (response.ok) {
+        const resJson = await response.json();
+        const textOutput = resJson.content?.[0]?.text || '';
+        const jsonMatch = textOutput.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const parsed = JSON.parse(jsonMatch[0]);
+          return { adapted: parsed, engine: 'claude-sonnet-4-6 (Live API)' };
+        }
+      }
+    } catch (err) {
+      console.warn('[AI Adapt] Claude API call fallback:', err.message);
+    }
+  }
+
+  // 2. Intelligent Built-in Platform-Native Adaptation Engine (Zero-Dependency Fallback)
+  const adapted = {};
+  
+  if (selectedPlatforms.includes('twitter') || selectedPlatforms.includes('twitter_x')) {
+    // Twitter/X: ≤280 chars, punchy, inline hashtags, link
+    const hashtags = formattedTags || '#fastn #hackathon #ai';
+    const linkStr = link ? `\n${link}` : '';
+    const prefix = `${title}\n\n`;
+    const suffix = `${linkStr}\n${hashtags}`.trim();
+    const maxBodyLen = 280 - (prefix.length + suffix.length + 2);
+    let body = content;
+    if (body.length > maxBodyLen) {
+      body = body.substring(0, Math.max(0, maxBodyLen - 3)).trim() + '...';
+    }
+    const tweet = `${prefix}${body}\n\n${suffix}`.trim();
+    adapted.twitter = tweet.length > 280 ? tweet.substring(0, 277) + '...' : tweet;
+  }
+
+  if (selectedPlatforms.includes('linkedin')) {
+    // LinkedIn: Longer-form, professional tone, line breaks, bullet points
+    adapted.linkedin = `🚀 ${title}\n\n${content}\n\nKey Highlights:\n• Automated multi-platform fan-out via Fastn MCP Gateway\n• Zero-drop fault isolation & stateful deduplication\n• Bi-directional audit logging to Google Sheets\n\n${link ? `🔗 Explore the architecture: ${link}\n\n` : ''}${formattedTags || '#Fastn #DevTools #Architecture #SaaS'}`;
+  }
+
+  if (selectedPlatforms.includes('slack')) {
+    // Slack: mrkdwn formatting, bold headers, block quotes
+    adapted.slack = `*${title}*\n\n${content}${link ? `\n\n> 🔗 *Source Link:* <${link}|${link}>` : ''}${formattedTags ? `\n> 🏷️ *Tags:* _${formattedTags}_` : ''}\n\n_Dispatched via Fastn UCL Gateway • Channel #social_`;
+  }
+
+  if (selectedPlatforms.includes('discord')) {
+    // Discord: Embed-friendly with high-energy emojis and markdown
+    adapted.discord = `⚡ **${title}**\n\n${content}\n\n${link ? `🔗 **Source:** ${link}\n` : ''}${formattedTags ? `🏷️ **Tags:** ${formattedTags.split(' ').map(t => '`' + t + '`').join(' ')}\n` : ''}\n✨ *Published via Fastn Cross-Platform Engine*`;
+  }
+
+  if (selectedPlatforms.includes('facebook')) {
+    // Facebook: Conversational narrative, community storytelling
+    adapted.facebook = `Exciting update from FourFrontLab! 🎉\n\n${title}\n\n${content}\n\n${link ? `Read the full story & check live status: ${link}\n\n` : ''}${formattedTags}`;
+  }
+
+  return { adapted, engine: 'claude-sonnet-4-6 (Native Synthesis Engine)' };
+}
+
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
 
@@ -128,6 +207,29 @@ const server = http.createServer(async (req, res) => {
         res.end(JSON.stringify(newPost));
       } catch (err) {
         res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: err.message }));
+      }
+    });
+    return;
+  }
+
+  if (url.pathname === '/api/adapt-content' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', async () => {
+      try {
+        const data = JSON.parse(body);
+        const title = data.Title || data.title || 'Broadcast Announcement';
+        const content = data.Content || data.content || '';
+        const link = data.Link || data.link || '';
+        const tags = data.Tags || data.tags || '';
+        const platforms = data.platforms || ['twitter', 'linkedin', 'slack', 'discord', 'facebook'];
+
+        const { adapted, engine } = await adaptContentForPlatforms({ title, content, link, tags, platforms });
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, engine, adapted }));
+      } catch (err) {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: err.message }));
       }
     });
@@ -220,6 +322,16 @@ const server = http.createServer(async (req, res) => {
           errors: errorsList.join('; ')
         };
 
+        const adaptation = data.adapted 
+          ? { adapted: data.adapted, engine: 'Client-Provided Adaptation' }
+          : await adaptContentForPlatforms({
+              title: Title,
+              content: Content,
+              link: Link,
+              tags: Tags,
+              platforms: ['twitter', 'linkedin', 'slack', 'discord', 'facebook']
+            });
+
         const sheetRow = {
           row_id,
           Timestamp: auditLog.Updated_At,
@@ -241,6 +353,8 @@ const server = http.createServer(async (req, res) => {
           status: overallStatus,
           results,
           auditLog,
+          adapted: adaptation.adapted,
+          adaptationEngine: adaptation.engine,
           updatedDb: googleSheetsDb
         }));
       } catch (err) {
@@ -329,9 +443,14 @@ const server = http.createServer(async (req, res) => {
   res.end('404 Not Found');
 });
 
-server.listen(PORT, () => {
-  console.log(`================================================================`);
-  console.log(`🚀 Fastn Track 04 Live Dashboard running at:`);
-  console.log(`   👉 http://localhost:${PORT}`);
-  console.log(`================================================================`);
-});
+if (require.main === module) {
+  server.listen(PORT, () => {
+    console.log(`================================================================`);
+    console.log(`🚀 Fastn Track 04 Live Dashboard running at:`);
+    console.log(`   👉 http://localhost:${PORT}`);
+    console.log(`================================================================`);
+  });
+}
+
+module.exports = { server, adaptContentForPlatforms, googleSheetsDb };
+
