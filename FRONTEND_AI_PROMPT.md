@@ -112,4 +112,49 @@ The frontend connects to the **Fastn Orchestration Engine**:
 1. **Zero Mock Bottlenecks:** Include a toggle at the top right: `Mode: Live Fastn Engine` vs `Mode: Local Demo Simulator`. When set to Live, it dispatches an actual `POST` request to `https://webhooks.fastn.dev/prod/triggers/personal_29e5272ccca34fc5d046/webhooks/671bf3f9-9d68-4e14-a2d9-89830c7e2e3b`.
 2. **FourFrontLab Branding:** Display the FourFrontLab logo/badge and "Track 04: Build with Fastn Hackathon".
 3. **Responsive:** Seamless layout on both desktop (multi-column) and mobile (collapsible sidebar / stacked cards).
+
+---
+
+### Theme Switcher (Light / Dark)
+
+Dark mode is already implemented as the default. Add a **light mode** and a toggle to switch between them, persisted across sessions (localStorage).
+
+**Toggle placement:** In the top header bar, next to the environment selector — a simple sun/moon icon switch, not a dropdown.
+
+**Implementation approach:**
+- Use CSS custom properties (variables) for every color already used in dark mode, scoped to `:root` or `[data-theme="dark"]`
+- Define a parallel `[data-theme="light"]` block that overrides those same variables — do not hardcode colors anywhere in components; everything should reference the variables so the toggle just swaps the token values
+- Toggle switches a `data-theme` attribute on `<html>` or `<body>`, and the choice is saved to `localStorage` so it persists on reload
+- Respect `prefers-color-scheme` as the initial default only if the user hasn't explicitly chosen a theme before
+
+**Light theme palette (parallel to the dark one, same roles):**
+- Background: `#F7F6F3` (soft warm off-white, not stark white)
+- Panel surface: `#FFFFFF` with a hairline border `#E4E2DC` instead of dark-mode shadows
+- Primary text: `#1A1D21` (not pure black)
+- Secondary/muted text: `#6B6F76`
+- Accent (live/active): keep the same amber `#F5A623`, but darken slightly to `#D4890F` for sufficient contrast on light backgrounds
+- Success green: `#1F9D64` (darkened from dark-mode green for contrast on white)
+- Failure red: `#D9364A` (darkened from dark-mode red for contrast on white)
+- Mono/code blocks (IDs, logs, errors): light gray background `#F0EFEB` with dark text, keep syntax coloring but adjusted for contrast — the terminal-style event console should switch to a light "terminal" look, not stay dark inside a light page
+
+**Requirements:**
+- Every component — banners, badges, cards, the live event console, table rows, input fields, buttons — must have both theme states designed intentionally, not just an inverted filter
+- Maintain WCAG AA contrast in both themes, especially for status badges (success/failure/sandboxed) and the character-counter states (green/amber/red)
+- The switch itself should animate smoothly (icon morph or slide, ~200ms), not hard-cut
+- Test the toggle against every view (Composer, Delivery Monitor, Audit Matrix) — nothing should look unfinished or default-browser-styled in light mode
+
+---
+
+### Fix: Dynamic Character Counter (Content Body)
+
+The character counter must be **reactive to the selected Target Channels**, not hardcoded to Twitter/X.
+
+**Logic:**
+- Define per-platform limits: Twitter/X = 280, LinkedIn = 3000, Discord = 4000, Slack = 40000, Facebook = 63206
+- On every keystroke, check which platforms are currently toggled ON
+- Counter displays against the **lowest limit among currently-selected platforms only**
+- Label next to the counter shows which platform that limit belongs to — e.g. `309 / 280 (Twitter/X)` only appears if Twitter/X is checked
+- If Twitter/X is unchecked, the counter should switch to the next-tightest selected platform's limit (e.g. `309 / 3000 (LinkedIn)`), or show a generic soft-limit counter with no platform label if none of the tightly-limited platforms are selected
+- If content exceeds a selected platform's limit, badge that platform's toggle itself with a small warning indicator (not just the counter) so it's clear *which* channel will get truncated
+- Color states apply to whichever limit is active: green under 80% of that limit, amber 80–100%, red over 100%
 ```
