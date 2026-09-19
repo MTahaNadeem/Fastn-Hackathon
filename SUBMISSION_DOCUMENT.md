@@ -92,13 +92,17 @@ Digital marketing teams, developer advocates, and community managers spend **30 
 - **Test 2 (Fault Isolation):** Simulated credential failure on secondary channel; Slack & Discord post cleanly, status returns `Partially Published` with diagnostic logging.
 - **Test 3 (Deduplication):** Duplicate submission detected and skipped with detailed receipt.
 - **Test 4 (Formatting Boundary):** 2500-char body adapted within strict limits (Twitter <= 280, Telegram <= 2000, Slack Block Kit image block).
-- **Result:** `16/16 assertions passed (100%)`.
+- **Test 5 (AI Content Adaptation):** Real-time generation of 5 channel-native versions (Twitter punchy <= 280 chars, LinkedIn professional with bullet structure, Slack mrkdwn, Discord embed, Facebook conversational).
+- **Result:** `26/26 assertions passed (100%)`.
 
 ---
 
 ## 6. Official Submission Metadata
 - **Team:** Muhammad Taha Nadeem & Haseeb (FourFrontLab)
 - **Track:** Track 04 — Cross-Platform Social Publisher
+- **Production Dashboard:** [https://fourfrontlab-hackathon.vercel.app/](https://fourfrontlab-hackathon.vercel.app/)
+- **GitHub Repository:** [https://github.com/MTahaNadeem/Fastn-Hackathon](https://github.com/MTahaNadeem/Fastn-Hackathon)
 - **Workflow Link:** [`https://connect.fastn.dev/integrations/workflows/wf_6cfc644efb9d`](https://connect.fastn.dev/integrations/workflows/wf_6cfc644efb9d)
 - **Widget Link:** [`https://connect.fastn.dev/widgets/wgt_c70a813b22ba`](https://connect.fastn.dev/widgets/wgt_c70a813b22ba)
-- **Sheet Link:** [`https://docs.google.com/spreadsheets/d/1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s`](https://docs.google.com/spreadsheets/d/1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s)
+- **Spreadsheet Audit Matrix:** [`https://docs.google.com/spreadsheets/d/1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s`](https://docs.google.com/spreadsheets/d/1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s)
+- **Demo Video (Google Drive):** `[Upload Demo Video to Google Drive with 'Anyone with the link can view' permission and paste link here]`

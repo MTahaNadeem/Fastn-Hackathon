@@ -1,14 +1,14 @@
 # 2-Minute Demo Video Script & Recording Guide
 **Track 04: Cross-Platform Social Publisher**  
 *Target Duration: Exactly 1:50 - 2:00*  
-*Screen Setup: Browser open to http://localhost:3456*
+*Screen Setup: Browser open to https://fourfrontlab-hackathon.vercel.app/ (or http://localhost:3456)*
 
 ---
 
 ### [0:00 - 0:25] The Hook & Problem Statement
-- **Screen:** Show Fastn Social Publisher Dashboard (`http://localhost:3456`).
+- **Screen:** Show FourFrontLab Social Publisher Dashboard (`https://fourfrontlab-hackathon.vercel.app/`).
 - **Voiceover:**
-  > "Hi everyone! Marketing and devrel teams waste 30 to 45 minutes manually adapting a single post across Slack, Discord, and Telegram. Each platform has different formatting, image handling, and character limits. Even worse, when traditional automations hit a rate limit or bad token on one platform, the entire publish crashes mid-way with zero audit trail."
+  > "Hi everyone! Marketing and devrel teams waste 30 to 45 minutes manually adapting a single post across Slack, Discord, Facebook, and Twitter. Each platform has different formatting, image handling, and character limits. Even worse, when traditional automations hit a rate limit or bad token on one platform, the entire publish crashes mid-way with zero audit trail."
 
 ---
 
