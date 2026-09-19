@@ -81,6 +81,9 @@ function createConnectors(failurePlatform) {
           Object.assign(row, fields);
         }
         return { updated: true };
+      },
+      appendValues: async (args) => {
+        return { spreadsheetId: args?.spreadsheetId || '1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s', updatedRows: 1 };
       }
     }
   };
