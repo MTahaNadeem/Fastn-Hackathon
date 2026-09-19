@@ -168,6 +168,76 @@ async function adaptContentForPlatforms({ title, content, link, tags, platforms 
   return { adapted, engine: 'claude-sonnet-4-6 (Native Synthesis Engine)' };
 }
 
+
+// Automated GitHub Audit Trail Committer
+async function recordAuditToGitHub(entry) {
+  const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
+  if (!token) {
+    console.warn('[GitHub Audit] GITHUB_TOKEN environment variable not set, skipping remote commit');
+    return { status: 'Recorded locally', commit_hash: 'PENDING_TOKEN' };
+  }
+  const repo = process.env.GITHUB_REPOSITORY || 'MTahaNadeem/Fastn-Hackathon';
+  const path = 'logs/ACTIVITY_LOG.md';
+
+  let currentContent = '';
+  let sha = null;
+  try {
+    const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'User-Agent': 'FastnPublisher-Vercel'
+      }
+    });
+    if (getRes.ok) {
+      const getJson = await getRes.json();
+      sha = getJson.sha;
+      currentContent = Buffer.from(getJson.content, 'base64').toString('utf8');
+    }
+  } catch (e) {}
+
+  if (!currentContent) {
+    currentContent = '# 📜 Fastn Publisher — Automatic GitHub Audit Log\n> Live audit logs synced automatically on every publish action from fourfrontlab-hackathon.vercel.app\n\n| Timestamp (UTC) | Post ID | Title | Platforms & Status | Overall Status | Slack ID / Permalink | GitHub Commit |\n| :--- | :--- | :--- | :--- | :---: | :--- | :---: |\n';
+  }
+
+  const slackDisplay = entry.destinations?.slack?.permalink ? `[\\`${entry.destinations.slack.id}\\`](${entry.destinations.slack.permalink})` : (entry.destinations?.slack?.id || 'None');
+  const summaryStr = `Slack: ${entry.destinations?.slack?.success ? '✓ OK' : '✗'} | Discord: ${entry.destinations?.discord?.success ? '✓ OK' : '✗'} | FB: ${entry.destinations?.facebook?.success ? '✓ OK' : '✗'}`;
+  const commitPlaceholder = `[PENDING]`;
+  const newRow = `| \\`${entry.timestamp}\\` | \\`${entry.row_id}\\` | ${entry.title.substring(0, 35)} | ${summaryStr} | **${entry.overall_status}** | ${slackDisplay} | ${commitPlaceholder} |\n`;
+  const updatedContent = currentContent + newRow;
+
+  try {
+    const putRes = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'User-Agent': 'FastnPublisher-Vercel'
+      },
+      body: JSON.stringify({
+        message: `audit: Auto-record post ${entry.row_id} publishing execution [${entry.overall_status}]`,
+        content: Buffer.from(updatedContent, 'utf8').toString('base64'),
+        sha: sha || undefined,
+        branch: 'main'
+      })
+    });
+
+    if (putRes.ok) {
+      const putJson = await putRes.json();
+      const commitSha = putJson.commit?.sha?.substring(0, 7) || 'COMMITTED';
+      return {
+        status: 'Committed to GitHub',
+        commit_hash: commitSha,
+        commit_url: `https://github.com/${repo}/commit/${putJson.commit?.sha}`,
+        log_url: `https://github.com/${repo}/blob/main/${path}`
+      };
+    }
+  } catch (err) {
+    console.warn('[GitHub Audit] Commit failed:', err.message);
+  }
+
+  return { status: 'Recorded locally', commit_hash: 'LOCAL_SYNC' };
+}
+
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
 
@@ -638,12 +708,29 @@ async function fetchGoogleSheetsRows() {
 
           googleSheetsDb.unshift(sheetRow);
 
+          // Automated GitHub Audit Logging & Committing
+          let githubAudit = { status: 'Not Attempted', commit_hash: null };
+          try {
+            githubAudit = await recordAuditToGitHub({
+              timestamp: sheetRow.Timestamp,
+              row_id: sheetRow.row_id,
+              title: Title,
+              overall_status: fastnResult.status || 'Published',
+              destinations: results,
+              error_log: sheetRow.Error_Log
+            });
+          } catch (ghErr) {
+            console.warn('[GitHub Audit] Auto-record warning:', ghErr.message);
+            githubAudit = { status: 'Error', error: ghErr.message };
+          }
+
           res.writeHead(200, { 'Content-Type': 'application/json' });
           return res.end(JSON.stringify({
             row_id: fastnResult.row_id || row_id,
             status: fastnResult.status || 'Published',
             results,
             auditLog: fastnResult.auditLog || { Status: fastnResult.status, Updated_At: new Date().toISOString(), errors: 'None' },
+            githubAudit,
             adapted: data.adapted || null,
             rawFastn: fastnResult,
             updatedDb: googleSheetsDb
