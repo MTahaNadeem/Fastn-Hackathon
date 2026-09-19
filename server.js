@@ -667,5 +667,14 @@ if (require.main === module) {
   });
 }
 
-module.exports = { server, adaptContentForPlatforms, googleSheetsDb };
+// Vercel serverless handler adapter
+const handler = (req, res) => {
+  server.emit('request', req, res);
+};
+
+module.exports = handler;
+module.exports.handler = handler;
+module.exports.server = server;
+module.exports.adaptContentForPlatforms = adaptContentForPlatforms;
+module.exports.googleSheetsDb = googleSheetsDb;
 
