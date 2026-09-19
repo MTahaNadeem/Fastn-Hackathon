@@ -162,6 +162,16 @@ async function adaptContentForPlatforms({ title, content, link, tags, platforms 
     adapted.facebook = `Exciting update from FourFrontLab! 🎉\n\n${title}\n\n${content}\n\n${link ? `Read the full story & check live status: ${link}\n\n` : ''}${formattedTags}`;
   }
 
+  if (selectedPlatforms.includes('mailchimp')) {
+    // Mailchimp: Clean responsive HTML newsletter card
+    adapted.mailchimp = `<div style="font-family:sans-serif;max-width:600px;margin:auto;padding:20px;border:1px solid #e2e8f0;border-radius:8px;">
+      <h2 style="color:#1e293b;margin-top:0;">${title}</h2>
+      <p style="color:#475569;line-height:1.6;">${content}</p>
+      ${link ? `<p><a href="${link}" style="background:#4f46e5;color:white;padding:10px 18px;text-decoration:none;border-radius:4px;display:inline-block;font-weight:bold;">Read More &rarr;</a></p>` : ''}
+      <p style="color:#94a3b8;font-size:12px;margin-bottom:0;">${formattedTags || '#Fastn #Mailchimp #Broadcast'}</p>
+    </div>`.trim();
+  }
+
   return { adapted, engine: 'claude-sonnet-4-6 (Native Synthesis Engine)' };
 }
 
@@ -445,6 +455,13 @@ async function fetchGoogleSheetsRows() {
                 skipped: true,
                 error: null
               },
+              mailchimp: {
+                success: true,
+                id: 'mc_campaign_existing',
+                permalink: 'https://mailchimp.com/',
+                skipped: true,
+                error: null
+              },
               google_sheets: {
                 success: true,
                 id: '1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s',
@@ -488,6 +505,7 @@ async function fetchGoogleSheetsRows() {
           const slackRes = fastnResult.results?.slack || {};
           const discordRes = fastnResult.results?.discord || {};
           const fbRes = fastnResult.results?.facebook || {};
+          const mcRes = fastnResult.results?.mailchimp || {};
 
           // Safeguard: strictly verify permalink and id
           const results = {
@@ -508,6 +526,12 @@ async function fetchGoogleSheetsRows() {
               id: fbRes.id || null,
               permalink: fbRes.permalink || null,
               error: fbRes.error || (fbRes.success ? null : 'Failed to deliver to Facebook')
+            },
+            mailchimp: {
+              success: mcRes.success === true,
+              id: mcRes.id || null,
+              permalink: mcRes.permalink || null,
+              error: mcRes.error || (mcRes.success ? null : 'Failed to deliver to Mailchimp')
             },
             google_sheets: {
               success: true,
@@ -540,7 +564,7 @@ async function fetchGoogleSheetsRows() {
             Image_URL,
             Status: fastnResult.status || 'Published',
             Slack_ID: results.slack.id || 'FAILED',
-            Social_ID: `DC:${results.discord.id || 'ERR'} | FB:${results.facebook.id || 'ERR'}`,
+            Social_ID: `DC:${results.discord.id || 'ERR'} | FB:${results.facebook.id || 'ERR'} | MC:${results.mailchimp.id || 'ERR'}`,
             Error_Log: fastnResult.auditLog?.errors || 'None'
           };
 
@@ -659,6 +683,13 @@ async function fetchGoogleSheetsRows() {
 });
 
 if (require.main === module) {
+  process.on('uncaughtException', (err) => {
+    console.error('[SERVER UNCAUGHT EXCEPTION]', err);
+  });
+  process.on('unhandledRejection', (reason, promise) => {
+    console.error('[SERVER UNHANDLED REJECTION]', reason);
+  });
+
   server.listen(PORT, () => {
     console.log(`================================================================`);
     console.log(`🚀 Fastn Track 04 Live Dashboard running at:`);
@@ -668,4 +699,5 @@ if (require.main === module) {
 }
 
 module.exports = { server, adaptContentForPlatforms, googleSheetsDb };
+
 

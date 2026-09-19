@@ -471,14 +471,14 @@
                   <input type="checkbox" id="toggleTwitter" checked onchange="handleContentChange()" class="accent-amber-500 cursor-pointer flex-shrink-0">
                 </label>
 
-                <!-- LinkedIn Toggle -->
-                <label class="flex items-center justify-between p-2 rounded-lg bg-brand-bg border border-brand-border hover:border-brand-borderLight cursor-pointer transition theme-transition">
+                <!-- Mailchimp Toggle (Fastn Native) -->
+                <label class="flex items-center justify-between p-2 rounded-lg bg-brand-bg border border-brand-border hover:border-brand-borderLight cursor-pointer transition theme-transition" title="Mailchimp (Fastn Native Connector)">
                   <div class="flex items-center space-x-1.5 overflow-hidden">
                     <span class="w-2 h-2 rounded-full bg-brand-success flex-shrink-0"></span>
-                    <span class="text-xs font-medium truncate" style="color: var(--text-primary);">LinkedIn</span>
-                    <span class="text-[9px] font-mono px-1 py-0.2 rounded border bg-brand-accent/10 border-brand-accent/20 text-brand-accent">pro</span>
+                    <span class="text-xs font-medium truncate" style="color: var(--text-primary);">Mailchimp</span>
+                    <span class="text-[9px] font-mono px-1 py-0.2 rounded border bg-brand-success/15 border-brand-success/30 text-brand-success font-semibold">Native</span>
                   </div>
-                  <input type="checkbox" id="toggleLinkedIn" checked onchange="handleContentChange()" class="accent-amber-500 cursor-pointer flex-shrink-0">
+                  <input type="checkbox" id="toggleMailchimp" checked onchange="handleContentChange()" class="accent-amber-500 cursor-pointer flex-shrink-0">
                 </label>
 
                 <!-- Google Sheets Toggle (Always Active) -->
@@ -537,6 +537,7 @@
                 <button id="tabBtn-discord" onclick="switchPreviewCard('discord')" class="px-2 py-1 rounded font-medium text-brand-muted hover:text-brand-accent transition">Discord</button>
                 <button id="tabBtn-twitter" onclick="switchPreviewCard('twitter')" class="px-2 py-1 rounded font-medium text-brand-muted hover:text-brand-accent transition">Twitter/X</button>
                 <button id="tabBtn-facebook" onclick="switchPreviewCard('facebook')" class="px-2 py-1 rounded font-medium text-brand-muted hover:text-brand-accent transition">Facebook</button>
+                <button id="tabBtn-mailchimp" onclick="switchPreviewCard('mailchimp')" class="px-2 py-1 rounded font-medium text-brand-muted hover:text-brand-accent transition">Mailchimp</button>
               </div>
             </div>
 
@@ -682,6 +683,35 @@ https://fastn.ai
               <p id="prevFbText" class="text-xs leading-relaxed opacity-90">FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unified Context Layer! One post fans out to Slack, Discord, Facebook, and Google Sheets simultaneously.</p>
               <div id="prevFbImgWrap" class="pt-1">
                 <img id="prevFbImg" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" alt="fb media" class="rounded max-h-48 w-full object-cover border border-brand-border" />
+              </div>
+            </div>
+
+            <!-- 5. MAILCHIMP HTML NEWSLETTER CARD PREVIEW -->
+            <div id="cardPrev-mailchimp" class="hidden space-y-3 rounded-xl p-4 theme-transition" style="background-color: var(--preview-mailchimp-bg, var(--bg-panel)); border: 1px solid var(--border-color); color: var(--text-primary);">
+              <div class="flex items-center justify-between text-xs pb-2 border-b" style="border-color: var(--border-color);">
+                <div class="flex items-center space-x-2">
+                  <div class="w-6 h-6 rounded bg-[#FFE01B] flex items-center justify-center font-black text-xs text-black">
+                    🐵
+                  </div>
+                  <span class="font-bold" style="color: var(--text-primary);">Mailchimp Campaign</span>
+                  <span class="text-[10px] bg-[#FFE01B] text-black px-1.5 py-0.2 rounded font-bold">NEWSLETTER</span>
+                  <span class="text-[10px] text-brand-muted">Audience: FourFrontLab</span>
+                </div>
+                <span class="text-[9px] bg-brand-success/15 text-brand-success px-1.5 py-0.5 rounded border border-brand-success/30 font-mono">✨ HTML Responsive</span>
+              </div>
+              <div class="rounded-lg p-4 border border-brand-border space-y-2 bg-white text-slate-800 shadow-inner">
+                <h3 id="prevMailchimpTitle" class="font-bold text-base text-slate-900 border-b pb-1">FourFrontLab Broadcast</h3>
+                <p id="prevMailchimpContent" class="text-xs text-slate-700 leading-relaxed whitespace-pre-wrap">Newsletter content preview...</p>
+                <div id="prevMailchimpImgWrap" class="pt-1">
+                  <img id="prevMailchimpImg" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" alt="newsletter media" class="rounded max-h-48 w-full object-cover border border-slate-200" />
+                </div>
+                <div class="pt-2">
+                  <a id="prevMailchimpBtn" href="#" class="inline-block px-3 py-1.5 bg-indigo-600 text-white text-xs font-bold rounded shadow hover:bg-indigo-700">Read More &rarr;</a>
+                </div>
+                <div class="pt-1 text-[10px] text-slate-400 border-t border-slate-100 flex items-center justify-between">
+                  <span id="prevMailchimpTags">#Fastn #Mailchimp</span>
+                  <span>FourFrontLab • Islamabad</span>
+                </div>
               </div>
             </div>
 
@@ -839,22 +869,22 @@ https://fastn.ai
               </a>
             </div>
 
-            <!-- LinkedIn Card -->
+            <!-- Mailchimp Card (Fastn Managed Connector) -->
             <div class="bg-brand-panel border border-brand-border rounded-xl p-4 space-y-3 theme-transition">
               <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2">
-                  <span id="cardDotLinkedIn" class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
-                  <span class="font-bold text-xs" style="color: var(--text-primary);">LinkedIn</span>
+                  <span id="cardDotMailchimp" class="w-2.5 h-2.5 rounded-full bg-brand-success"></span>
+                  <span class="font-bold text-xs" style="color: var(--text-primary);">Mailchimp</span>
                 </div>
-                <span id="cardBadgeLinkedIn" class="text-[10px] font-mono px-2 py-0.5 rounded border text-brand-accent" style="background-color: var(--accent-bg); border-color: var(--accent-border);">UNVERIFIED</span>
+                <span id="cardBadgeMailchimp" class="text-[10px] font-mono px-2 py-0.5 rounded border text-brand-success" style="background-color: var(--success-bg); border-color: var(--success-border);">CONNECTED</span>
               </div>
               <div class="space-y-1 text-xs font-mono">
-                <div class="text-brand-muted text-[11px]">Status: <span style="color: var(--text-primary);">No Fastn Connector</span></div>
-                <div class="text-brand-muted text-[11px]">Verification: <span id="cardIdLinkedIn" class="text-brand-accent">Unverified</span></div>
+                <div class="text-brand-muted text-[11px]">Audience: <span style="color: var(--text-primary);">FourFrontLab (6e0acf71ff)</span></div>
+                <div class="text-brand-muted text-[11px]">Campaign: <span id="cardIdMailchimp" class="text-brand-accent">Ready to Send</span></div>
               </div>
-              <button disabled class="w-full py-1.5 text-xs font-medium text-brand-muted bg-brand-bg border border-brand-border rounded-lg cursor-not-allowed theme-transition">
-                Not Connected
-              </button>
+              <a id="cardLinkMailchimp" href="https://us16.admin.mailchimp.com/campaigns/" target="_blank" class="block text-center py-1.5 text-xs font-medium text-brand-accent bg-brand-bg hover:bg-brand-panelHover border border-brand-border rounded-lg transition theme-transition">
+                Open Campaign Archive
+              </a>
             </div>
 
           </div>
@@ -1099,15 +1129,17 @@ https://fastn.ai
 
     // 2. Preview Card Switcher
     function switchPreviewCard(tab) {
-      ['slack', 'discord', 'twitter', 'facebook'].forEach(t => {
-        document.getElementById(`cardPrev-${t}`).classList.add('hidden');
+      ['slack', 'discord', 'twitter', 'facebook', 'mailchimp'].forEach(t => {
+        const el = document.getElementById(`cardPrev-${t}`);
+        if (el) el.classList.add('hidden');
         const btn = document.getElementById(`tabBtn-${t}`);
-        btn.className = 'px-2 py-1 rounded font-medium text-brand-muted hover:text-brand-accent transition';
+        if (btn) btn.className = 'px-2 py-1 rounded font-medium text-brand-muted hover:text-brand-accent transition';
       });
 
-      document.getElementById(`cardPrev-${tab}`).classList.remove('hidden');
+      const targetEl = document.getElementById(`cardPrev-${tab}`);
+      if (targetEl) targetEl.classList.remove('hidden');
       const activeBtn = document.getElementById(`tabBtn-${tab}`);
-      activeBtn.className = 'px-2 py-1 rounded font-medium bg-brand-panel text-brand-accent transition';
+      if (activeBtn) activeBtn.className = 'px-2 py-1 rounded font-medium bg-brand-panel text-brand-accent transition';
       lucide.createIcons();
     }
 
@@ -1119,8 +1151,8 @@ https://fastn.ai
       if (document.getElementById('toggleSlack')?.checked) platforms.push('slack');
       if (document.getElementById('toggleDiscord')?.checked) platforms.push('discord');
       if (document.getElementById('toggleFacebook')?.checked) platforms.push('facebook');
+      if (document.getElementById('toggleMailchimp')?.checked) platforms.push('mailchimp');
       if (TWITTER_ENABLED && document.getElementById('toggleTwitter')?.checked) platforms.push('twitter');
-      if (document.getElementById('toggleLinkedIn')?.checked) platforms.push('linkedin');
       return platforms;
     }
 
@@ -1172,6 +1204,23 @@ https://fastn.ai
       const fbImg = document.getElementById('prevFbImg');
       if (image) { fbImg.src = image; document.getElementById('prevFbImgWrap').classList.remove('hidden'); }
       else { document.getElementById('prevFbImgWrap').classList.add('hidden'); }
+
+      // Mailchimp Live Sync
+      const mcTitle = document.getElementById('prevMailchimpTitle');
+      if (mcTitle) mcTitle.innerText = title;
+      const mcContent = document.getElementById('prevMailchimpContent');
+      if (mcContent) mcContent.innerText = content || 'Newsletter content preview...';
+      const mcImg = document.getElementById('prevMailchimpImg');
+      const mcImgWrap = document.getElementById('prevMailchimpImgWrap');
+      if (image) { if (mcImg) mcImg.src = image; if (mcImgWrap) mcImgWrap.classList.remove('hidden'); }
+      else { if (mcImgWrap) mcImgWrap.classList.add('hidden'); }
+      const mcTags = document.getElementById('prevMailchimpTags');
+      if (mcTags) mcTags.innerText = tagsFormatted || '#Fastn #Mailchimp';
+      const mcBtn = document.getElementById('prevMailchimpBtn');
+      if (mcBtn) {
+        if (link) { mcBtn.href = link; mcBtn.classList.remove('hidden'); }
+        else { mcBtn.classList.add('hidden'); }
+      }
 
       // Default baseline previews before AI adaptation finishes
       if (!currentAdapted) {
@@ -1254,6 +1303,10 @@ https://fastn.ai
       if (adapted.facebook) {
         document.getElementById('prevFbText').innerText = adapted.facebook;
       }
+      if (adapted.mailchimp) {
+        const mcEl = document.getElementById('prevMailchimpContent');
+        if (mcEl) mcEl.innerText = adapted.mailchimp.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+      }
     }
 
     // 6. Dispatch Broadcast (POST /api/publish)
@@ -1279,13 +1332,8 @@ https://fastn.ai
       lucide.createIcons();
 
       logEvent(`[DISPATCH] Initiating parallel broadcast: "${Title}" (force=${force})`, 'cyan');
-      if (TWITTER_ENABLED) {
-        logEvent(`[AI] Dispatching platform-native adapted payloads (Twitter ≤280, Slack mrkdwn, Discord embed, FB narrative)`, 'amber');
-        logEvent(`[TARGETS] Slack (#social), Discord (Embed), Facebook (Relay), Twitter/X (Active), Sheets (Audit)`, 'slate');
-      } else {
-        logEvent(`[AI] Dispatching platform-native adapted payloads (Slack mrkdwn, Discord embed, FB narrative, LinkedIn pro)`, 'amber');
-        logEvent(`[TARGETS] Slack (#social), Discord (Embed), Facebook (Relay), LinkedIn, Sheets (Audit)`, 'slate');
-      }
+      logEvent(`[AI] Dispatching platform-native adapted payloads (Slack mrkdwn, Discord embed, FB narrative, Mailchimp HTML)`, 'amber');
+      logEvent(`[TARGETS] Slack (#social), Discord (Embed), Facebook (Relay), Mailchimp (Newsletter), Sheets (Audit)`, 'slate');
 
       const startTime = Date.now();
 
@@ -1519,24 +1567,33 @@ https://fastn.ai
         }
       }
 
-      // 6. LinkedIn (Strict Anti-Mock Safeguard: Unverified if no OAuth connection in Fastn)
-      const liBadge = document.getElementById('cardBadgeLinkedIn');
-      const liId = document.getElementById('cardIdLinkedIn');
-      const liDot = document.getElementById('cardDotLinkedIn');
-      if (data.results?.linkedin?.success && data.results?.linkedin?.permalink && !data.results?.linkedin?.unverified) {
+      // 6. Mailchimp (Fastn Native Managed Connector)
+      const mcBadge = document.getElementById('cardBadgeMailchimp');
+      const mcId = document.getElementById('cardIdMailchimp');
+      const mcDot = document.getElementById('cardDotMailchimp');
+      const mcLink = document.getElementById('cardLinkMailchimp');
+      if (data.results?.mailchimp?.success) {
         deliveredCount++;
-        liBadge.innerText = 'DELIVERED';
-        liBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-success';
-        liBadge.style = 'background-color: var(--success-bg); border-color: var(--success-border);';
-        if (liDot) liDot.className = 'w-2.5 h-2.5 rounded-full bg-brand-success';
-        liId.innerText = data.results.linkedin.id;
-      } else {
+        if (mcBadge) {
+          mcBadge.innerText = 'DELIVERED';
+          mcBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-success';
+          mcBadge.style = 'background-color: var(--success-bg); border-color: var(--success-border);';
+        }
+        if (mcDot) mcDot.className = 'w-2.5 h-2.5 rounded-full bg-brand-success';
+        if (mcId) mcId.innerText = data.results.mailchimp.id || 'Campaign Active';
+        if (mcLink && data.results.mailchimp.permalink) {
+          mcLink.href = data.results.mailchimp.permalink;
+          mcLink.innerText = 'View HTML Newsletter';
+        }
+      } else if (data.results?.mailchimp) {
         isolatedCount++;
-        liBadge.innerText = 'UNVERIFIED';
-        liBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-accent';
-        liBadge.style = 'background-color: var(--accent-bg); border-color: var(--accent-border);';
-        if (liDot) liDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-500';
-        liId.innerText = 'Not Connected in Fastn';
+        if (mcBadge) {
+          mcBadge.innerText = 'FAILED';
+          mcBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-rose-500';
+          mcBadge.style = 'background-color: rgba(244,63,94,0.1); border-color: rgba(244,63,94,0.2);';
+        }
+        if (mcDot) mcDot.className = 'w-2.5 h-2.5 rounded-full bg-rose-500';
+        if (mcId) mcId.innerText = data.results.mailchimp.error || 'Execution Error';
       }
 
       // Update Summary Statistics
