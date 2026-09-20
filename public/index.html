@@ -1724,16 +1724,18 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
           body: JSON.stringify(requestPayload)
         });
 
-        const rawText = await res.text(); // NOT res.json() yet
-        console.log('RAW RESPONSE:', JSON.stringify(rawText));
-        console.log('First 20 chars:', rawText.slice(0, 20));
+        const rawText = await res.text();
+
+        if (!res.ok) {
+          console.error('Server returned non-OK status:', res.status, rawText.slice(0, 200));
+          throw new Error(`Publish failed (${res.status}): ${rawText.slice(0, 100)}`);
+        }
 
         let data;
         try {
           data = JSON.parse(rawText);
-        } catch (err) {
-          console.error('Parse failed. Raw body was:', rawText);
-          throw err;
+        } catch {
+          throw new Error('Server returned non-JSON response: ' + rawText.slice(0, 100));
         }
         const elapsed = Date.now() - startTime;
 

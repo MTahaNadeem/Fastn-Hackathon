@@ -1,17 +1,8 @@
 {
-  "functions": {
-    "server.js": {
-      "includeFiles": "public/**"
-    }
-  },
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/server.js?__route=/api/$1"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/server.js?__route=/$1"
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
     }
   ]
 }

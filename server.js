@@ -171,15 +171,22 @@ async function adaptContentForPlatforms({ title, content, link, tags, platforms 
   return { adapted, engine: 'claude-sonnet-4-6 (Native Synthesis Engine)' };
 }
 
-const server = http.createServer(async (req, res) => {
-  const host = req.headers.host || 'localhost';
-  const url = new URL(req.url, `http://${host}`);
-  let pathname = url.searchParams.get('__route') || req.headers['x-matched-path'] || req.headers['x-vercel-matched-path'] || url.pathname;
-  if (pathname.startsWith('/server.js')) {
-    pathname = pathname.replace('/server.js', '') || '/';
+async function getRequestBody(req) {
+  if (req.body) {
+    if (typeof req.body === 'object') return req.body;
+    try { return JSON.parse(req.body); } catch (e) { return {}; }
   }
+  return new Promise((resolve, reject) => {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => {
+      try { resolve(body ? JSON.parse(body) : {}); } catch (e) { reject(e); }
+    });
+    req.on('error', reject);
+  });
+}
 
-  // CORS Headers
+async function handlePosts(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -189,64 +196,71 @@ const server = http.createServer(async (req, res) => {
     return res.end();
   }
 
-  // API Endpoints
-  if (pathname === '/api/posts' && req.method === 'GET') {
+  if (req.method === 'GET') {
     const posts = await fetchGoogleSheetsRows();
     res.writeHead(200, { 'Content-Type': 'application/json' });
     return res.end(JSON.stringify(posts));
   }
 
-  if (pathname === '/api/posts' && req.method === 'POST') {
-    let body = '';
-    req.on('data', chunk => body += chunk);
-    req.on('end', () => {
-      try {
-        const data = JSON.parse(body);
-        const newPost = {
-          row_id: String(Date.now()).slice(-4),
-          Title: data.Title || 'Untitled Post',
-          Content: data.Content || '',
-          Image_URL: data.Image_URL || '',
-          Tags: data.Tags || '',
-          Status: data.Status || 'Ready to Publish',
-          Slack_Log: '',
-          Telegram_Log: '',
-          Discord_Log: '',
-          Updated_At: ''
-        };
-        googleSheetsDb.push(newPost);
-        res.writeHead(201, { 'Content-Type': 'application/json' });
-        return res.end(JSON.stringify(newPost));
-      } catch (err) {
-        res.writeHead(400, { 'Content-Type': 'application/json' });
-        return res.end(JSON.stringify({ error: err.message }));
-      }
-    });
-    return;
+  if (req.method === 'POST') {
+    try {
+      const data = await getRequestBody(req);
+      const newPost = {
+        row_id: String(Date.now()).slice(-4),
+        Title: data.Title || 'Untitled Post',
+        Content: data.Content || '',
+        Image_URL: data.Image_URL || '',
+        Tags: data.Tags || '',
+        Status: data.Status || 'Ready to Publish',
+        Slack_Log: '',
+        Telegram_Log: '',
+        Discord_Log: '',
+        Updated_At: ''
+      };
+      googleSheetsDb.push(newPost);
+      res.writeHead(201, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify(newPost));
+    } catch (err) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ error: err.message }));
+    }
   }
 
-  if (pathname === '/api/adapt-content' && req.method === 'POST') {
-    let body = '';
-    req.on('data', chunk => body += chunk);
-    req.on('end', async () => {
-      try {
-        const data = JSON.parse(body);
-        const title = data.Title || data.title || 'Broadcast Announcement';
-        const content = data.Content || data.content || '';
-        const link = data.Link || data.link || '';
-        const tags = data.Tags || data.tags || '';
-        const platforms = data.platforms || ['twitter', 'slack', 'discord', 'facebook', 'mailchimp'];
+  res.writeHead(405, { 'Content-Type': 'application/json' });
+  return res.end(JSON.stringify({ error: 'Method Not Allowed' }));
+}
 
-        const { adapted, engine } = await adaptContentForPlatforms({ title, content, link, tags, platforms });
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        return res.end(JSON.stringify({ success: true, engine, adapted }));
-      } catch (err) {
-        res.writeHead(500, { 'Content-Type': 'application/json' });
-        return res.end(JSON.stringify({ error: err.message }));
-      }
-    });
-    return;
+async function handleAdaptContent(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204);
+    return res.end();
   }
+
+  if (req.method === 'POST') {
+    try {
+      const data = await getRequestBody(req);
+      const title = data.Title || data.title || 'Broadcast Announcement';
+      const content = data.Content || data.content || '';
+      const link = data.Link || data.link || '';
+      const tags = data.Tags || data.tags || '';
+      const platforms = data.platforms || ['twitter', 'slack', 'discord', 'facebook', 'mailchimp'];
+
+      const { adapted, engine } = await adaptContentForPlatforms({ title, content, link, tags, platforms });
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ success: true, engine, adapted }));
+    } catch (err) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ error: err.message }));
+    }
+  }
+
+  res.writeHead(405, { 'Content-Type': 'application/json' });
+  return res.end(JSON.stringify({ error: 'Method Not Allowed' }));
+}
 
 // Execute Fastn Workflow via Fastn MCP JSON-RPC Gateway
 async function executeFastnWorkflow(input) {
@@ -402,470 +416,526 @@ async function fetchGoogleSheetsRows() {
   return googleSheetsDb;
 }
 
-  if (pathname === '/api/publish' && req.method === 'POST') {
-    let body = '';
-    req.on('data', chunk => body += chunk);
-    req.on('end', async () => {
-      try {
-        const data = JSON.parse(body);
-        const row_id = data.row_id || String(Date.now()).slice(-4);
-        const Title = data.Title || data.title || 'Broadcast Post';
-        const Content = data.Content || data.content || '';
-        const Tags = data.Tags || data.tags || '';
-        const Link = data.Link || data.link || '';
-        const Image_URL = data.Image_URL || data.image_url || data.imageUrl || '';
-        const Status = data.Status || data.status || 'Ready';
-        const force = data.force === true;
-        const fault = data.fault || data.failurePlatform || 'none';
+async function handlePublish(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-        console.log(`[SERVER /api/publish] Received broadcast request: "${Title}" (force=${force}, simulator=${data.simulator === true}, fault=${fault})`);
-
-        // Handle Simulator Mode (Mock testing without real API calls)
-        if (data.simulator === true) {
-          const simTs = (Date.now() / 1000).toFixed(6);
-          const simDiscordId = String(Date.now());
-          const simFbId = 'fb_' + Math.floor(100000 + Math.random() * 900000);
-          const simMcId = 'mc_' + Date.now().toString().slice(-6);
-
-          const slackSuccess = fault !== 'slack';
-          const discordSuccess = fault !== 'discord';
-
-          const results = {
-            slack: {
-              success: slackSuccess,
-              id: slackSuccess ? simTs : null,
-              permalink: slackSuccess ? `https://fourfrontlab.slack.com/archives/C0C278R4PRD/p${simTs.replace('.', '')}` : null,
-              error: slackSuccess ? null : 'Slack API 429: Rate Limit Exceeded (Retry-After: 30s)'
-            },
-            discord: {
-              success: discordSuccess,
-              id: discordSuccess ? simDiscordId : null,
-              permalink: discordSuccess ? `https://discord.com/channels/@me/${simDiscordId}` : null,
-              error: discordSuccess ? null : 'Discord Webhook 404: Webhook token revoked'
-            },
-            facebook: {
-              success: true,
-              id: simFbId,
-              permalink: `https://facebook.com/1288938340978227/posts/${simFbId}`,
-              error: null
-            },
-            mailchimp: {
-              success: true,
-              id: simMcId,
-              permalink: `https://us16.campaign-archive.com/?id=${simMcId}`,
-              error: null
-            },
-            google_sheets: {
-              success: true,
-              id: '1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s',
-              range: 'Sheet1!A1:H50',
-              permalink: 'https://docs.google.com/spreadsheets/d/1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s'
-            },
-            twitter_x: {
-              success: false,
-              id: null,
-              permalink: null,
-              error: 'X API 401: Unauthorized (Free-tier credits depleted)'
-            }
-          };
-
-          const errorsList = [];
-          if (!slackSuccess) errorsList.push('slack: 429 Rate Limit Exceeded');
-          if (!discordSuccess) errorsList.push('discord: 404 Webhook token revoked');
-          errorsList.push('twitter_x: X API 401: Unauthorized (Free-tier credits depleted)');
-
-          const overallStatus = (!slackSuccess || !discordSuccess) ? 'Partially Published' : 'Published';
-
-          const sheetRow = {
-            row_id: row_id,
-            Timestamp: new Date().toISOString(),
-            Title,
-            Content,
-            Tags,
-            Image_URL,
-            Status: overallStatus,
-            Slack_ID: slackSuccess ? simTs : 'FAILED',
-            Social_ID: `DC:${discordSuccess ? simDiscordId : 'ERR'} | FB:${simFbId} | MC:${simMcId}`,
-            Error_Log: errorsList.join(' | ')
-          };
-
-          googleSheetsDb.unshift(sheetRow);
-
-          const finalPayload = {
-            row_id,
-            status: overallStatus,
-            simulated: true,
-            results,
-            auditLog: { Status: overallStatus, Updated_At: new Date().toISOString(), errors: errorsList.join(' | ') },
-            adapted: data.adapted || null,
-            updatedDb: googleSheetsDb
-          };
-          console.log('SENDING RESPONSE:', JSON.stringify(finalPayload));
-          res.writeHead(200, { 'Content-Type': 'application/json' });
-          return res.end(JSON.stringify(finalPayload));
-        }
-
-        let fastnResult = null;
-        let executionError = null;
-
-        try {
-          // Execute the real Fastn Cloud Workflow wf_6cfc644efb9d
-          fastnResult = await executeFastnWorkflow({
-            Title,
-            Content,
-            Tags,
-            Link,
-            Image_URL,
-            Status,
-            force
-          });
-          console.log('[SERVER /api/publish] Dispatched to Fastn. Raw Fastn response:\n', JSON.stringify(fastnResult, null, 2));
-        } catch (err) {
-          console.error('[SERVER /api/publish] Fastn execution failed:', err.message);
-          executionError = err.message;
-        }
-
-        if (fastnResult) {
-          if (fastnResult.status === 'Skipped') {
-            const existing = fastnResult.existingPost || {};
-            const results = {
-              slack: {
-                success: true,
-                id: existing.slackId || 'Previously Dispatched',
-                permalink: existing.slackId ? `https://fourfrontlab.slack.com/archives/C0C278R4PRD/p${String(existing.slackId).replace('.', '')}` : 'https://fourfrontlab.slack.com/archives/C0C278R4PRD',
-                skipped: true,
-                error: null
-              },
-              discord: {
-                success: true,
-                id: existing.discordId || 'Previously Dispatched',
-                permalink: existing.discordId ? `https://discord.com/channels/@me/${existing.discordId}` : null,
-                skipped: true,
-                error: null
-              },
-              facebook: {
-                success: true,
-                id: 'fb_relay_existing',
-                permalink: 'https://facebook.com/1288938340978227',
-                skipped: true,
-                error: null
-              },
-              mailchimp: {
-                success: true,
-                id: existing.mailchimpId || 'Previously Dispatched',
-                permalink: existing.mailchimpId ? `https://us16.campaign-archive.com/?id=${existing.mailchimpId}` : 'https://mailchimp.com',
-                skipped: true,
-                error: null
-              },
-              google_sheets: {
-                success: true,
-                id: '1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s',
-                range: 'Sheet1!A1',
-                permalink: 'https://docs.google.com/spreadsheets/d/1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s/edit?usp=sharing'
-              },
-              twitter_x: {
-                success: false,
-                id: null,
-                permalink: null,
-                error: 'X API 401: Unauthorized (Free-tier credits depleted)'
-              }
-            };
-
-            const finalPayload = {
-              row_id: fastnResult.row_id || row_id,
-              status: 'Skipped',
-              message: fastnResult.message || 'Duplicate post skipped. Use force: true to override.',
-              results,
-              auditLog: {
-                Status: 'Skipped',
-                Updated_At: existing.publishedAt || new Date().toISOString(),
-                errors: `Deduplication: ${fastnResult.message}`
-              },
-              adapted: data.adapted || null,
-              rawFastn: fastnResult,
-              updatedDb: googleSheetsDb
-            };
-            console.log('SENDING RESPONSE:', JSON.stringify(finalPayload));
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify(finalPayload));
-          }
-
-          // Real execution succeeded! Use genuine results from Fastn
-          const slackRes = fastnResult.results?.slack || {};
-          const discordRes = fastnResult.results?.discord || {};
-          const fbRes = fastnResult.results?.facebook || {};
-          const mcRes = fastnResult.results?.mailchimp || {};
-
-          // Safeguard: strictly verify permalink and id
-          const results = {
-            slack: {
-              success: slackRes.success === true,
-              id: slackRes.id || null,
-              permalink: slackRes.permalink || null,
-              error: slackRes.error || (slackRes.success ? null : 'Failed to deliver to Slack')
-            },
-            discord: {
-              success: discordRes.success === true,
-              id: discordRes.id || null,
-              permalink: discordRes.permalink || null,
-              error: discordRes.error || (discordRes.success ? null : 'Failed to deliver to Discord')
-            },
-            facebook: {
-              success: fbRes.success === true,
-              id: fbRes.id || null,
-              permalink: fbRes.permalink || null,
-              error: fbRes.error || (fbRes.success ? null : 'Failed to deliver to Facebook')
-            },
-            mailchimp: {
-              success: mcRes.success === true,
-              id: mcRes.id || null,
-              permalink: mcRes.permalink || (mcRes.id ? `https://us16.campaign-archive.com/?id=${mcRes.id}` : null),
-              error: mcRes.error || (mcRes.success ? null : 'Failed to deliver to Mailchimp')
-            },
-            google_sheets: {
-              success: true,
-              id: '1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s',
-              range: 'Sheet1!A1',
-              permalink: 'https://docs.google.com/spreadsheets/d/1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s/edit?usp=sharing'
-            },
-            twitter_x: {
-              success: false,
-              id: null,
-              permalink: null,
-              error: 'X API 401: Unauthorized (Free-tier credits depleted)'
-            }
-          };
-
-          const sheetRow = {
-            row_id: fastnResult.row_id || row_id,
-            Timestamp: fastnResult.auditLog?.Updated_At || new Date().toISOString(),
-            Title,
-            Content,
-            Tags,
-            Image_URL,
-            Status: fastnResult.status || 'Published',
-            Slack_ID: results.slack.id || 'FAILED',
-            Social_ID: `DC:${results.discord.id || 'ERR'} | FB:${results.facebook.id || 'ERR'} | MC:${results.mailchimp.id || 'ERR'}`,
-            Error_Log: fastnResult.auditLog?.errors || 'None'
-          };
-
-          googleSheetsDb.unshift(sheetRow);
-
-          const finalPayload = {
-            row_id: fastnResult.row_id || row_id,
-            status: fastnResult.status || 'Published',
-            results,
-            auditLog: fastnResult.auditLog || { Status: fastnResult.status, Updated_At: new Date().toISOString(), errors: 'None' },
-            adapted: data.adapted || null,
-            rawFastn: fastnResult,
-            updatedDb: googleSheetsDb
-          };
-          console.log('SENDING RESPONSE:', JSON.stringify(finalPayload));
-          res.writeHead(200, { 'Content-Type': 'application/json' });
-          return res.end(JSON.stringify(finalPayload));
-        }
-
-        // Resilient fallback to local workflow execution if Fastn cloud is unreachable or token unavailable
-        console.log('[SERVER /api/publish] Executing resilient local workflow fallback with connector fault isolation...');
-        try {
-          const connectors = createConnectors(fault);
-          const post = {
-            row_id,
-            Title,
-            Content,
-            Image_URL,
-            Tags,
-            Status: force ? 'Ready to Publish' : Status
-          };
-          const wfRes = await runWorkflow({ input: post, connectors });
-
-          if (wfRes.skipped) {
-            const finalPayload = {
-              row_id,
-              status: 'Skipped',
-              message: wfRes.message,
-              results: {
-                slack: { success: true, id: 'Previously Dispatched', skipped: true, permalink: 'https://fourfrontlab.slack.com/archives/C0C278R4PRD' },
-                discord: { success: true, id: 'Previously Dispatched', skipped: true, permalink: 'https://discord.com' },
-                facebook: { success: true, id: 'Previously Dispatched', skipped: true, permalink: 'https://facebook.com/1288938340978227' },
-                mailchimp: { success: true, id: 'Previously Dispatched', skipped: true, permalink: 'https://mailchimp.com' },
-                google_sheets: { success: true, id: '1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s', permalink: 'https://docs.google.com/spreadsheets/d/1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s' },
-                twitter_x: { success: false, error: 'X API 401: Unauthorized (Free-tier credits depleted)' }
-              },
-              auditLog: { Status: 'Skipped', Updated_At: new Date().toISOString(), errors: `Deduplication: ${wfRes.message}` },
-              adapted: data.adapted || null,
-              updatedDb: googleSheetsDb
-            };
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify(finalPayload));
-          }
-
-          const slackSuccess = wfRes.results?.slack?.success === true;
-          const discordSuccess = wfRes.results?.discord?.success === true;
-          const simTs = (Date.now() / 1000).toFixed(6);
-          const simDiscordId = String(Date.now());
-          const simFbId = 'fb_' + Math.floor(100000 + Math.random() * 900000);
-          const simMcId = 'mc_' + Date.now().toString().slice(-6);
-
-          const results = {
-            slack: {
-              success: slackSuccess,
-              id: slackSuccess ? (wfRes.results?.slack?.id || simTs) : null,
-              permalink: slackSuccess ? `https://fourfrontlab.slack.com/archives/C0C278R4PRD/p${String(wfRes.results?.slack?.id || simTs).replace('.', '')}` : null,
-              error: slackSuccess ? null : (wfRes.results?.slack?.error || 'Slack API 429: Rate Limit Exceeded (Retry-After: 30s)')
-            },
-            discord: {
-              success: discordSuccess,
-              id: discordSuccess ? (wfRes.results?.discord?.id || simDiscordId) : null,
-              permalink: discordSuccess ? `https://discord.com/channels/@me/${wfRes.results?.discord?.id || simDiscordId}` : null,
-              error: discordSuccess ? null : (wfRes.results?.discord?.error || 'Discord Webhook 404: Webhook token revoked')
-            },
-            facebook: {
-              success: true,
-              id: simFbId,
-              permalink: `https://facebook.com/1288938340978227/posts/${simFbId}`,
-              error: null
-            },
-            mailchimp: {
-              success: true,
-              id: simMcId,
-              permalink: `https://us16.campaign-archive.com/?id=${simMcId}`,
-              error: null
-            },
-            google_sheets: {
-              success: true,
-              id: '1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s',
-              range: 'Sheet1!A1:H50',
-              permalink: 'https://docs.google.com/spreadsheets/d/1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s'
-            },
-            twitter_x: {
-              success: false,
-              id: null,
-              permalink: null,
-              error: 'X API 401: Unauthorized (Free-tier credits depleted)'
-            }
-          };
-
-          const errorsList = [];
-          if (!slackSuccess) errorsList.push(`slack: ${wfRes.results?.slack?.error || '429 Rate Limit'}`);
-          if (!discordSuccess) errorsList.push(`discord: ${wfRes.results?.discord?.error || '404 Token Revoked'}`);
-          errorsList.push('twitter_x: X API 401: Unauthorized (Free-tier credits depleted)');
-
-          const overallStatus = (!slackSuccess || !discordSuccess) ? 'Partially Published' : 'Published';
-
-          const sheetRow = {
-            row_id,
-            Timestamp: new Date().toISOString(),
-            Title,
-            Content,
-            Tags,
-            Image_URL,
-            Status: overallStatus,
-            Slack_ID: results.slack.id || 'FAILED',
-            Social_ID: `DC:${results.discord.id || 'ERR'} | FB:${results.facebook.id} | MC:${results.mailchimp.id}`,
-            Error_Log: errorsList.join(' | ')
-          };
-          googleSheetsDb.unshift(sheetRow);
-
-          const finalPayload = {
-            row_id,
-            status: overallStatus,
-            results,
-            auditLog: { Status: overallStatus, Updated_At: new Date().toISOString(), errors: errorsList.join(' | ') },
-            adapted: data.adapted || null,
-            fallback: true,
-            updatedDb: googleSheetsDb
-          };
-          console.log('SENDING RESPONSE:', JSON.stringify(finalPayload));
-          res.writeHead(200, { 'Content-Type': 'application/json' });
-          return res.end(JSON.stringify(finalPayload));
-        } catch (fallbackErr) {
-          console.error('[SERVER /api/publish] Fallback execution error:', fallbackErr.message);
-        }
-
-        // Final error response if all paths failed
-        const finalPayload = {
-          error: `Broadcast execution failed: ${executionError || 'Unknown error'}`,
-          status: 'Failed',
-          results: {
-            slack: { success: false, error: executionError },
-            discord: { success: false, error: executionError },
-            facebook: { success: false, error: executionError },
-            mailchimp: { success: false, error: executionError },
-            google_sheets: { success: false, error: executionError },
-            twitter_x: { success: false, error: 'X API 401: Unauthorized (Free-tier credits depleted)' }
-          }
-        };
-        console.log('SENDING RESPONSE:', JSON.stringify(finalPayload));
-        res.writeHead(502, { 'Content-Type': 'application/json' });
-        return res.end(JSON.stringify(finalPayload));
-      } catch (err) {
-        const finalPayload = { error: err.message };
-        console.log('SENDING RESPONSE:', JSON.stringify(finalPayload));
-        res.writeHead(500, { 'Content-Type': 'application/json' });
-        return res.end(JSON.stringify(finalPayload));
-      }
-    });
-    return;
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204);
+    return res.end();
   }
 
-  if (pathname === '/api/fastn-proxy' && req.method === 'POST') {
-    let body = '';
-    req.on('data', chunk => body += chunk);
-    req.on('end', async () => {
-      try {
-        const data = JSON.parse(body);
-        const fastnWebhookUrl = 'https://webhooks.fastn.dev/prod/triggers/personal_29e5272ccca34fc5d046/webhooks/671bf3f9-9d68-4e14-a2d9-89830c7e2e3b';
-        
-        let forwardHeaders = { 'Content-Type': 'application/json' };
-        if (process.env.FASTN_API_KEY) {
-          forwardHeaders['x-api-key'] = process.env.FASTN_API_KEY;
-        }
-
-        try {
-          const fastnRes = await fetch(fastnWebhookUrl, {
-            method: 'POST',
-            headers: forwardHeaders,
-            body: JSON.stringify(data)
-          });
-          const fastnText = await fastnRes.text();
-          let fastnJson;
-          try { fastnJson = JSON.parse(fastnText); } catch { fastnJson = { raw: fastnText }; }
-          
-          if (fastnRes.ok) {
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: true, live: true, data: fastnJson }));
-          }
-        } catch (fetchErr) {
-          console.warn('[Proxy] Fastn Webhook fetch warning:', fetchErr.message);
-        }
-
-        // Fallback to local workflow execution if webhook is unauthenticated or unreachable
-        const connectors = createConnectors(data.failurePlatform || data.fault);
-        const post = {
-          row_id: data.row_id || String(Date.now()).slice(-4),
-          Title: data.Title || data.title || 'Broadcast Post',
-          Content: data.Content || data.content || '',
-          Image_URL: data.Image_URL || data.image_url || data.imageUrl || '',
-          Tags: data.Tags || data.tags || '',
-          Status: data.Status || data.status || 'Ready to Publish'
-        };
-        const result = await runWorkflow({ input: post, connectors });
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        return res.end(JSON.stringify({ success: true, live: false, fallback: true, result }));
-      } catch (err) {
-        res.writeHead(500, { 'Content-Type': 'application/json' });
-        return res.end(JSON.stringify({ error: err.message }));
-      }
-    });
-    return;
-  }
-
-  if (pathname === '/api/reset' && req.method === 'POST') {
-    googleSheetsDb = JSON.parse(JSON.stringify(initialDb));
+  if (req.method === 'GET') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    return res.end(JSON.stringify({ ok: true, posts: googleSheetsDb }));
+    return res.end(JSON.stringify({
+      status: 'ok',
+      endpoint: '/api/publish',
+      message: 'FourFrontLab Social Publisher API is active. Send a POST request with Title and Content to broadcast.'
+    }));
   }
+
+  if (req.method !== 'POST') {
+    res.writeHead(405, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify({ error: 'Method Not Allowed' }));
+  }
+
+  try {
+    const data = await getRequestBody(req);
+    const row_id = data.row_id || String(Date.now()).slice(-4);
+    const Title = data.Title || data.title || 'Broadcast Post';
+    const Content = data.Content || data.content || '';
+    const Tags = data.Tags || data.tags || '';
+    const Link = data.Link || data.link || '';
+    const Image_URL = data.Image_URL || data.image_url || data.imageUrl || '';
+    const Status = data.Status || data.status || 'Ready';
+    const force = data.force === true;
+    const fault = data.fault || data.failurePlatform || 'none';
+
+    console.log(`[SERVER /api/publish] Received broadcast request: "${Title}" (force=${force}, simulator=${data.simulator === true}, fault=${fault})`);
+
+    // Handle Simulator Mode (Mock testing without real API calls)
+    if (data.simulator === true) {
+      const simTs = (Date.now() / 1000).toFixed(6);
+      const simDiscordId = String(Date.now());
+      const simFbId = 'fb_' + Math.floor(100000 + Math.random() * 900000);
+      const simMcId = 'mc_' + Date.now().toString().slice(-6);
+
+      const slackSuccess = fault !== 'slack';
+      const discordSuccess = fault !== 'discord';
+
+      const results = {
+        slack: {
+          success: slackSuccess,
+          id: slackSuccess ? simTs : null,
+          permalink: slackSuccess ? `https://fourfrontlab.slack.com/archives/C0C278R4PRD/p${simTs.replace('.', '')}` : null,
+          error: slackSuccess ? null : 'Slack API 429: Rate Limit Exceeded (Retry-After: 30s)'
+        },
+        discord: {
+          success: discordSuccess,
+          id: discordSuccess ? simDiscordId : null,
+          permalink: discordSuccess ? `https://discord.com/channels/@me/${simDiscordId}` : null,
+          error: discordSuccess ? null : 'Discord Webhook 404: Webhook token revoked'
+        },
+        facebook: {
+          success: true,
+          id: simFbId,
+          permalink: `https://facebook.com/1288938340978227/posts/${simFbId}`,
+          error: null
+        },
+        mailchimp: {
+          success: true,
+          id: simMcId,
+          permalink: `https://us16.campaign-archive.com/?id=${simMcId}`,
+          error: null
+        },
+        google_sheets: {
+          success: true,
+          id: '1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s',
+          range: 'Sheet1!A1:H50',
+          permalink: 'https://docs.google.com/spreadsheets/d/1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s'
+        },
+        twitter_x: {
+          success: false,
+          id: null,
+          permalink: null,
+          error: 'X API 401: Unauthorized (Free-tier credits depleted)'
+        }
+      };
+
+      const errorsList = [];
+      if (!slackSuccess) errorsList.push('slack: Slack API 429: Rate Limit Exceeded');
+      if (!discordSuccess) errorsList.push('discord: Discord Webhook 404: Webhook token revoked');
+      errorsList.push('twitter_x: X API 401: Unauthorized (Free-tier credits depleted)');
+
+      const overallStatus = (!slackSuccess || !discordSuccess) ? 'Partially Published' : 'Published';
+
+      const sheetRow = {
+        row_id: row_id,
+        Timestamp: new Date().toISOString(),
+        Title,
+        Content,
+        Tags,
+        Image_URL,
+        Status: overallStatus,
+        Slack_ID: results.slack.id || 'FAILED',
+        Social_ID: `DC:${results.discord.id || 'ERR'} | FB:${simFbId} | MC:${simMcId}`,
+        Error_Log: errorsList.join(' | ')
+      };
+
+      googleSheetsDb.unshift(sheetRow);
+
+      const finalPayload = {
+        row_id,
+        status: overallStatus,
+        simulated: true,
+        results,
+        auditLog: { Status: overallStatus, Updated_At: new Date().toISOString(), errors: errorsList.join(' | ') },
+        adapted: data.adapted || null,
+        updatedDb: googleSheetsDb
+      };
+      console.log('SENDING RESPONSE:', JSON.stringify(finalPayload));
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify(finalPayload));
+    }
+
+    let fastnResult = null;
+    let executionError = null;
+
+    try {
+      // Execute the real Fastn Cloud Workflow wf_6cfc644efb9d
+      fastnResult = await executeFastnWorkflow({
+        Title,
+        Content,
+        Tags,
+        Link,
+        Image_URL,
+        Status,
+        force
+      });
+      console.log('[SERVER /api/publish] Dispatched to Fastn. Raw Fastn response:\n', JSON.stringify(fastnResult, null, 2));
+    } catch (err) {
+      console.error('[SERVER /api/publish] Fastn execution failed:', err.message);
+      executionError = err.message;
+    }
+
+    if (fastnResult) {
+      if (fastnResult.status === 'Skipped') {
+        const existing = fastnResult.existingPost || {};
+        const results = {
+          slack: {
+            success: true,
+            id: existing.slackId || 'Previously Dispatched',
+            permalink: existing.slackId ? `https://fourfrontlab.slack.com/archives/C0C278R4PRD/p${String(existing.slackId).replace('.', '')}` : 'https://fourfrontlab.slack.com/archives/C0C278R4PRD',
+            skipped: true,
+            error: null
+          },
+          discord: {
+            success: true,
+            id: existing.discordId || 'Previously Dispatched',
+            permalink: existing.discordId ? `https://discord.com/channels/@me/${existing.discordId}` : null,
+            skipped: true,
+            error: null
+          },
+          facebook: {
+            success: true,
+            id: 'fb_relay_existing',
+            permalink: 'https://facebook.com/1288938340978227',
+            skipped: true,
+            error: null
+          },
+          mailchimp: {
+            success: true,
+            id: existing.mailchimpId || 'Previously Dispatched',
+            permalink: existing.mailchimpId ? `https://us16.campaign-archive.com/?id=${existing.mailchimpId}` : 'https://mailchimp.com',
+            skipped: true,
+            error: null
+          },
+          google_sheets: {
+            success: true,
+            id: '1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s',
+            range: 'Sheet1!A1',
+            permalink: 'https://docs.google.com/spreadsheets/d/1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s/edit?usp=sharing'
+          },
+          twitter_x: {
+            success: false,
+            id: null,
+            permalink: null,
+            error: 'X API 401: Unauthorized (Free-tier credits depleted)'
+          }
+        };
+
+        const finalPayload = {
+          row_id: fastnResult.row_id || row_id,
+          status: 'Skipped',
+          message: fastnResult.message || 'Duplicate post skipped. Use force: true to override.',
+          results,
+          auditLog: {
+            Status: 'Skipped',
+            Updated_At: existing.publishedAt || new Date().toISOString(),
+            errors: `Deduplication: ${fastnResult.message}`
+          },
+          adapted: data.adapted || null,
+          rawFastn: fastnResult,
+          updatedDb: googleSheetsDb
+        };
+        console.log('SENDING RESPONSE:', JSON.stringify(finalPayload));
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify(finalPayload));
+      }
+
+      // Real execution succeeded! Use genuine results from Fastn
+      const slackRes = fastnResult.results?.slack || {};
+      const discordRes = fastnResult.results?.discord || {};
+      const fbRes = fastnResult.results?.facebook || {};
+      const mcRes = fastnResult.results?.mailchimp || {};
+
+      // Safeguard: strictly verify permalink and id
+      const results = {
+        slack: {
+          success: slackRes.success === true,
+          id: slackRes.id || null,
+          permalink: slackRes.permalink || null,
+          error: slackRes.error || (slackRes.success ? null : 'Failed to deliver to Slack')
+        },
+        discord: {
+          success: discordRes.success === true,
+          id: discordRes.id || null,
+          permalink: discordRes.permalink || null,
+          error: discordRes.error || (discordRes.success ? null : 'Failed to deliver to Discord')
+        },
+        facebook: {
+          success: fbRes.success === true,
+          id: fbRes.id || null,
+          permalink: fbRes.permalink || null,
+          error: fbRes.error || (fbRes.success ? null : 'Failed to deliver to Facebook')
+        },
+        mailchimp: {
+          success: mcRes.success === true,
+          id: mcRes.id || null,
+          permalink: mcRes.permalink || (mcRes.id ? `https://us16.campaign-archive.com/?id=${mcRes.id}` : null),
+          error: mcRes.error || (mcRes.success ? null : 'Failed to deliver to Mailchimp')
+        },
+        google_sheets: {
+          success: true,
+          id: '1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s',
+          range: 'Sheet1!A1',
+          permalink: 'https://docs.google.com/spreadsheets/d/1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s/edit?usp=sharing'
+        },
+        twitter_x: {
+          success: false,
+          id: null,
+          permalink: null,
+          error: 'X API 401: Unauthorized (Free-tier credits depleted)'
+        }
+      };
+
+      const sheetRow = {
+        row_id: fastnResult.row_id || row_id,
+        Timestamp: fastnResult.auditLog?.Updated_At || new Date().toISOString(),
+        Title,
+        Content,
+        Tags,
+        Image_URL,
+        Status: fastnResult.status || 'Published',
+        Slack_ID: results.slack.id || 'FAILED',
+        Social_ID: `DC:${results.discord.id || 'ERR'} | FB:${results.facebook.id || 'ERR'} | MC:${results.mailchimp.id || 'ERR'}`,
+        Error_Log: fastnResult.auditLog?.errors || 'None'
+      };
+
+      googleSheetsDb.unshift(sheetRow);
+
+      const finalPayload = {
+        row_id: fastnResult.row_id || row_id,
+        status: fastnResult.status || 'Published',
+        results,
+        auditLog: fastnResult.auditLog || { Status: fastnResult.status, Updated_At: new Date().toISOString(), errors: 'None' },
+        adapted: data.adapted || null,
+        rawFastn: fastnResult,
+        updatedDb: googleSheetsDb
+      };
+      console.log('SENDING RESPONSE:', JSON.stringify(finalPayload));
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify(finalPayload));
+    }
+
+    // Resilient fallback to local workflow execution if Fastn cloud is unreachable or token unavailable
+    console.log('[SERVER /api/publish] Executing resilient local workflow fallback with connector fault isolation...');
+    try {
+      const connectors = createConnectors(fault);
+      const post = {
+        row_id,
+        Title,
+        Content,
+        Image_URL,
+        Tags,
+        Status: force ? 'Ready to Publish' : Status
+      };
+      const wfRes = await runWorkflow({ input: post, connectors });
+
+      if (wfRes.skipped) {
+        const finalPayload = {
+          row_id,
+          status: 'Skipped',
+          message: wfRes.message,
+          results: {
+            slack: { success: true, id: 'Previously Dispatched', skipped: true, permalink: 'https://fourfrontlab.slack.com/archives/C0C278R4PRD' },
+            discord: { success: true, id: 'Previously Dispatched', skipped: true, permalink: 'https://discord.com' },
+            facebook: { success: true, id: 'Previously Dispatched', skipped: true, permalink: 'https://facebook.com/1288938340978227' },
+            mailchimp: { success: true, id: 'Previously Dispatched', skipped: true, permalink: 'https://mailchimp.com' },
+            google_sheets: { success: true, id: '1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s', permalink: 'https://docs.google.com/spreadsheets/d/1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s' },
+            twitter_x: { success: false, error: 'X API 401: Unauthorized (Free-tier credits depleted)' }
+          },
+          auditLog: { Status: 'Skipped', Updated_At: new Date().toISOString(), errors: `Deduplication: ${wfRes.message}` },
+          adapted: data.adapted || null,
+          updatedDb: googleSheetsDb
+        };
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify(finalPayload));
+      }
+
+      const slackSuccess = wfRes.results?.slack?.success === true;
+      const discordSuccess = wfRes.results?.discord?.success === true;
+      const simTs = (Date.now() / 1000).toFixed(6);
+      const simDiscordId = String(Date.now());
+      const simFbId = 'fb_' + Math.floor(100000 + Math.random() * 900000);
+      const simMcId = 'mc_' + Date.now().toString().slice(-6);
+
+      const results = {
+        slack: {
+          success: slackSuccess,
+          id: slackSuccess ? (wfRes.results?.slack?.id || simTs) : null,
+          permalink: slackSuccess ? `https://fourfrontlab.slack.com/archives/C0C278R4PRD/p${String(wfRes.results?.slack?.id || simTs).replace('.', '')}` : null,
+          error: slackSuccess ? null : (wfRes.results?.slack?.error || 'Slack API 429: Rate Limit Exceeded (Retry-After: 30s)')
+        },
+        discord: {
+          success: discordSuccess,
+          id: discordSuccess ? (wfRes.results?.discord?.id || simDiscordId) : null,
+          permalink: discordSuccess ? `https://discord.com/channels/@me/${wfRes.results?.discord?.id || simDiscordId}` : null,
+          error: discordSuccess ? null : (wfRes.results?.discord?.error || 'Discord Webhook 404: Webhook token revoked')
+        },
+        facebook: {
+          success: true,
+          id: simFbId,
+          permalink: `https://facebook.com/1288938340978227/posts/${simFbId}`,
+          error: null
+        },
+        mailchimp: {
+          success: true,
+          id: simMcId,
+          permalink: `https://us16.campaign-archive.com/?id=${simMcId}`,
+          error: null
+        },
+        google_sheets: {
+          success: true,
+          id: '1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s',
+          range: 'Sheet1!A1:H50',
+          permalink: 'https://docs.google.com/spreadsheets/d/1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s'
+        },
+        twitter_x: {
+          success: false,
+          id: null,
+          permalink: null,
+          error: 'X API 401: Unauthorized (Free-tier credits depleted)'
+        }
+      };
+
+      const errorsList = [];
+      if (!slackSuccess) errorsList.push(`slack: ${wfRes.results?.slack?.error || '429 Rate Limit'}`);
+      if (!discordSuccess) errorsList.push(`discord: ${wfRes.results?.discord?.error || '404 Token Revoked'}`);
+      errorsList.push('twitter_x: X API 401: Unauthorized (Free-tier credits depleted)');
+
+      const overallStatus = (!slackSuccess || !discordSuccess) ? 'Partially Published' : 'Published';
+
+      const sheetRow = {
+        row_id,
+        Timestamp: new Date().toISOString(),
+        Title,
+        Content,
+        Tags,
+        Image_URL,
+        Status: overallStatus,
+        Slack_ID: results.slack.id || 'FAILED',
+        Social_ID: `DC:${results.discord.id || 'ERR'} | FB:${results.facebook.id} | MC:${results.mailchimp.id}`,
+        Error_Log: errorsList.join(' | ')
+      };
+      googleSheetsDb.unshift(sheetRow);
+
+      const finalPayload = {
+        row_id,
+        status: overallStatus,
+        results,
+        auditLog: { Status: overallStatus, Updated_At: new Date().toISOString(), errors: errorsList.join(' | ') },
+        adapted: data.adapted || null,
+        fallback: true,
+        updatedDb: googleSheetsDb
+      };
+      console.log('SENDING RESPONSE:', JSON.stringify(finalPayload));
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify(finalPayload));
+    } catch (fallbackErr) {
+      console.error('[SERVER /api/publish] Fallback execution error:', fallbackErr.message);
+    }
+
+    // Final error response if all paths failed
+    const finalPayload = {
+      error: `Broadcast execution failed: ${executionError || 'Unknown error'}`,
+      status: 'Failed',
+      results: {
+        slack: { success: false, error: executionError },
+        discord: { success: false, error: executionError },
+        facebook: { success: false, error: executionError },
+        mailchimp: { success: false, error: executionError },
+        google_sheets: { success: false, error: executionError },
+        twitter_x: { success: false, error: 'X API 401: Unauthorized (Free-tier credits depleted)' }
+      }
+    };
+    console.log('SENDING RESPONSE:', JSON.stringify(finalPayload));
+    res.writeHead(502, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify(finalPayload));
+  } catch (err) {
+    const finalPayload = { error: err.message };
+    console.log('SENDING RESPONSE:', JSON.stringify(finalPayload));
+    res.writeHead(500, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify(finalPayload));
+  }
+}
+
+async function handleFastnProxy(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204);
+    return res.end();
+  }
+
+  try {
+    const data = await getRequestBody(req);
+    const fastnWebhookUrl = 'https://webhooks.fastn.dev/prod/triggers/personal_29e5272ccca34fc5d046/webhooks/671bf3f9-9d68-4e14-a2d9-89830c7e2e3b';
+    
+    let forwardHeaders = { 'Content-Type': 'application/json' };
+    if (process.env.FASTN_API_KEY) {
+      forwardHeaders['x-api-key'] = process.env.FASTN_API_KEY;
+    }
+
+    try {
+      const fastnRes = await fetch(fastnWebhookUrl, {
+        method: 'POST',
+        headers: forwardHeaders,
+        body: JSON.stringify(data)
+      });
+      const fastnText = await fastnRes.text();
+      let fastnJson;
+      try { fastnJson = JSON.parse(fastnText); } catch { fastnJson = { raw: fastnText }; }
+      
+      if (fastnRes.ok) {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ success: true, live: true, data: fastnJson }));
+      }
+    } catch (fetchErr) {
+      console.warn('[Proxy] Fastn Webhook fetch warning:', fetchErr.message);
+    }
+
+    // Fallback to local workflow execution if webhook is unauthenticated or unreachable
+    const connectors = createConnectors(data.failurePlatform || data.fault);
+    const post = {
+      row_id: data.row_id || String(Date.now()).slice(-4),
+      Title: data.Title || data.title || 'Broadcast Post',
+      Content: data.Content || data.content || '',
+      Image_URL: data.Image_URL || data.image_url || data.imageUrl || '',
+      Tags: data.Tags || data.tags || '',
+      Status: data.Status || data.status || 'Ready to Publish'
+    };
+    const result = await runWorkflow({ input: post, connectors });
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify({ success: true, live: false, fallback: true, result }));
+  } catch (err) {
+    res.writeHead(500, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify({ error: err.message }));
+  }
+}
+
+async function handleReset(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204);
+    return res.end();
+  }
+
+  googleSheetsDb = JSON.parse(JSON.stringify(initialDb));
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  return res.end(JSON.stringify({ ok: true, posts: googleSheetsDb }));
+}
+
+// Master HTTP Server
+const server = http.createServer(async (req, res) => {
+  const host = req.headers.host || 'localhost';
+  const url = new URL(req.url, `http://${host}`);
+  let pathname = url.searchParams.get('__route') || req.headers['x-matched-path'] || req.headers['x-vercel-matched-path'] || url.pathname;
+  if (pathname.startsWith('/server.js')) {
+    pathname = pathname.replace('/server.js', '') || '/';
+  }
+
+  // CORS Preflight
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.writeHead(204);
+    return res.end();
+  }
+
+  // API Endpoints
+  if (pathname === '/api/posts') return handlePosts(req, res);
+  if (pathname === '/api/adapt-content') return handleAdaptContent(req, res);
+  if (pathname === '/api/publish') return handlePublish(req, res);
+  if (pathname === '/api/reset') return handleReset(req, res);
+  if (pathname === '/api/fastn-proxy') return handleFastnProxy(req, res);
 
   // Static File Serving
   let filePath = path.join(PUBLIC_DIR, pathname === '/' ? 'index.html' : pathname.replace(/^\//, ''));
@@ -918,7 +988,10 @@ module.exports = handler;
 module.exports.default = handler;
 module.exports.handler = handler;
 module.exports.server = server;
+module.exports.handlePublish = handlePublish;
+module.exports.handlePosts = handlePosts;
+module.exports.handleAdaptContent = handleAdaptContent;
+module.exports.handleReset = handleReset;
+module.exports.handleFastnProxy = handleFastnProxy;
 module.exports.adaptContentForPlatforms = adaptContentForPlatforms;
 module.exports.googleSheetsDb = googleSheetsDb;
-
-
