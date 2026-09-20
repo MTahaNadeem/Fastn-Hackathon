@@ -264,7 +264,7 @@ async function handleAdaptContent(req, res) {
 
 // Execute Fastn Workflow via Fastn MCP JSON-RPC Gateway
 async function executeFastnWorkflow(input) {
-  let token = process.env.FASTN_API_KEY || process.env.FASTN_OAUTH_TOKEN || null;
+  let token = process.env.FASTN_API_KEY || process.env.FASTN_OAUTH_TOKEN || 'fsk_live_zPk1SSugJstVXyWDw1L3JmpXkuk47XOO';
   const tokensPath = path.join(process.env.USERPROFILE || 'C:\\Users\\tahap', '.gemini', 'antigravity', 'mcp_oauth_tokens.json');
   if (!token && fs.existsSync(tokensPath)) {
     try {
@@ -336,7 +336,7 @@ async function executeFastnWorkflow(input) {
 
 // Fetch Real Rows from Google Sheets via Fastn
 async function fetchGoogleSheetsRows() {
-  let token = process.env.FASTN_API_KEY || process.env.FASTN_OAUTH_TOKEN || null;
+  let token = process.env.FASTN_API_KEY || process.env.FASTN_OAUTH_TOKEN || 'fsk_live_zPk1SSugJstVXyWDw1L3JmpXkuk47XOO';
   const tokensPath = path.join(process.env.USERPROFILE || 'C:\\Users\\tahap', '.gemini', 'antigravity', 'mcp_oauth_tokens.json');
   if (!token && fs.existsSync(tokensPath)) {
     try {
@@ -861,10 +861,10 @@ async function handleFastnProxy(req, res) {
     const data = await getRequestBody(req);
     const fastnWebhookUrl = 'https://webhooks.fastn.dev/prod/triggers/personal_29e5272ccca34fc5d046/webhooks/671bf3f9-9d68-4e14-a2d9-89830c7e2e3b';
     
-    let forwardHeaders = { 'Content-Type': 'application/json' };
-    if (process.env.FASTN_API_KEY) {
-      forwardHeaders['x-api-key'] = process.env.FASTN_API_KEY;
-    }
+    let forwardHeaders = {
+      'Content-Type': 'application/json',
+      'x-api-key': process.env.FASTN_API_KEY || 'fsk_live_zPk1SSugJstVXyWDw1L3JmpXkuk47XOO'
+    };
 
     try {
       const fastnRes = await fetch(fastnWebhookUrl, {
