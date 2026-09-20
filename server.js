@@ -264,7 +264,7 @@ async function handleAdaptContent(req, res) {
 
 // Execute Fastn Workflow via Fastn MCP JSON-RPC Gateway
 async function executeFastnWorkflow(input) {
-  let token = process.env.FASTN_OAUTH_TOKEN || process.env.FASTN_API_KEY || null;
+  let token = process.env.FASTN_API_KEY || process.env.FASTN_OAUTH_TOKEN || null;
   const tokensPath = path.join(process.env.USERPROFILE || 'C:\\Users\\tahap', '.gemini', 'antigravity', 'mcp_oauth_tokens.json');
   if (!token && fs.existsSync(tokensPath)) {
     try {
@@ -276,7 +276,7 @@ async function executeFastnWorkflow(input) {
   }
 
   if (!token) {
-    throw new Error('Fastn OAuth token not found in environment or mcp_oauth_tokens.json');
+    throw new Error('Fastn credentials not found in environment (FASTN_API_KEY or FASTN_OAUTH_TOKEN)');
   }
 
   const payload = {
@@ -301,14 +301,17 @@ async function executeFastnWorkflow(input) {
     }
   };
 
+  const headers = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'User-Agent': 'antigravity'
+  };
+  headers['Authorization'] = `Bearer ${token}`;
+  headers['x-api-key'] = token;
+
   const response = await fetch('https://mcp.fastn.dev', {
     method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'User-Agent': 'antigravity'
-    },
+    headers,
     body: JSON.stringify(payload)
   });
 
@@ -333,7 +336,7 @@ async function executeFastnWorkflow(input) {
 
 // Fetch Real Rows from Google Sheets via Fastn
 async function fetchGoogleSheetsRows() {
-  let token = process.env.FASTN_OAUTH_TOKEN || process.env.FASTN_API_KEY || null;
+  let token = process.env.FASTN_API_KEY || process.env.FASTN_OAUTH_TOKEN || null;
   const tokensPath = path.join(process.env.USERPROFILE || 'C:\\Users\\tahap', '.gemini', 'antigravity', 'mcp_oauth_tokens.json');
   if (!token && fs.existsSync(tokensPath)) {
     try {
@@ -363,14 +366,17 @@ async function fetchGoogleSheetsRows() {
       }
     };
 
+    const headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'User-Agent': 'antigravity'
+    };
+    headers['Authorization'] = `Bearer ${token}`;
+    headers['x-api-key'] = token;
+
     const res = await fetch('https://mcp.fastn.dev', {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'User-Agent': 'antigravity'
-      },
+      headers,
       body: JSON.stringify(payload)
     });
 
