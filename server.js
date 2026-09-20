@@ -475,7 +475,7 @@ async function fetchGoogleSheetsRows() {
 
           googleSheetsDb.unshift(sheetRow);
 
-          const payload = JSON.stringify({
+          const finalPayload = {
             row_id,
             status: 'Published',
             simulated: true,
@@ -483,10 +483,10 @@ async function fetchGoogleSheetsRows() {
             auditLog: { Status: 'Published', Updated_At: new Date().toISOString(), errors: 'twitter_x: X API 401: Unauthorized (Free-tier credits depleted)' },
             adapted: data.adapted || null,
             updatedDb: googleSheetsDb
-          });
-          console.log('[SERVER /api/publish] Raw response body before send (length=' + payload.length + '):\n', payload.substring(0, 120));
+          };
+          console.log('SENDING RESPONSE:', JSON.stringify(finalPayload));
           res.writeHead(200, { 'Content-Type': 'application/json' });
-          return res.end(payload);
+          return res.end(JSON.stringify(finalPayload));
         }
 
         let fastnResult = null;
@@ -555,7 +555,7 @@ async function fetchGoogleSheetsRows() {
               }
             };
 
-            const payload = JSON.stringify({
+            const finalPayload = {
               row_id: fastnResult.row_id || row_id,
               status: 'Skipped',
               message: fastnResult.message || 'Duplicate post skipped. Use force: true to override.',
@@ -568,10 +568,10 @@ async function fetchGoogleSheetsRows() {
               adapted: data.adapted || null,
               rawFastn: fastnResult,
               updatedDb: googleSheetsDb
-            });
-            console.log('[SERVER /api/publish] Raw response body before send (length=' + payload.length + '):\n', payload.substring(0, 120));
+            };
+            console.log('SENDING RESPONSE:', JSON.stringify(finalPayload));
             res.writeHead(200, { 'Content-Type': 'application/json' });
-            return res.end(payload);
+            return res.end(JSON.stringify(finalPayload));
           }
 
           // Real execution succeeded! Use genuine results from Fastn
@@ -635,7 +635,7 @@ async function fetchGoogleSheetsRows() {
 
           googleSheetsDb.unshift(sheetRow);
 
-          const payload = JSON.stringify({
+          const finalPayload = {
             row_id: fastnResult.row_id || row_id,
             status: fastnResult.status || 'Published',
             results,
@@ -643,14 +643,14 @@ async function fetchGoogleSheetsRows() {
             adapted: data.adapted || null,
             rawFastn: fastnResult,
             updatedDb: googleSheetsDb
-          });
-          console.log('[SERVER /api/publish] Raw response body before send (length=' + payload.length + '):\n', payload.substring(0, 120));
+          };
+          console.log('SENDING RESPONSE:', JSON.stringify(finalPayload));
           res.writeHead(200, { 'Content-Type': 'application/json' });
-          return res.end(payload);
+          return res.end(JSON.stringify(finalPayload));
         }
 
         // If Fastn execution errored out (e.g. offline / token expired), report the real error!
-        const payload = JSON.stringify({
+        const finalPayload = {
           error: `Fastn workflow execution failed: ${executionError}`,
           status: 'Failed',
           results: {
@@ -661,15 +661,15 @@ async function fetchGoogleSheetsRows() {
             google_sheets: { success: false, error: executionError },
             twitter_x: { success: false, error: 'X API 401: Unauthorized (Free-tier credits depleted)' }
           }
-        });
-        console.log('[SERVER /api/publish] Raw response body before send (length=' + payload.length + '):\n', payload.substring(0, 120));
+        };
+        console.log('SENDING RESPONSE:', JSON.stringify(finalPayload));
         res.writeHead(502, { 'Content-Type': 'application/json' });
-        return res.end(payload);
+        return res.end(JSON.stringify(finalPayload));
       } catch (err) {
-        const payload = JSON.stringify({ error: err.message });
-        console.error('[SERVER /api/publish] Raw response body before send (length=' + payload.length + '):\n', payload);
+        const finalPayload = { error: err.message };
+        console.log('SENDING RESPONSE:', JSON.stringify(finalPayload));
         res.writeHead(500, { 'Content-Type': 'application/json' });
-        return res.end(payload);
+        return res.end(JSON.stringify(finalPayload));
       }
     });
     return;
