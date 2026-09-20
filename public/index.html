@@ -220,12 +220,17 @@
         <span class="text-[10px] font-mono text-brand-muted hidden md:inline">(wf_6cfc644efb9d)</span>
       </div>
 
-      <!-- Environment Selector -->
+      <!-- Persistent Mode Indicator Badge (Requirements 7 & 10) -->
+      <div id="headerModeBadge" class="flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-semibold font-mono border theme-transition" style="background-color: var(--success-bg); border-color: var(--success-border); color: var(--success);">
+        <span id="headerModeDot" class="w-2 h-2 rounded-full bg-brand-success pulse-dot"></span>
+        <span id="headerModeText">LIVE MODE</span>
+      </div>
+
+      <!-- Environment Selector: Live vs Simulator -->
       <div class="relative">
-        <select id="environmentSelector" class="bg-brand-bg border border-brand-border hover:border-brand-borderLight text-xs font-mono rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-brand-accent transition cursor-pointer theme-transition" style="color: var(--text-primary);">
-          <option value="proxy">Internal Proxy Gateway (/api/publish)</option>
-          <option value="cloud">Live Fastn Webhook (Cloud)</option>
-          <option value="mock">Local Simulator API</option>
+        <select id="environmentSelector" onchange="handleModeChange(this.value)" class="bg-brand-bg border border-brand-border hover:border-brand-borderLight text-xs font-semibold rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-brand-accent transition cursor-pointer theme-transition" style="color: var(--text-primary);">
+          <option value="live">Live</option>
+          <option value="simulator">Simulator</option>
         </select>
       </div>
 
@@ -249,10 +254,10 @@
     <div class="flex items-center space-x-2">
       <i data-lucide="alert-triangle" class="w-4 h-4 text-brand-accent flex-shrink-0"></i>
       <span>
-        <strong>Twitter/X API v2 Connected:</strong> Configured with OAuth 2.0 credentials. Gracefully sandboxed on live 403 Forbidden (missing <code class="font-mono bg-black/20 px-1 py-0.5 rounded">tweet.write</code> scope) and 402 Credits Depleted. Dispatches demonstrate zero-drop fault isolation without blocking Slack, Discord, Facebook, or Google Sheets.
+        <strong>Twitter/X API v2:</strong> X API 401: Unauthorized (Free-tier credits depleted). Gracefully sandboxed with zero-drop fault isolation without blocking Slack, Discord, Facebook, or Google Sheets.
       </span>
     </div>
-    <button onclick="dismissBanner()" class="hover:opacity-75 transition p-1" title="Dismiss" style="color: var(--banner-text);">
+    <button onclick="dismissBanner()" class="hover:opacity-75 transition p-1 cursor-pointer" title="Dismiss" style="color: var(--banner-text);">
       <i data-lucide="x" class="w-3.5 h-3.5"></i>
     </button>
   </div>
@@ -350,7 +355,7 @@
                     <span>AI Adaptation Active</span>
                   </span>
                   <div id="charCounterBadge" class="text-[11px] font-mono font-medium px-2 py-0.5 rounded bg-brand-bg border border-brand-border text-brand-muted theme-transition">
-                    0 chars
+                    198 chars
                   </div>
                 </div>
               </div>
@@ -426,10 +431,10 @@
               </div>
             </div>
 
-            <!-- Platform Destination Toggles -->
+            <!-- Platform Destination Toggles (In Scope Targets Only) -->
             <div class="pt-2 border-t border-brand-border space-y-2">
               <label class="text-xs font-medium block" style="color: var(--text-primary);">Target Publishing Destinations</label>
-              <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                 
                 <!-- Slack Toggle -->
                 <label class="flex items-center justify-between p-2 rounded-lg bg-brand-bg border border-brand-border hover:border-brand-borderLight cursor-pointer transition theme-transition">
@@ -462,7 +467,7 @@
                 </label>
 
                 <!-- Twitter / X Toggle -->
-                <label id="toggleTwitterWrap" class="flex items-center justify-between p-2 rounded-lg bg-brand-bg border border-brand-border hover:border-brand-borderLight cursor-pointer transition theme-transition" title="OAuth 2.0 Connected (Sandboxed on 403/402)">
+                <label id="toggleTwitterWrap" class="flex items-center justify-between p-2 rounded-lg bg-brand-bg border border-brand-border hover:border-brand-borderLight cursor-pointer transition theme-transition" title="OAuth 2.0 Connected (Sandboxed on 401)">
                   <div class="flex items-center space-x-1.5 overflow-hidden">
                     <span class="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0"></span>
                     <span class="text-xs font-medium truncate" style="color: var(--text-primary);">Twitter / X</span>
@@ -471,46 +476,48 @@
                   <input type="checkbox" id="toggleTwitter" checked onchange="handleContentChange()" class="accent-amber-500 cursor-pointer flex-shrink-0">
                 </label>
 
-                <!-- Mailchimp Toggle (Fastn Native) -->
-                <label class="flex items-center justify-between p-2 rounded-lg bg-brand-bg border border-brand-border hover:border-brand-borderLight cursor-pointer transition theme-transition" title="Mailchimp (Fastn Native Connector)">
-                  <div class="flex items-center space-x-1.5 overflow-hidden">
-                    <span class="w-2 h-2 rounded-full bg-brand-success flex-shrink-0"></span>
-                    <span class="text-xs font-medium truncate" style="color: var(--text-primary);">Mailchimp</span>
-                    <span class="text-[9px] font-mono px-1 py-0.2 rounded border bg-brand-success/15 border-brand-success/30 text-brand-success font-semibold">Native</span>
-                  </div>
-                  <input type="checkbox" id="toggleMailchimp" checked onchange="handleContentChange()" class="accent-amber-500 cursor-pointer flex-shrink-0">
-                </label>
-
                 <!-- Google Sheets Toggle (Always Active) -->
-                <div class="flex items-center justify-between p-2 rounded-lg bg-brand-bg border border-brand-border text-brand-muted theme-transition">
+                <div class="col-span-2 sm:col-span-4 flex items-center justify-between p-2 rounded-lg bg-brand-bg border border-brand-border text-brand-muted theme-transition">
                   <div class="flex items-center space-x-2">
                     <span class="w-2 h-2 rounded-full bg-brand-success"></span>
-                    <span class="text-xs font-medium" style="color: var(--text-primary);">Sheets Log</span>
+                    <span class="text-xs font-medium" style="color: var(--text-primary);">Google Sheets Audit Log</span>
+                    <span class="text-[11px] text-brand-muted">(Bi-directional persistence)</span>
                   </div>
-                  <span class="text-[10px] font-mono text-brand-accent font-semibold">AUTO</span>
+                  <span class="text-[10px] font-mono text-brand-accent font-semibold">AUTO-SYNC</span>
                 </div>
               </div>
             </div>
 
-            <!-- Fault Injection & Demo Control -->
-            <div class="pt-2 border-t border-brand-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div class="flex items-center space-x-2">
-                <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-brand-muted"></i>
-                <span class="text-xs text-brand-muted">Resilience Sandbox:</span>
-                <select id="composerFault" class="bg-brand-bg border border-brand-border text-xs font-mono rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-brand-accent theme-transition" style="color: var(--text-primary);">
-                  <option value="none">🟢 Normal Fan-Out (Pass)</option>
-                  <option id="faultOptTwitter" value="twitter">🔴 Inject Twitter 403 Forbidden / 402 Credits Depleted</option>
-                  <option value="slack">🔴 Inject Slack 429 Rate Limit</option>
-                  <option value="discord">🔴 Inject Discord 404 Token Revoked</option>
-                </select>
-              </div>
+            <!-- Collapsed Developer Tools & Resilience Controls Panel (Requirement 3) -->
+            <details class="group pt-2 border-t border-brand-border">
+              <summary class="text-xs text-brand-muted cursor-pointer flex items-center justify-between hover:text-brand-accent py-1.5 transition select-none">
+                <div class="flex items-center space-x-2">
+                  <i data-lucide="settings-2" class="w-3.5 h-3.5"></i>
+                  <span class="font-medium">Developer Tools & Resilience Controls</span>
+                </div>
+                <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform duration-200 group-open:rotate-180"></i>
+              </summary>
+              <div class="pt-3 pb-1 space-y-3">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 rounded-lg bg-brand-bg border border-brand-border theme-transition">
+                  <div class="flex items-center space-x-2">
+                    <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-brand-muted"></i>
+                    <span class="text-xs text-brand-muted">Resilience Sandbox:</span>
+                    <select id="composerFault" class="bg-brand-panel border border-brand-border text-xs font-mono rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-brand-accent theme-transition" style="color: var(--text-primary);">
+                      <option value="none">🟢 Normal Fan-Out (Pass)</option>
+                      <option id="faultOptTwitter" value="twitter">🔴 Inject Twitter 401 Unauthorized (Credits Depleted)</option>
+                      <option value="slack">🔴 Inject Slack 429 Rate Limit</option>
+                      <option value="discord">🔴 Inject Discord 404 Token Revoked</option>
+                    </select>
+                  </div>
 
-              <!-- Deduplication Force Checkbox -->
-              <label class="flex items-center space-x-1.5 text-xs text-brand-muted cursor-pointer">
-                <input type="checkbox" id="forcePublishToggle" class="accent-amber-500">
-                <span>Override Dedup Guard (force: true)</span>
-              </label>
-            </div>
+                  <!-- Deduplication Force Checkbox -->
+                  <label class="flex items-center space-x-1.5 text-xs text-brand-muted cursor-pointer">
+                    <input type="checkbox" id="forcePublishToggle" class="accent-amber-500">
+                    <span>Override Dedup Guard (force: true)</span>
+                  </label>
+                </div>
+              </div>
+            </details>
 
             <!-- Primary Dispatch CTA -->
             <button 
@@ -533,15 +540,14 @@
               
               <!-- Preview Tab Switchers -->
               <div class="flex items-center space-x-1 bg-brand-bg p-0.5 rounded-lg border border-brand-border text-[11px] theme-transition">
-                <button id="tabBtn-slack" onclick="switchPreviewCard('slack')" class="px-2 py-1 rounded font-medium bg-brand-panel transition" style="color: var(--text-primary);">Slack</button>
+                <button id="tabBtn-slack" onclick="switchPreviewCard('slack')" class="px-2 py-1 rounded font-medium bg-brand-panel text-brand-accent transition" style="color: var(--text-primary);">Slack</button>
                 <button id="tabBtn-discord" onclick="switchPreviewCard('discord')" class="px-2 py-1 rounded font-medium text-brand-muted hover:text-brand-accent transition">Discord</button>
                 <button id="tabBtn-twitter" onclick="switchPreviewCard('twitter')" class="px-2 py-1 rounded font-medium text-brand-muted hover:text-brand-accent transition">Twitter/X</button>
                 <button id="tabBtn-facebook" onclick="switchPreviewCard('facebook')" class="px-2 py-1 rounded font-medium text-brand-muted hover:text-brand-accent transition">Facebook</button>
-                <button id="tabBtn-mailchimp" onclick="switchPreviewCard('mailchimp')" class="px-2 py-1 rounded font-medium text-brand-muted hover:text-brand-accent transition">Mailchimp</button>
               </div>
             </div>
 
-            <!-- 1. SLACK MRKDWN CARD PREVIEW -->
+            <!-- 1. SLACK MRKDWN CARD PREVIEW (Requirement 4 & 5) -->
             <div id="cardPrev-slack" class="space-y-3 rounded-xl p-4 theme-transition" style="background-color: var(--preview-slack-bg); border: 1px solid var(--preview-slack-border); color: var(--preview-slack-text);">
               <div class="flex items-center justify-between border-b pb-2 text-xs" style="border-color: var(--preview-slack-border);">
                 <div class="flex items-center space-x-2">
@@ -573,9 +579,9 @@
                   <!-- Content block -->
                   <p id="prevSlackContent" class="leading-relaxed whitespace-pre-wrap opacity-90">FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unified Context Layer! One post fans out to Slack, Discord, Facebook, and Google Sheets simultaneously with zero-drop fault isolation.</p>
 
-                  <!-- Link & Tags -->
+                  <!-- Link & Tags with target="_blank" -->
                   <div class="pt-1 space-y-0.5 text-brand-muted">
-                    <p id="prevSlackLink">🔗 <a href="#" class="text-blue-500 underline">https://fastn.ai</a></p>
+                    <p id="prevSlackLink">🔗 <a id="prevSlackLinkAnchor" href="https://fastn.ai" target="_blank" rel="noopener noreferrer" class="text-blue-500 underline">https://fastn.ai</a></p>
                     <p id="prevSlackTags" class="italic font-mono text-[11px]">*Tags:* _#fastn #hackathon #ai #automation_</p>
                   </div>
 
@@ -587,7 +593,7 @@
               </div>
             </div>
 
-            <!-- 2. DISCORD EMBED CARD PREVIEW -->
+            <!-- 2. DISCORD EMBED CARD PREVIEW (Requirement 4 & 5) -->
             <div id="cardPrev-discord" class="hidden space-y-3 rounded-xl p-4 theme-transition" style="background-color: var(--preview-discord-bg); border: 1px solid var(--preview-discord-border);">
               <div class="flex items-center justify-between text-xs pb-2 border-b" style="border-color: var(--border-color);">
                 <div class="flex items-center space-x-2">
@@ -603,7 +609,7 @@
 
               <!-- Embed with #5865F2 Left Accent Border -->
               <div class="border-l-4 border-[#5865F2] rounded p-3 space-y-2 text-xs theme-transition" style="background-color: var(--bg-panel); border-right: 1px solid var(--border-color); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
-                <a id="prevDiscordTitle" href="#" class="font-bold text-sm text-[#00A8FC] hover:underline block">FourFrontLab Hackathon Broadcast: Track 04 Live!</a>
+                <a id="prevDiscordTitle" href="https://fastn.ai" target="_blank" rel="noopener noreferrer" class="font-bold text-sm text-[#00A8FC] hover:underline block">FourFrontLab Hackathon Broadcast: Track 04 Live!</a>
                 <p id="prevDiscordContent" class="leading-relaxed" style="color: var(--text-primary); opacity: 0.9;">FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unified Context Layer! One post fans out to Slack, Discord, Facebook, and Google Sheets simultaneously with zero-drop fault isolation.</p>
                 
                 <div class="grid grid-cols-2 gap-2 pt-1">
@@ -613,7 +619,7 @@
                   </div>
                   <div>
                     <span class="text-[10px] font-bold uppercase text-brand-muted block">🔗 Source</span>
-                    <a id="prevDiscordLink" href="#" class="text-[11px] text-[#00A8FC] underline block">https://fastn.ai</a>
+                    <a id="prevDiscordLink" href="https://fastn.ai" target="_blank" rel="noopener noreferrer" class="text-[11px] text-[#00A8FC] underline block">https://fastn.ai</a>
                   </div>
                 </div>
 
@@ -627,7 +633,7 @@
               </div>
             </div>
 
-            <!-- 3. TWITTER / X CARD PREVIEW -->
+            <!-- 3. TWITTER / X CARD PREVIEW (Requirement 4 & 5) -->
             <div id="cardPrev-twitter" class="hidden space-y-3 rounded-xl p-4 theme-transition" style="background-color: var(--preview-twitter-bg); border: 1px solid var(--preview-twitter-border); color: var(--text-primary);">
               <div class="flex items-start space-x-3 text-xs">
                 <div class="w-9 h-9 rounded-full bg-brand-bg border border-brand-border flex items-center justify-center font-bold text-xs text-brand-accent flex-shrink-0">
@@ -644,7 +650,7 @@
                   </div>
 
                   <!-- Truncated 280-char Tweet -->
-                  <p id="prevTwitterText" class="text-xs leading-relaxed whitespace-pre-wrap opacity-90">FourFrontLab Hackathon Broadcast: Track 04 Live!
+                  <p id="prevTwitterText" class="text-xs leading-relaxed whitespace-pre-wrap opacity-90">🚀 FourFrontLab Hackathon Broadcast: Track 04 Live!
 
 FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unified Context Layer!
 
@@ -666,7 +672,7 @@ https://fastn.ai
               </div>
             </div>
 
-            <!-- 4. FACEBOOK CARD PREVIEW -->
+            <!-- 4. FACEBOOK CARD PREVIEW (Requirement 4 & 5) -->
             <div id="cardPrev-facebook" class="hidden space-y-3 rounded-xl p-4 theme-transition" style="background-color: var(--preview-fb-bg); border: 1px solid var(--preview-fb-border); color: var(--text-primary);">
               <div class="flex items-center justify-between text-xs pb-2">
                 <div class="flex items-center space-x-2">
@@ -680,38 +686,20 @@ https://fastn.ai
                 </div>
                 <span class="text-[9px] bg-brand-accent/15 text-brand-accent px-1.5 py-0.5 rounded border border-brand-accent/30 font-mono">✨ AI Story</span>
               </div>
-              <p id="prevFbText" class="text-xs leading-relaxed opacity-90">FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unified Context Layer! One post fans out to Slack, Discord, Facebook, and Google Sheets simultaneously.</p>
+              <p id="prevFbText" class="text-xs leading-relaxed opacity-90">FourFrontLab Update 📢
+
+FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unified Context Layer! One post fans out to Slack, Discord, Facebook, and Google Sheets simultaneously.</p>
+              
+              <!-- Canonical Link with target="_blank" -->
+              <div class="pt-1 text-xs">
+                <a id="prevFbLink" href="https://fastn.ai" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline flex items-center space-x-1">
+                  <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                  <span id="prevFbLinkText">https://fastn.ai</span>
+                </a>
+              </div>
+
               <div id="prevFbImgWrap" class="pt-1">
                 <img id="prevFbImg" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" alt="fb media" class="rounded max-h-48 w-full object-cover border border-brand-border" />
-              </div>
-            </div>
-
-            <!-- 5. MAILCHIMP HTML NEWSLETTER CARD PREVIEW -->
-            <div id="cardPrev-mailchimp" class="hidden space-y-3 rounded-xl p-4 theme-transition" style="background-color: var(--preview-mailchimp-bg, var(--bg-panel)); border: 1px solid var(--border-color); color: var(--text-primary);">
-              <div class="flex items-center justify-between text-xs pb-2 border-b" style="border-color: var(--border-color);">
-                <div class="flex items-center space-x-2">
-                  <div class="w-6 h-6 rounded bg-[#FFE01B] flex items-center justify-center font-black text-xs text-black">
-                    🐵
-                  </div>
-                  <span class="font-bold" style="color: var(--text-primary);">Mailchimp Campaign</span>
-                  <span class="text-[10px] bg-[#FFE01B] text-black px-1.5 py-0.2 rounded font-bold">NEWSLETTER</span>
-                  <span class="text-[10px] text-brand-muted">Audience: FourFrontLab</span>
-                </div>
-                <span class="text-[9px] bg-brand-success/15 text-brand-success px-1.5 py-0.5 rounded border border-brand-success/30 font-mono">✨ HTML Responsive</span>
-              </div>
-              <div class="rounded-lg p-4 border border-brand-border space-y-2 bg-white text-slate-800 shadow-inner">
-                <h3 id="prevMailchimpTitle" class="font-bold text-base text-slate-900 border-b pb-1">FourFrontLab Broadcast</h3>
-                <p id="prevMailchimpContent" class="text-xs text-slate-700 leading-relaxed whitespace-pre-wrap">Newsletter content preview...</p>
-                <div id="prevMailchimpImgWrap" class="pt-1">
-                  <img id="prevMailchimpImg" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" alt="newsletter media" class="rounded max-h-48 w-full object-cover border border-slate-200" />
-                </div>
-                <div class="pt-2">
-                  <a id="prevMailchimpBtn" href="#" class="inline-block px-3 py-1.5 bg-indigo-600 text-white text-xs font-bold rounded shadow hover:bg-indigo-700">Read More &rarr;</a>
-                </div>
-                <div class="pt-1 text-[10px] text-slate-400 border-t border-slate-100 flex items-center justify-between">
-                  <span id="prevMailchimpTags">#Fastn #Mailchimp</span>
-                  <span>FourFrontLab • Islamabad</span>
-                </div>
               </div>
             </div>
 
@@ -773,122 +761,119 @@ https://fastn.ai
           </div>
         </div>
 
-        <!-- Per-Platform Result Cards Grid -->
+        <!-- Per-Platform Result Cards Grid (5-State Vocabulary: Requirements 8 & 9) -->
         <div class="space-y-3">
           <h3 class="text-xs font-semibold uppercase tracking-wider text-brand-muted">Channel Delivery Matrix</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             
-            <!-- Slack Card -->
+            <!-- 1. Slack Card -->
             <div class="bg-brand-panel border border-brand-border rounded-xl p-4 space-y-3 theme-transition">
               <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2">
                   <span id="cardDotSlack" class="w-2.5 h-2.5 rounded-full bg-brand-muted"></span>
                   <span class="font-bold text-xs" style="color: var(--text-primary);">Slack</span>
                 </div>
-                <span id="cardBadgeSlack" class="text-[10px] font-mono px-2 py-0.5 rounded border bg-brand-bg border-brand-border text-brand-muted">IDLE</span>
+                <span id="cardBadgeSlack" class="text-[10px] font-mono px-2 py-0.5 rounded border bg-brand-bg border-brand-border text-brand-muted font-semibold">Ready</span>
               </div>
               <div class="space-y-1 text-xs font-mono">
                 <div class="text-brand-muted text-[11px]">Channel: <span style="color: var(--text-primary);">#social (C0C278R4PRD)</span></div>
-                <div class="text-brand-muted text-[11px]">Timestamp: <span id="cardTsSlack" style="color: var(--text-secondary);">None</span></div>
+                <div class="text-brand-muted text-[11px]">Timestamp: <span id="cardTsSlack" style="color: var(--text-secondary);">Awaiting dispatch</span></div>
               </div>
-              <a id="cardLinkSlack" href="https://fourfrontlab.slack.com/archives/C0C278R4PRD" target="_blank" class="block text-center py-1.5 text-xs font-medium text-brand-accent bg-brand-bg hover:bg-brand-panelHover border border-brand-border rounded-lg transition theme-transition">
+              <a id="cardLinkSlack" href="#" aria-disabled="true" class="pointer-events-none opacity-50 cursor-not-allowed block text-center py-1.5 text-xs font-medium text-brand-muted bg-brand-bg border border-brand-border rounded-lg transition theme-transition">
                 View in Slack
               </a>
             </div>
 
-            <!-- Discord Card -->
+            <!-- 2. Discord Card -->
             <div class="bg-brand-panel border border-brand-border rounded-xl p-4 space-y-3 theme-transition">
               <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2">
                   <span id="cardDotDiscord" class="w-2.5 h-2.5 rounded-full bg-brand-muted"></span>
                   <span class="font-bold text-xs" style="color: var(--text-primary);">Discord</span>
                 </div>
-                <span id="cardBadgeDiscord" class="text-[10px] font-mono px-2 py-0.5 rounded border bg-brand-bg border-brand-border text-brand-muted">IDLE</span>
+                <span id="cardBadgeDiscord" class="text-[10px] font-mono px-2 py-0.5 rounded border bg-brand-bg border-brand-border text-brand-muted font-semibold">Ready</span>
               </div>
               <div class="space-y-1 text-xs font-mono">
                 <div class="text-brand-muted text-[11px]">Type: <span style="color: var(--text-primary);">Webhook Embed Card</span></div>
-                <div class="text-brand-muted text-[11px]">Message ID: <span id="cardIdDiscord" style="color: var(--text-secondary);">None</span></div>
+                <div class="text-brand-muted text-[11px]">Message ID: <span id="cardIdDiscord" style="color: var(--text-secondary);">Awaiting dispatch</span></div>
               </div>
-              <a id="cardLinkDiscord" href="https://discord.com/channels/@me" target="_blank" class="block text-center py-1.5 text-xs font-medium text-brand-accent bg-brand-bg hover:bg-brand-panelHover border border-brand-border rounded-lg transition theme-transition">
+              <a id="cardLinkDiscord" href="#" aria-disabled="true" class="pointer-events-none opacity-50 cursor-not-allowed block text-center py-1.5 text-xs font-medium text-brand-muted bg-brand-bg border border-brand-border rounded-lg transition theme-transition">
                 View in Discord
               </a>
             </div>
 
-            <!-- Facebook Card -->
+            <!-- 3. Facebook Card -->
             <div class="bg-brand-panel border border-brand-border rounded-xl p-4 space-y-3 theme-transition">
               <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2">
                   <span id="cardDotFacebook" class="w-2.5 h-2.5 rounded-full bg-brand-muted"></span>
                   <span class="font-bold text-xs" style="color: var(--text-primary);">Facebook</span>
                 </div>
-                <span id="cardBadgeFacebook" class="text-[10px] font-mono px-2 py-0.5 rounded border bg-brand-bg border-brand-border text-brand-muted">IDLE</span>
+                <span id="cardBadgeFacebook" class="text-[10px] font-mono px-2 py-0.5 rounded border bg-brand-bg border-brand-border text-brand-muted font-semibold">Ready</span>
               </div>
               <div class="space-y-1 text-xs font-mono">
-                <div class="text-brand-muted text-[11px]">Relay: <span style="color: var(--text-primary);">Make.com Webhook Relay</span></div>
-                <div class="text-brand-muted text-[11px]">Relay ID: <span id="cardIdFacebook" style="color: var(--text-secondary);">None</span></div>
+                <div class="text-brand-muted text-[11px]">API: <span style="color: var(--text-primary);">Meta Graph API v21.0</span></div>
+                <div class="text-brand-muted text-[11px]">Post ID: <span id="cardIdFacebook" style="color: var(--text-secondary);">Awaiting dispatch</span></div>
               </div>
-              <a href="https://facebook.com" target="_blank" class="block text-center py-1.5 text-xs font-medium text-brand-accent bg-brand-bg hover:bg-brand-panelHover border border-brand-border rounded-lg transition theme-transition">
-                View Page Feed
+              <a id="cardLinkFacebook" href="#" aria-disabled="true" class="pointer-events-none opacity-50 cursor-not-allowed block text-center py-1.5 text-xs font-medium text-brand-muted bg-brand-bg border border-brand-border rounded-lg transition theme-transition">
+                View in Facebook
               </a>
             </div>
 
-            <!-- Twitter / X Card -->
+            <!-- 4. Twitter / X Card (Consistent 401 Reason: Requirement 2) -->
             <div id="cardTwitterWrap" class="bg-brand-panel border border-brand-border rounded-xl p-4 space-y-3 theme-transition">
               <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2">
-                  <span id="cardDotTwitter" class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                  <span id="cardDotTwitter" class="w-2.5 h-2.5 rounded-full bg-brand-failure"></span>
                   <span class="font-bold text-xs" style="color: var(--text-primary);">Twitter / X</span>
                 </div>
-                <span id="cardBadgeTwitter" class="text-[10px] font-mono px-2 py-0.5 rounded border text-brand-accent" style="background-color: var(--accent-bg); border-color: var(--accent-border);">SANDBOXED</span>
+                <span id="cardBadgeTwitter" class="text-[10px] font-mono px-2 py-0.5 rounded border font-semibold text-brand-failure" style="background-color: var(--failure-bg); border-color: var(--failure-border);">Failed</span>
               </div>
               <div class="space-y-1 text-xs font-mono">
-                <div class="text-brand-muted text-[11px]">Auth: <span class="text-emerald-400">OAuth 2.0 Bearer</span></div>
-                <div class="text-brand-muted text-[11px]">Status: <span id="cardStatusTwitter" class="text-amber-400">403 (Missing tweet.write)</span></div>
-                <div class="text-brand-muted text-[11px]">Isolation: <span class="text-emerald-400">Zero-Drop (Slack/DC OK)</span></div>
+                <div class="text-brand-muted text-[11px]">Auth: <span style="color: var(--text-primary);">OAuth 2.0 Bearer</span></div>
+                <div class="text-brand-muted text-[11px]">Error: <span id="cardStatusTwitter" class="text-brand-failure">X API 401: Unauthorized (Free-tier credits depleted)</span></div>
+                <div class="text-brand-muted text-[11px]">Isolation: <span class="text-brand-success">Zero-Drop (Other Channels OK)</span></div>
               </div>
-              <a href="https://x.com/FourFrontLab" target="_blank" class="block text-center py-1.5 text-xs font-medium text-brand-accent bg-brand-bg hover:bg-brand-panelHover border border-brand-border rounded-lg transition theme-transition">
-                View @FourFrontLab
+              <a id="cardLinkTwitter" href="#" aria-disabled="true" class="pointer-events-none opacity-50 cursor-not-allowed block text-center py-1.5 text-xs font-medium text-brand-muted bg-brand-bg border border-brand-border rounded-lg transition theme-transition">
+                View on X
               </a>
             </div>
 
-            <!-- Google Sheets Card -->
+            <!-- 5. Google Sheets Card -->
             <div class="bg-brand-panel border border-brand-border rounded-xl p-4 space-y-3 theme-transition">
               <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2">
-                  <span id="cardDotSheets" class="w-2.5 h-2.5 rounded-full bg-brand-success"></span>
+                  <span id="cardDotSheets" class="w-2.5 h-2.5 rounded-full bg-brand-muted"></span>
                   <span class="font-bold text-xs" style="color: var(--text-primary);">Google Sheets</span>
                 </div>
-                <span id="cardBadgeSheets" class="text-[10px] font-mono px-2 py-0.5 rounded border text-brand-success" style="background-color: var(--success-bg); border-color: var(--success-border);">CONNECTED</span>
+                <span id="cardBadgeSheets" class="text-[10px] font-mono px-2 py-0.5 rounded border bg-brand-bg border-brand-border text-brand-muted font-semibold">Ready</span>
               </div>
               <div class="space-y-1 text-xs font-mono">
                 <div class="text-brand-muted text-[11px]">Action: <span style="color: var(--text-primary);">appendValues</span></div>
                 <div class="text-brand-muted text-[11px]">Range: <span id="cardRangeSheets" style="color: var(--text-secondary);">Sheet1!A1:H50</span></div>
               </div>
-              <a href="https://docs.google.com/spreadsheets/d/1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s" target="_blank" class="block text-center py-1.5 text-xs font-medium text-brand-accent bg-brand-bg hover:bg-brand-panelHover border border-brand-border rounded-lg transition theme-transition">
+              <a id="cardLinkSheets" href="#" aria-disabled="true" class="pointer-events-none opacity-50 cursor-not-allowed block text-center py-1.5 text-xs font-medium text-brand-muted bg-brand-bg border border-brand-border rounded-lg transition theme-transition">
                 Open Spreadsheet
               </a>
             </div>
 
-            <!-- Mailchimp Card (Fastn Managed Connector) -->
+            <!-- 6. LinkedIn Card (Not Connected in Fastn: Requirement 8) -->
             <div class="bg-brand-panel border border-brand-border rounded-xl p-4 space-y-3 theme-transition">
               <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2">
-                  <span id="cardDotMailchimp" class="w-2.5 h-2.5 rounded-full bg-brand-success"></span>
-                  <span class="font-bold text-xs" style="color: var(--text-primary);">Mailchimp</span>
+                  <span id="cardDotLinkedIn" class="w-2.5 h-2.5 rounded-full bg-brand-muted"></span>
+                  <span class="font-bold text-xs" style="color: var(--text-primary);">LinkedIn</span>
                 </div>
-                <span id="cardBadgeMailchimp" class="text-[10px] font-mono px-2 py-0.5 rounded border text-brand-success" style="background-color: var(--success-bg); border-color: var(--success-border);">CONNECTED</span>
+                <span id="cardBadgeLinkedIn" class="text-[10px] font-mono px-2 py-0.5 rounded border bg-brand-bg border-brand-border text-brand-muted font-semibold">Not Connected</span>
               </div>
               <div class="space-y-1 text-xs font-mono">
-                <div class="text-brand-muted text-[11px]">Audience: <span style="color: var(--text-primary);">FourFrontLab (6e0acf71ff)</span></div>
-                <div class="text-brand-muted text-[11px]">Campaign: <span id="cardIdMailchimp" class="text-brand-accent">Ready to Send</span></div>
+                <div class="text-brand-muted text-[11px]">Connector: <span style="color: var(--text-secondary);">None configured</span></div>
+                <div class="text-brand-muted text-[11px]">Status: <span style="color: var(--text-secondary);">Not Connected in Fastn</span></div>
               </div>
-              <a id="cardLinkMailchimp" href="https://us16.admin.mailchimp.com/campaigns/" target="_blank" class="block text-center py-1.5 text-xs font-medium text-brand-accent bg-brand-bg hover:bg-brand-panelHover border border-brand-border rounded-lg transition theme-transition">
-                Open Campaign Archive
+              <a id="cardLinkLinkedIn" href="#" aria-disabled="true" class="pointer-events-none opacity-50 cursor-not-allowed block text-center py-1.5 text-xs font-medium text-brand-muted bg-brand-bg border border-brand-border rounded-lg transition theme-transition">
+                View in LinkedIn
               </a>
             </div>
-
-          </div>
-        </div>
 
           </div>
         </div>
@@ -1113,6 +1098,34 @@ https://fastn.ai
       }
     }
 
+    // Environment Mode Manager (Requirements 7 & 10)
+    let currentMode = 'live';
+
+    function handleModeChange(mode) {
+      currentMode = mode;
+      const badge = document.getElementById('headerModeBadge');
+      const text = document.getElementById('headerModeText');
+      const dot = document.getElementById('headerModeDot');
+
+      if (mode === 'live') {
+        badge.style.backgroundColor = 'var(--success-bg)';
+        badge.style.borderColor = 'var(--success-border)';
+        badge.style.color = 'var(--success)';
+        if (dot) dot.className = 'w-2 h-2 rounded-full bg-brand-success pulse-dot';
+        if (text) text.innerText = 'LIVE MODE';
+        logEvent('[MODE] Switched to LIVE MODE (real Fastn MCP execution)', 'green');
+        showToast('Switched to Live Mode: Dispatches call real Fastn API', 'info');
+      } else {
+        badge.style.backgroundColor = 'var(--accent-bg)';
+        badge.style.borderColor = 'var(--accent-border)';
+        badge.style.color = 'var(--accent)';
+        if (dot) dot.className = 'w-2 h-2 rounded-full bg-amber-500';
+        if (text) text.innerText = 'SIMULATOR MODE (MOCK)';
+        logEvent('[MODE] Switched to SIMULATOR MODE (mock responses for testing)', 'amber');
+        showToast('Switched to Simulator Mode: Dispatches return realistic mocks', 'warning');
+      }
+    }
+
     // 1. Navigation Switcher
     function switchMainView(viewName) {
       ['composer', 'monitor', 'sheets'].forEach(v => {
@@ -1129,7 +1142,7 @@ https://fastn.ai
 
     // 2. Preview Card Switcher
     function switchPreviewCard(tab) {
-      ['slack', 'discord', 'twitter', 'facebook', 'mailchimp'].forEach(t => {
+      ['slack', 'discord', 'twitter', 'facebook'].forEach(t => {
         const el = document.getElementById(`cardPrev-${t}`);
         if (el) el.classList.add('hidden');
         const btn = document.getElementById(`tabBtn-${t}`);
@@ -1151,16 +1164,15 @@ https://fastn.ai
       if (document.getElementById('toggleSlack')?.checked) platforms.push('slack');
       if (document.getElementById('toggleDiscord')?.checked) platforms.push('discord');
       if (document.getElementById('toggleFacebook')?.checked) platforms.push('facebook');
-      if (document.getElementById('toggleMailchimp')?.checked) platforms.push('mailchimp');
       if (TWITTER_ENABLED && document.getElementById('toggleTwitter')?.checked) platforms.push('twitter');
       return platforms;
     }
 
-    // 3. Live Preview & Raw Character Counter Handler
+    // 3. Live Preview & Raw Character Counter Handler (Requirements 4, 5, 6)
     function handleContentChange() {
       const title = document.getElementById('composerTitle').value || 'Untitled Broadcast';
       const content = document.getElementById('composerContent').value || '';
-      const link = document.getElementById('composerLink').value || '';
+      const link = document.getElementById('composerLink').value || 'https://fastn.ai';
       const tags = document.getElementById('composerTags').value || '';
       const image = document.getElementById('composerImage').value || '';
 
@@ -1168,9 +1180,11 @@ https://fastn.ai
       const bodyLength = content.length;
       const counterEl = document.getElementById('charCounterBadge');
 
-      // Live raw character count for writer reference (no hardcoded Twitter limit)
-      counterEl.innerText = `${bodyLength} chars`;
-      counterEl.className = 'text-[11px] font-mono font-medium px-2 py-0.5 rounded bg-brand-bg border border-brand-border text-brand-muted theme-transition';
+      // Live character counter reflecting live textarea value (Requirement 6)
+      if (counterEl) {
+        counterEl.innerText = `${bodyLength} chars`;
+        counterEl.className = 'text-[11px] font-mono font-medium px-2 py-0.5 rounded bg-brand-bg border border-brand-border text-brand-muted theme-transition';
+      }
 
       // Thumbnail
       const thumbImg = document.getElementById('thumbImg');
@@ -1181,14 +1195,39 @@ https://fastn.ai
         thumbImg.classList.add('hidden');
       }
 
-      // Live Title & Media Sync
-      document.getElementById('prevSlackTitle').innerText = title;
-      document.getElementById('prevDiscordTitle').innerText = title;
-      document.getElementById('prevSlackLink').innerHTML = link ? `🔗 <a href="${link}" target="_blank" class="text-blue-500 underline">${link}</a>` : '';
-      document.getElementById('prevSlackTags').innerText = tagsFormatted ? `*Tags:* _${tagsFormatted}_` : '';
-      document.getElementById('prevDiscordTags').innerText = tagsFormatted || 'General';
-      document.getElementById('prevDiscordLink').innerText = link || 'N/A';
+      // Live Title & Canonical Links Sync (Requirement 5 - target="_blank")
+      const slackTitle = document.getElementById('prevSlackTitle');
+      if (slackTitle) slackTitle.innerText = title;
+      const discordTitle = document.getElementById('prevDiscordTitle');
+      if (discordTitle) {
+        discordTitle.innerText = title;
+        discordTitle.href = link;
+      }
 
+      const slackLinkAnchor = document.getElementById('prevSlackLinkAnchor');
+      if (slackLinkAnchor) {
+        slackLinkAnchor.href = link;
+        slackLinkAnchor.innerText = link;
+      }
+
+      const slackTags = document.getElementById('prevSlackTags');
+      if (slackTags) slackTags.innerText = tagsFormatted ? `*Tags:* _${tagsFormatted}_` : '';
+
+      const discordTags = document.getElementById('prevDiscordTags');
+      if (discordTags) discordTags.innerText = tagsFormatted || 'General';
+
+      const discordLink = document.getElementById('prevDiscordLink');
+      if (discordLink) {
+        discordLink.href = link;
+        discordLink.innerText = link;
+      }
+
+      const fbLink = document.getElementById('prevFbLink');
+      const fbLinkText = document.getElementById('prevFbLinkText');
+      if (fbLink) fbLink.href = link;
+      if (fbLinkText) fbLinkText.innerText = link;
+
+      // Image sync across previews
       const slackImg = document.getElementById('prevSlackImg');
       if (image) { slackImg.src = image; document.getElementById('prevSlackImgWrap').classList.remove('hidden'); }
       else { document.getElementById('prevSlackImgWrap').classList.add('hidden'); }
@@ -1205,29 +1244,27 @@ https://fastn.ai
       if (image) { fbImg.src = image; document.getElementById('prevFbImgWrap').classList.remove('hidden'); }
       else { document.getElementById('prevFbImgWrap').classList.add('hidden'); }
 
-      // Mailchimp Live Sync
-      const mcTitle = document.getElementById('prevMailchimpTitle');
-      if (mcTitle) mcTitle.innerText = title;
-      const mcContent = document.getElementById('prevMailchimpContent');
-      if (mcContent) mcContent.innerText = content || 'Newsletter content preview...';
-      const mcImg = document.getElementById('prevMailchimpImg');
-      const mcImgWrap = document.getElementById('prevMailchimpImgWrap');
-      if (image) { if (mcImg) mcImg.src = image; if (mcImgWrap) mcImgWrap.classList.remove('hidden'); }
-      else { if (mcImgWrap) mcImgWrap.classList.add('hidden'); }
-      const mcTags = document.getElementById('prevMailchimpTags');
-      if (mcTags) mcTags.innerText = tagsFormatted || '#Fastn #Mailchimp';
-      const mcBtn = document.getElementById('prevMailchimpBtn');
-      if (mcBtn) {
-        if (link) { mcBtn.href = link; mcBtn.classList.remove('hidden'); }
-        else { mcBtn.classList.add('hidden'); }
-      }
-
-      // Default baseline previews before AI adaptation finishes
+      // Default baseline platform-native previews before AI adaptation finishes (Requirement 4)
       if (!currentAdapted) {
+        // Slack: Team announcement
         document.getElementById('prevSlackContent').innerText = content;
+
+        // Discord: High-energy community tone
         document.getElementById('prevDiscordContent').innerText = content;
-        document.getElementById('prevTwitterText').innerText = `${title}\n\n${content}${link ? '\n' + link : ''}${tagsFormatted ? '\n' + tagsFormatted : ''}`.trim();
-        document.getElementById('prevFbText').innerText = `${title}\n\n${content}${link ? '\n' + link : ''}\n\n${tagsFormatted}`.trim();
+
+        // Twitter/X: ≤280 chars, punchy headline, concise body, inline link & hashtags
+        const twPrefix = `🚀 ${title}\n\n`;
+        const twSuffix = `${link ? '\n' + link : ''}${tagsFormatted ? '\n' + tagsFormatted : ''}`.trim();
+        const maxBodyLen = 280 - (twPrefix.length + twSuffix.length + 2);
+        let twBody = content;
+        if (twBody.length > maxBodyLen) {
+          twBody = twBody.substring(0, Math.max(0, maxBodyLen - 3)).trim() + '...';
+        }
+        const twFull = `${twPrefix}${twBody}\n\n${twSuffix}`.trim();
+        document.getElementById('prevTwitterText').innerText = twFull.length > 280 ? twFull.substring(0, 277) + '...' : twFull;
+
+        // Facebook: Conversational narrative
+        document.getElementById('prevFbText').innerText = `FourFrontLab Update 📢\n\n${title}\n\n${content}\n\n${tagsFormatted}`.trim();
       } else {
         applyAdaptedContentToPreviews(currentAdapted, title, link, tags);
       }
@@ -1287,7 +1324,7 @@ https://fastn.ai
       }
     }
 
-    // 5. Apply AI-Adapted Text to Multi-Platform Previews
+    // 5. Apply AI-Adapted Text to Multi-Platform Previews (Requirement 4)
     function applyAdaptedContentToPreviews(adapted, title, link, tags) {
       if (!adapted) return;
 
@@ -1303,9 +1340,51 @@ https://fastn.ai
       if (adapted.facebook) {
         document.getElementById('prevFbText').innerText = adapted.facebook;
       }
-      if (adapted.mailchimp) {
-        const mcEl = document.getElementById('prevMailchimpContent');
-        if (mcEl) mcEl.innerText = adapted.mailchimp.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+    }
+
+    // Helper: Standardized 5-State Taxonomy Updater (Requirements 8 & 9)
+    // States: 'Not Connected' | 'Ready' | 'Delivering' | 'Delivered' | 'Failed'
+    function setChannelCardState(channel, state, detailText, permalink = null, buttonLabel = null) {
+      const badge = document.getElementById(`cardBadge${channel}`);
+      const dot = document.getElementById(`cardDot${channel}`);
+      const link = document.getElementById(`cardLink${channel}`);
+
+      if (badge) {
+        badge.innerText = state;
+        if (state === 'Delivered') {
+          badge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border font-semibold text-brand-success';
+          badge.style = 'background-color: var(--success-bg); border-color: var(--success-border);';
+        } else if (state === 'Delivering') {
+          badge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border font-semibold text-brand-accent';
+          badge.style = 'background-color: var(--accent-bg); border-color: var(--accent-border);';
+        } else if (state === 'Failed') {
+          badge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border font-semibold text-brand-failure';
+          badge.style = 'background-color: var(--failure-bg); border-color: var(--failure-border);';
+        } else { // 'Ready' or 'Not Connected'
+          badge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border bg-brand-bg border-brand-border text-brand-muted font-semibold';
+          badge.style = '';
+        }
+      }
+
+      if (dot) {
+        if (state === 'Delivered') dot.className = 'w-2.5 h-2.5 rounded-full bg-brand-success';
+        else if (state === 'Delivering') dot.className = 'w-2.5 h-2.5 rounded-full bg-brand-accent pulse-dot';
+        else if (state === 'Failed') dot.className = 'w-2.5 h-2.5 rounded-full bg-brand-failure';
+        else dot.className = 'w-2.5 h-2.5 rounded-full bg-brand-muted';
+      }
+
+      if (link) {
+        if (state === 'Delivered' && permalink) {
+          link.href = permalink;
+          link.removeAttribute('aria-disabled');
+          link.className = 'pointer-events-auto opacity-100 cursor-pointer block text-center py-1.5 text-xs font-medium text-brand-accent bg-brand-bg hover:bg-brand-panelHover border border-brand-border rounded-lg transition theme-transition';
+          if (buttonLabel) link.innerText = buttonLabel;
+        } else {
+          link.href = '#';
+          link.setAttribute('aria-disabled', 'true');
+          link.className = 'pointer-events-none opacity-50 cursor-not-allowed block text-center py-1.5 text-xs font-medium text-brand-muted bg-brand-bg border border-brand-border rounded-lg transition theme-transition';
+          if (buttonLabel) link.innerText = buttonLabel;
+        }
       }
     }
 
@@ -1328,12 +1407,27 @@ https://fastn.ai
       // Button loading state
       btn.disabled = true;
       btn.className = 'w-full py-3 px-4 rounded-xl bg-brand-accent/50 text-white font-bold text-xs tracking-wider uppercase transition flex items-center justify-center space-x-2 cursor-wait btn-dispatching';
-      btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Broadcasting to Fastn UCL...</span>`;
+      btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Broadcasting (${currentMode.toUpperCase()} MODE)...</span>`;
       lucide.createIcons();
 
-      logEvent(`[DISPATCH] Initiating parallel broadcast: "${Title}" (force=${force})`, 'cyan');
-      logEvent(`[AI] Dispatching platform-native adapted payloads (Slack mrkdwn, Discord embed, FB narrative, Mailchimp HTML)`, 'amber');
-      logEvent(`[TARGETS] Slack (#social), Discord (Embed), Facebook (Relay), Mailchimp (Newsletter), Sheets (Audit)`, 'slate');
+      // Set in-flight Delivering state across active cards (Requirement 8)
+      if (document.getElementById('toggleSlack')?.checked) {
+        setChannelCardState('Slack', 'Delivering', 'Broadcasting via Fastn UCL...');
+        document.getElementById('cardTsSlack').innerText = 'In-flight dispatch...';
+      }
+      if (document.getElementById('toggleDiscord')?.checked) {
+        setChannelCardState('Discord', 'Delivering', 'Broadcasting via Fastn UCL...');
+        document.getElementById('cardIdDiscord').innerText = 'In-flight dispatch...';
+      }
+      if (document.getElementById('toggleFacebook')?.checked) {
+        setChannelCardState('Facebook', 'Delivering', 'Broadcasting via Fastn UCL...');
+        document.getElementById('cardIdFacebook').innerText = 'In-flight dispatch...';
+      }
+      setChannelCardState('Sheets', 'Delivering', 'Appending row to Sheet1...');
+
+      logEvent(`[DISPATCH] Initiating parallel broadcast: "${Title}" (mode=${currentMode}, force=${force})`, 'cyan');
+      logEvent(`[AI] Dispatching platform-native adapted payloads (Slack mrkdwn, Discord embed, FB narrative)`, 'amber');
+      logEvent(`[TARGETS] Slack (#social), Discord (Embed), Facebook (Relay), Sheets (Audit Log)`, 'slate');
 
       const startTime = Date.now();
 
@@ -1346,6 +1440,7 @@ https://fastn.ai
         Status: 'Ready',
         fault,
         force,
+        simulator: currentMode === 'simulator',
         TWITTER_ENABLED,
         adapted: currentAdapted
       };
@@ -1374,8 +1469,8 @@ https://fastn.ai
           logEvent(`[DEDUP] ${data.message || 'Duplicate post detected'}`, 'amber');
           logEvent(`[DEDUP] Previous Slack TS: ${data.results?.slack?.id || 'N/A'} | Discord ID: ${data.results?.discord?.id || 'N/A'}`, 'slate');
         } else {
-          showToast(`Published successfully in ${elapsed}ms`, 'success');
-          logEvent(`[SUCCESS] Completed in ${elapsed}ms. Status: ${data.status}`, 'green');
+          showToast(`Published successfully in ${elapsed}ms (${currentMode === 'simulator' ? 'Simulated' : 'Live'})`, 'success');
+          logEvent(`[SUCCESS] Completed in ${elapsed}ms. Status: ${data.status} (${currentMode === 'simulator' ? 'Simulator Mock' : 'Live Fastn'})`, 'green');
           logEvent(`[SLACK] Delivered to #social | TS: ${data.results?.slack?.id || 'None'}`, 'slate');
           logEvent(`[DISCORD] Embed ID: ${data.results?.discord?.id || 'None'}`, 'slate');
           logEvent(`[FACEBOOK] Relay ID: ${data.results?.facebook?.id || 'None'}`, 'slate');
@@ -1415,7 +1510,7 @@ https://fastn.ai
       }
     }
 
-    // 5. Update Delivery Monitor with Strict Safeguards
+    // 7. Update Delivery Monitor with Standardized 5 States (Requirement 8 & 9)
     function updateMonitorView(data, elapsed) {
       document.getElementById('statLatency').innerText = `${elapsed}ms`;
       document.getElementById('monExecTimeBadge').innerText = `Executed in ${elapsed}ms`;
@@ -1446,155 +1541,60 @@ https://fastn.ai
       let deliveredCount = 0;
       let isolatedCount = 0;
 
-      // 1. Slack Check (Real permalink & ID required)
-      const slackBadge = document.getElementById('cardBadgeSlack');
-      const slackDot = document.getElementById('cardDotSlack');
-      if (data.results?.slack?.skipped) {
+      // 1. Slack (Delivered | Failed)
+      if (data.results?.slack?.success && data.results?.slack?.id) {
         deliveredCount++;
-        slackBadge.innerText = 'DEDUP SKIPPED';
-        slackBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-accent';
-        slackBadge.style = 'background-color: var(--accent-bg); border-color: var(--accent-border);';
-        if (slackDot) slackDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-500';
-        document.getElementById('cardTsSlack').innerText = `${data.results.slack.id} (Existing)`;
-      } else if (data.results?.slack?.success && data.results?.slack?.id) {
-        deliveredCount++;
-        slackBadge.innerText = 'DELIVERED';
-        slackBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-success';
-        slackBadge.style = 'background-color: var(--success-bg); border-color: var(--success-border);';
-        if (slackDot) slackDot.className = 'w-2.5 h-2.5 rounded-full bg-brand-success';
-        document.getElementById('cardTsSlack').innerText = data.results.slack.id;
-        if (data.results.slack.permalink) {
-          document.getElementById('cardLinkSlack').href = data.results.slack.permalink;
-        }
+        setChannelCardState('Slack', 'Delivered', data.results.slack.id, data.results.slack.permalink, 'View in Slack');
+        document.getElementById('cardTsSlack').innerText = data.results.slack.skipped ? `${data.results.slack.id} (Existing)` : data.results.slack.id;
       } else {
-        slackBadge.innerText = 'FAILED';
-        slackBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-failure';
-        slackBadge.style = 'background-color: var(--failure-bg); border-color: var(--failure-border);';
-        if (slackDot) slackDot.className = 'w-2.5 h-2.5 rounded-full bg-brand-failure';
+        setChannelCardState('Slack', 'Failed', data.results?.slack?.error || 'Failed', null, 'View in Slack');
         document.getElementById('cardTsSlack').innerText = data.results?.slack?.error || 'Failed';
       }
 
-      // 2. Discord Check
-      const discordBadge = document.getElementById('cardBadgeDiscord');
-      const discordDot = document.getElementById('cardDotDiscord');
-      if (data.results?.discord?.skipped) {
+      // 2. Discord (Delivered | Failed)
+      if (data.results?.discord?.success && data.results?.discord?.id) {
         deliveredCount++;
-        discordBadge.innerText = 'DEDUP SKIPPED';
-        discordBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-accent';
-        discordBadge.style = 'background-color: var(--accent-bg); border-color: var(--accent-border);';
-        if (discordDot) discordDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-500';
-        document.getElementById('cardIdDiscord').innerText = `${data.results.discord.id} (Existing)`;
-      } else if (data.results?.discord?.success && data.results?.discord?.id) {
-        deliveredCount++;
-        discordBadge.innerText = 'DELIVERED';
-        discordBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-success';
-        discordBadge.style = 'background-color: var(--success-bg); border-color: var(--success-border);';
-        if (discordDot) discordDot.className = 'w-2.5 h-2.5 rounded-full bg-brand-success';
-        document.getElementById('cardIdDiscord').innerText = data.results.discord.id;
-        if (data.results.discord.permalink) {
-          document.getElementById('cardLinkDiscord').href = data.results.discord.permalink;
-        }
+        setChannelCardState('Discord', 'Delivered', data.results.discord.id, data.results.discord.permalink, 'View in Discord');
+        document.getElementById('cardIdDiscord').innerText = data.results.discord.skipped ? `${data.results.discord.id} (Existing)` : data.results.discord.id;
       } else {
-        discordBadge.innerText = 'FAILED';
-        discordBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-failure';
-        discordBadge.style = 'background-color: var(--failure-bg); border-color: var(--failure-border);';
-        if (discordDot) discordDot.className = 'w-2.5 h-2.5 rounded-full bg-brand-failure';
+        setChannelCardState('Discord', 'Failed', data.results?.discord?.error || 'Failed', null, 'View in Discord');
         document.getElementById('cardIdDiscord').innerText = data.results?.discord?.error || 'Failed';
       }
 
-      // 3. Facebook Check
-      const fbBadge = document.getElementById('cardBadgeFacebook');
-      const fbDot = document.getElementById('cardDotFacebook');
-      if (data.results?.facebook?.skipped) {
+      // 3. Facebook (Delivered | Failed)
+      if (data.results?.facebook?.success && data.results?.facebook?.id) {
         deliveredCount++;
-        fbBadge.innerText = 'DEDUP SKIPPED';
-        fbBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-accent';
-        fbBadge.style = 'background-color: var(--accent-bg); border-color: var(--accent-border);';
-        if (fbDot) fbDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-500';
-        document.getElementById('cardIdFacebook').innerText = 'Previously Relayed';
-      } else if (data.results?.facebook?.success && data.results?.facebook?.id) {
-        deliveredCount++;
-        fbBadge.innerText = 'DELIVERED';
-        fbBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-success';
-        fbBadge.style = 'background-color: var(--success-bg); border-color: var(--success-border);';
-        if (fbDot) fbDot.className = 'w-2.5 h-2.5 rounded-full bg-brand-success';
-        document.getElementById('cardIdFacebook').innerText = data.results.facebook.id;
+        setChannelCardState('Facebook', 'Delivered', data.results.facebook.id, data.results.facebook.permalink, 'View in Facebook');
+        document.getElementById('cardIdFacebook').innerText = data.results.facebook.skipped ? 'Previously Relayed' : data.results.facebook.id;
       } else {
-        fbBadge.innerText = 'FAILED';
-        fbBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-failure';
-        fbBadge.style = 'background-color: var(--failure-bg); border-color: var(--failure-border);';
-        if (fbDot) fbDot.className = 'w-2.5 h-2.5 rounded-full bg-brand-failure';
+        setChannelCardState('Facebook', 'Failed', data.results?.facebook?.error || 'Failed', null, 'View in Facebook');
         document.getElementById('cardIdFacebook').innerText = data.results?.facebook?.error || 'Failed';
       }
 
-      // 4. Google Sheets Check
-      const sheetsBadge = document.getElementById('cardBadgeSheets');
-      const sheetsDot = document.getElementById('cardDotSheets');
+      // 4. Twitter / X (Consistently Failed with 401: Requirement 2)
+      if (data.results?.twitter_x?.success) {
+        deliveredCount++;
+        setChannelCardState('Twitter', 'Delivered', '200 OK', data.results.twitter_x.permalink, 'View on X');
+        document.getElementById('cardStatusTwitter').innerText = '200 OK';
+      } else {
+        isolatedCount++;
+        setChannelCardState('Twitter', 'Failed', 'X API 401: Unauthorized (Free-tier credits depleted)', null, 'View on X');
+        document.getElementById('cardStatusTwitter').innerText = 'X API 401: Unauthorized (Free-tier credits depleted)';
+      }
+
+      // 5. Google Sheets (Delivered | Failed)
       if (data.results?.google_sheets?.success) {
         deliveredCount++;
-        sheetsBadge.innerText = 'LOGGED';
-        sheetsBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-success';
-        sheetsBadge.style = 'background-color: var(--success-bg); border-color: var(--success-border);';
-        if (sheetsDot) sheetsDot.className = 'w-2.5 h-2.5 rounded-full bg-brand-success';
+        setChannelCardState('Sheets', 'Delivered', data.results.google_sheets.range || 'Sheet1!A1:H50', data.results.google_sheets.permalink || 'https://docs.google.com/spreadsheets/d/1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s', 'Open Spreadsheet');
         if (data.results.google_sheets.range) {
           document.getElementById('cardRangeSheets').innerText = data.results.google_sheets.range;
         }
+      } else {
+        setChannelCardState('Sheets', 'Failed', data.results?.google_sheets?.error || 'Failed', null, 'Open Spreadsheet');
       }
 
-      // 5. Twitter / X (Gracefully sandboxed or Delivered when enabled)
-      if (TWITTER_ENABLED) {
-        const twBadge = document.getElementById('cardBadgeTwitter');
-        const twDot = document.getElementById('cardDotTwitter');
-        const twStatus = document.getElementById('cardStatusTwitter');
-        if (data.results?.twitter_x?.success) {
-          deliveredCount++;
-          if (twBadge) {
-            twBadge.innerText = 'DELIVERED';
-            twBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-success';
-            twBadge.style = 'background-color: var(--success-bg); border-color: var(--success-border);';
-          }
-          if (twDot) twDot.className = 'w-2.5 h-2.5 rounded-full bg-brand-success';
-          if (twStatus) twStatus.innerText = '200 OK';
-        } else {
-          isolatedCount++;
-          if (twBadge) {
-            twBadge.innerText = 'SANDBOXED';
-            twBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-accent';
-            twBadge.style = 'background-color: var(--accent-bg); border-color: var(--accent-border);';
-          }
-          if (twDot) twDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-500';
-          if (twStatus) twStatus.innerText = data.results?.twitter_x?.error ? data.results.twitter_x.error.replace('X API ', '') : '403 (tweet.write missing)';
-        }
-      }
-
-      // 6. Mailchimp (Fastn Native Managed Connector)
-      const mcBadge = document.getElementById('cardBadgeMailchimp');
-      const mcId = document.getElementById('cardIdMailchimp');
-      const mcDot = document.getElementById('cardDotMailchimp');
-      const mcLink = document.getElementById('cardLinkMailchimp');
-      if (data.results?.mailchimp?.success) {
-        deliveredCount++;
-        if (mcBadge) {
-          mcBadge.innerText = 'DELIVERED';
-          mcBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-success';
-          mcBadge.style = 'background-color: var(--success-bg); border-color: var(--success-border);';
-        }
-        if (mcDot) mcDot.className = 'w-2.5 h-2.5 rounded-full bg-brand-success';
-        if (mcId) mcId.innerText = data.results.mailchimp.id || 'Campaign Active';
-        if (mcLink && data.results.mailchimp.permalink) {
-          mcLink.href = data.results.mailchimp.permalink;
-          mcLink.innerText = 'View HTML Newsletter';
-        }
-      } else if (data.results?.mailchimp) {
-        isolatedCount++;
-        if (mcBadge) {
-          mcBadge.innerText = 'FAILED';
-          mcBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-rose-500';
-          mcBadge.style = 'background-color: rgba(244,63,94,0.1); border-color: rgba(244,63,94,0.2);';
-        }
-        if (mcDot) mcDot.className = 'w-2.5 h-2.5 rounded-full bg-rose-500';
-        if (mcId) mcId.innerText = data.results.mailchimp.error || 'Execution Error';
-      }
+      // 6. LinkedIn (Always Not Connected: Requirement 8)
+      setChannelCardState('LinkedIn', 'Not Connected', 'Not Connected in Fastn', null, 'View in LinkedIn');
 
       // Update Summary Statistics
       const totalDispatched = deliveredCount + isolatedCount;
