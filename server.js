@@ -212,10 +212,10 @@ const server = http.createServer(async (req, res) => {
         };
         googleSheetsDb.push(newPost);
         res.writeHead(201, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(newPost));
+        return res.end(JSON.stringify(newPost));
       } catch (err) {
         res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: err.message }));
+        return res.end(JSON.stringify({ error: err.message }));
       }
     });
     return;
@@ -235,10 +235,10 @@ const server = http.createServer(async (req, res) => {
 
         const { adapted, engine } = await adaptContentForPlatforms({ title, content, link, tags, platforms });
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ success: true, engine, adapted }));
+        return res.end(JSON.stringify({ success: true, engine, adapted }));
       } catch (err) {
         res.writeHead(500, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: err.message }));
+        return res.end(JSON.stringify({ error: err.message }));
       }
     });
     return;
@@ -475,8 +475,7 @@ async function fetchGoogleSheetsRows() {
 
           googleSheetsDb.unshift(sheetRow);
 
-          res.writeHead(200, { 'Content-Type': 'application/json' });
-          return res.end(JSON.stringify({
+          const payload = JSON.stringify({
             row_id,
             status: 'Published',
             simulated: true,
@@ -484,7 +483,10 @@ async function fetchGoogleSheetsRows() {
             auditLog: { Status: 'Published', Updated_At: new Date().toISOString(), errors: 'twitter_x: X API 401: Unauthorized (Free-tier credits depleted)' },
             adapted: data.adapted || null,
             updatedDb: googleSheetsDb
-          }));
+          });
+          console.log('[SERVER /api/publish] Raw response body before send (length=' + payload.length + '):\n', payload.substring(0, 120));
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          return res.end(payload);
         }
 
         let fastnResult = null;
@@ -553,8 +555,7 @@ async function fetchGoogleSheetsRows() {
               }
             };
 
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({
+            const payload = JSON.stringify({
               row_id: fastnResult.row_id || row_id,
               status: 'Skipped',
               message: fastnResult.message || 'Duplicate post skipped. Use force: true to override.',
@@ -567,7 +568,10 @@ async function fetchGoogleSheetsRows() {
               adapted: data.adapted || null,
               rawFastn: fastnResult,
               updatedDb: googleSheetsDb
-            }));
+            });
+            console.log('[SERVER /api/publish] Raw response body before send (length=' + payload.length + '):\n', payload.substring(0, 120));
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            return res.end(payload);
           }
 
           // Real execution succeeded! Use genuine results from Fastn
@@ -631,8 +635,7 @@ async function fetchGoogleSheetsRows() {
 
           googleSheetsDb.unshift(sheetRow);
 
-          res.writeHead(200, { 'Content-Type': 'application/json' });
-          return res.end(JSON.stringify({
+          const payload = JSON.stringify({
             row_id: fastnResult.row_id || row_id,
             status: fastnResult.status || 'Published',
             results,
@@ -640,12 +643,14 @@ async function fetchGoogleSheetsRows() {
             adapted: data.adapted || null,
             rawFastn: fastnResult,
             updatedDb: googleSheetsDb
-          }));
+          });
+          console.log('[SERVER /api/publish] Raw response body before send (length=' + payload.length + '):\n', payload.substring(0, 120));
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          return res.end(payload);
         }
 
         // If Fastn execution errored out (e.g. offline / token expired), report the real error!
-        res.writeHead(502, { 'Content-Type': 'application/json' });
-        return res.end(JSON.stringify({
+        const payload = JSON.stringify({
           error: `Fastn workflow execution failed: ${executionError}`,
           status: 'Failed',
           results: {
@@ -656,10 +661,15 @@ async function fetchGoogleSheetsRows() {
             google_sheets: { success: false, error: executionError },
             twitter_x: { success: false, error: 'X API 401: Unauthorized (Free-tier credits depleted)' }
           }
-        }));
+        });
+        console.log('[SERVER /api/publish] Raw response body before send (length=' + payload.length + '):\n', payload.substring(0, 120));
+        res.writeHead(502, { 'Content-Type': 'application/json' });
+        return res.end(payload);
       } catch (err) {
+        const payload = JSON.stringify({ error: err.message });
+        console.error('[SERVER /api/publish] Raw response body before send (length=' + payload.length + '):\n', payload);
         res.writeHead(500, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: err.message }));
+        return res.end(payload);
       }
     });
     return;
@@ -711,7 +721,7 @@ async function fetchGoogleSheetsRows() {
         return res.end(JSON.stringify({ success: true, live: false, fallback: true, result }));
       } catch (err) {
         res.writeHead(500, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: err.message }));
+        return res.end(JSON.stringify({ error: err.message }));
       }
     });
     return;
@@ -740,7 +750,7 @@ async function fetchGoogleSheetsRows() {
   }
 
   res.writeHead(404, { 'Content-Type': 'text/plain' });
-  res.end('404 Not Found');
+  return res.end('404 Not Found');
 });
 
 if (require.main === module) {
@@ -761,7 +771,12 @@ if (require.main === module) {
 
 // Vercel serverless handler adapter
 const handler = (req, res) => {
-  server.emit('request', req, res);
+  return new Promise((resolve, reject) => {
+    res.on('finish', () => resolve());
+    res.on('close', () => resolve());
+    res.on('error', (err) => reject(err));
+    server.emit('request', req, res);
+  });
 };
 
 // Default export must be a function or server for Vercel Serverless Functions

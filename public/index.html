@@ -1675,8 +1675,22 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
           body: JSON.stringify(requestPayload)
         });
 
-        const data = await res.json();
-        console.log('[CLIENT /api/publish] Raw response:\n', JSON.stringify(data, null, 2));
+        const rawText = await res.text();
+        console.log('[CLIENT /api/publish] Raw response text:\n', rawText);
+
+        let data;
+        try {
+          data = JSON.parse(rawText);
+        } catch (parseErr) {
+          // Defensive cleanup: if runtime prepended 'true' or whitespace, strip and parse
+          if (rawText.startsWith('true')) {
+            console.warn('[CLIENT /api/publish] Detected prepended boolean "true", sanitizing response...');
+            const cleaned = rawText.replace(/^true\s*/, '');
+            data = JSON.parse(cleaned);
+          } else {
+            throw parseErr;
+          }
+        }
         const elapsed = Date.now() - startTime;
 
         if (!res.ok && data.status !== 'Skipped') {
