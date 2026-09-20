@@ -4,7 +4,13 @@ const path = require('path');
 const { run: runWorkflow } = require('./workflow');
 
 const PORT = process.env.PORT || 3456;
-const PUBLIC_DIR = path.join(__dirname, 'public');
+const candidatePublicDirs = [
+  path.join(__dirname, 'public'),
+  path.join(process.cwd(), 'public'),
+  path.join(__dirname, '..', 'public'),
+  path.join(process.cwd(), '..', 'public')
+];
+const PUBLIC_DIR = candidatePublicDirs.find(dir => fs.existsSync(dir)) || path.join(__dirname, 'public');
 
 // In-Memory Database mimicking Google Sheets
 let googleSheetsDb = [
@@ -166,7 +172,8 @@ async function adaptContentForPlatforms({ title, content, link, tags, platforms 
 }
 
 const server = http.createServer(async (req, res) => {
-  const url = new URL(req.url, `http://${req.headers.host}`);
+  const host = req.headers.host || 'localhost';
+  const url = new URL(req.url, `http://${host}`);
 
   // CORS Headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -744,6 +751,17 @@ if (require.main === module) {
   });
 }
 
-module.exports = { server, adaptContentForPlatforms, googleSheetsDb };
+// Vercel serverless handler adapter
+const handler = (req, res) => {
+  server.emit('request', req, res);
+};
+
+// Default export must be a function or server for Vercel Serverless Functions
+module.exports = handler;
+module.exports.default = handler;
+module.exports.handler = handler;
+module.exports.server = server;
+module.exports.adaptContentForPlatforms = adaptContentForPlatforms;
+module.exports.googleSheetsDb = googleSheetsDb;
 
 
