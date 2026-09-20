@@ -1775,10 +1775,18 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
         };
 
         matrixData.unshift(newRow);
-        renderTable();
+        try {
+          renderTable();
+        } catch (tableErr) {
+          console.warn('[Delivery Monitor] Table render warning:', tableErr);
+        }
 
         // Update View 2 Monitor
-        updateMonitorView(data, elapsed);
+        try {
+          updateMonitorView(data, elapsed);
+        } catch (monErr) {
+          console.warn('[Delivery Monitor] Monitor view update warning:', monErr);
+        }
 
         // Orchestrated reveal: switch to monitor view
         switchMainView('monitor');
@@ -1899,15 +1907,20 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
     function renderTable() {
       const tbody = document.getElementById('auditTableBody');
       const emptyState = document.getElementById('tableEmptyState');
-      const searchVal = document.getElementById('sheetSearchInput').value.toLowerCase().trim();
+      const searchVal = (document.getElementById('sheetSearchInput')?.value || '').toLowerCase().trim();
 
       const filtered = matrixData.filter(row => {
+        if (!row) return false;
         const matchesFilter = (currentFilter === 'ALL') || (row.Status === currentFilter);
+        const titleStr = (row.Title || '').toLowerCase();
+        const contentStr = (row.Content || '').toLowerCase();
+        const tagsStr = (row.Tags || '').toLowerCase();
+        const slackStr = (row.Slack_ID ? String(row.Slack_ID) : '').toLowerCase();
         const matchesSearch = !searchVal || 
-          row.Title.toLowerCase().includes(searchVal) || 
-          row.Content.toLowerCase().includes(searchVal) || 
-          row.Tags.toLowerCase().includes(searchVal) || 
-          row.Slack_ID.toLowerCase().includes(searchVal);
+          titleStr.includes(searchVal) || 
+          contentStr.includes(searchVal) || 
+          tagsStr.includes(searchVal) || 
+          slackStr.includes(searchVal);
         return matchesFilter && matchesSearch;
       });
 
@@ -1929,23 +1942,29 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
           statusBadge = `<span class="${badgeBase} text-[var(--text-secondary)] border border-[var(--border-strong)]" style="background-color: transparent;">Draft</span>`;
         }
 
-        const slackCell = row.Slack_ID && row.Slack_ID !== 'FAILED'
-          ? `<a href="https://fourfrontlab.slack.com/archives/C0C278R4PRD/p${row.Slack_ID.replace('.', '')}" target="_blank" class="text-[var(--accent)] hover:underline font-mono text-[11px]">${row.Slack_ID}</a>`
-          : `<span class="text-[var(--danger)] font-mono text-[11px]">${row.Slack_ID}</span>`;
+        const slackIdStr = String(row.Slack_ID || '');
+        const slackCell = row.Slack_ID && row.Slack_ID !== 'FAILED' && row.Slack_ID !== 'None'
+          ? `<a href="https://fourfrontlab.slack.com/archives/C0C278R4PRD/p${slackIdStr.replace('.', '')}" target="_blank" class="text-[var(--accent)] hover:underline font-mono text-[11px]">${escapeHtml(slackIdStr)}</a>`
+          : `<span class="text-[var(--danger)] font-mono text-[11px]">${escapeHtml(slackIdStr || 'None')}</span>`;
+
+        const rawTimestamp = row.Timestamp || row.Updated_At || new Date().toISOString();
+        const formattedTime = (typeof rawTimestamp === 'string' ? rawTimestamp : String(rawTimestamp || ''))
+          .replace('T', ' ')
+          .substring(0, 19);
 
         return `
           <tr class="hover:bg-[var(--surface-raised)] transition">
-            <td class="py-3.5 px-4 font-mono text-[var(--text-secondary)] text-[11px] whitespace-nowrap">${row.Timestamp.replace('T', ' ').substring(0, 19)}</td>
-            <td class="py-3.5 px-4 font-medium max-w-xs truncate text-[13px] text-[var(--text-primary)]">${escapeHtml(row.Title)}</td>
-            <td class="py-3.5 px-4 max-w-xs truncate text-[11px] text-[var(--text-secondary)]">${escapeHtml(row.Content)}</td>
+            <td class="py-3.5 px-4 font-mono text-[var(--text-secondary)] text-[11px] whitespace-nowrap">${formattedTime}</td>
+            <td class="py-3.5 px-4 font-medium max-w-xs truncate text-[13px] text-[var(--text-primary)]">${escapeHtml(row.Title || 'Untitled')}</td>
+            <td class="py-3.5 px-4 max-w-xs truncate text-[11px] text-[var(--text-secondary)]">${escapeHtml(row.Content || '')}</td>
             <td class="py-3.5 px-4 font-mono text-[11px] text-[var(--text-secondary)]">${escapeHtml(row.Tags || 'None')}</td>
             <td class="py-3.5 px-4">
               ${row.Image_URL ? `<img src="${row.Image_URL}" alt="thumb" class="w-7 h-7 object-cover rounded-[var(--radius-sm)] border border-[var(--border)]">` : `<span class="text-[var(--text-secondary)] text-[10px]">None</span>`}
             </td>
             <td class="py-3.5 px-4">${statusBadge}</td>
             <td class="py-3.5 px-4">${slackCell}</td>
-            <td class="py-3.5 px-4 font-mono text-[11px] text-[var(--text-primary)]">${escapeHtml(row.Social_ID)}</td>
-            <td class="py-3.5 px-4 font-mono text-[var(--text-secondary)] text-[11px] max-w-xs truncate" title="${escapeHtml(row.Error_Log)}">${escapeHtml(row.Error_Log)}</td>
+            <td class="py-3.5 px-4 font-mono text-[11px] text-[var(--text-primary)]">${escapeHtml(row.Social_ID || 'None')}</td>
+            <td class="py-3.5 px-4 font-mono text-[var(--text-secondary)] text-[11px] max-w-xs truncate" title="${escapeHtml(row.Error_Log || 'None')}">${escapeHtml(row.Error_Log || 'None')}</td>
           </tr>
         `;
       }).join('');

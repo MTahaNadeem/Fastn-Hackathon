@@ -16,39 +16,42 @@ const PUBLIC_DIR = candidatePublicDirs.find(dir => fs.existsSync(dir)) || path.j
 let googleSheetsDb = [
   {
     row_id: '101',
+    Timestamp: '2026-09-19T07:45:48.550Z',
     Title: '🚀 Build with Fastn Hackathon Kickoff!',
     Content: 'Developers at NUST SEECS are building production-grade autonomous agent workflows using Fastn connectors.',
     Image_URL: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80',
     Tags: 'hackathon, fastn, ai, nust',
     Status: 'Ready to Publish',
-    Slack_Log: '',
-    Telegram_Log: '',
-    Discord_Log: '',
-    Updated_At: ''
+    Slack_ID: 'None',
+    Social_ID: 'None',
+    Error_Log: 'None',
+    Updated_At: '2026-09-19T07:45:48.550Z'
   },
   {
     row_id: '102',
+    Timestamp: '2026-09-19T06:52:34.452Z',
     Title: '⚡ Fastn Unified Context Layer (UCL)',
     Content: 'Fastn turns any API or database into an MCP Tool with managed OAuth 2.1, RBAC, and zero-latency caching.',
     Image_URL: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&q=80',
     Tags: 'mcp, devtools, architecture',
     Status: 'Draft',
-    Slack_Log: '',
-    Telegram_Log: '',
-    Discord_Log: '',
-    Updated_At: ''
+    Slack_ID: 'None',
+    Social_ID: 'None',
+    Error_Log: 'None',
+    Updated_At: '2026-09-19T06:52:34.452Z'
   },
   {
     row_id: '103',
+    Timestamp: '2026-09-19T05:55:49.605Z',
     Title: '🛡️ Resilient Fault-Isolation Demonstration',
     Content: 'Watch how Fastn handles an expired Telegram bot token without failing Slack or Discord publishing.',
     Image_URL: '',
     Tags: 'resilience, faulttolerance',
     Status: 'Ready to Publish',
-    Slack_Log: '',
-    Telegram_Log: '',
-    Discord_Log: '',
-    Updated_At: ''
+    Slack_ID: 'None',
+    Social_ID: 'None',
+    Error_Log: 'None',
+    Updated_At: '2026-09-19T05:55:49.605Z'
   }
 ];
 
