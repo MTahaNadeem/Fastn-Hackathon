@@ -17,78 +17,104 @@
 
   <style>
     /* ========================================================================= */
-    /* CSS CUSTOM PROPERTIES (VARIABLES) - DUAL THEME ENGINE                    */
+    /* CSS DESIGN TOKENS (VARIABLES) - DUAL THEME ENGINE                         */
     /* ========================================================================= */
     :root, [data-theme="dark"] {
-      --bg-base: #0B0E11;
-      --bg-panel: #151A20;
-      --bg-panel-hover: #1C232B;
-      --bg-input: #0B0E11;
-      --bg-code: #0B0E11;
-      --border-color: #222933;
-      --border-light: #2D3744;
-      --text-primary: #E1E7EF;
-      --text-secondary: #7A889B;
-      --text-muted: #576577;
+      --bg: #0B0E11;
+      --surface: #12161B;
+      --surface-raised: #171C22;
+      --border: #232830;
+      --border-strong: #2E343D;
+      --text-primary: #EDEBE6;
+      --text-secondary: #8B919A;
+      --text-tertiary: #5A616B;
       --accent: #F5A623;
-      --accent-hover: #E09215;
-      --accent-bg: rgba(245, 166, 35, 0.15);
-      --accent-border: rgba(245, 166, 35, 0.3);
+      --accent-hover: #FFB84D;
       --success: #3DDC97;
       --success-bg: rgba(61, 220, 151, 0.12);
-      --success-border: rgba(61, 220, 151, 0.3);
-      --failure: #FF5D5D;
-      --failure-bg: rgba(255, 93, 93, 0.12);
-      --failure-border: rgba(255, 93, 93, 0.3);
-      --banner-bg: rgba(120, 53, 15, 0.25);
-      --banner-border: rgba(180, 83, 9, 0.35);
-      --banner-text: #FDE68A;
-      --console-bg: #0B0E11;
-      --console-text: #E1E7EF;
-      --table-header-bg: rgba(11, 14, 17, 0.6);
-      --table-hover: rgba(28, 35, 43, 0.6);
+      --danger: #FF5D5D;
+      --danger-bg: rgba(255, 93, 93, 0.12);
+      --warning: #F5A623;
+      --warning-bg: rgba(245, 166, 35, 0.12);
+      --mono-font: 'JetBrains Mono', monospace;
+      --sans-font: 'Inter', sans-serif;
+
+      /* Compatible Token Aliases */
+      --bg-base: var(--bg);
+      --bg-panel: var(--surface);
+      --bg-panel-hover: var(--surface-raised);
+      --bg-input: var(--bg);
+      --bg-code: var(--surface-raised);
+      --border-color: var(--border);
+      --border-light: var(--border-strong);
+      --text-muted: var(--text-secondary);
+      --accent-bg: var(--warning-bg);
+      --accent-border: var(--accent);
+      --failure: var(--danger);
+      --failure-bg: var(--danger-bg);
+      --failure-border: var(--danger);
+      --banner-bg: var(--warning-bg);
+      --banner-border: var(--warning);
+      --banner-text: var(--text-primary);
+      --console-bg: #000000;
+      --console-text: #7EE787;
+      --table-header-bg: var(--surface-raised);
+      --table-hover: var(--surface-raised);
       --preview-slack-bg: #1A1D21;
       --preview-slack-border: #2C3136;
-      --preview-slack-text: #E1E7EF;
+      --preview-slack-text: #EDEBE6;
       --preview-discord-bg: #313338;
       --preview-discord-border: #2B2D31;
       --preview-twitter-bg: #000000;
       --preview-twitter-border: #262626;
       --preview-fb-bg: #242526;
       --preview-fb-border: #3A3B3C;
-      --card-inner-bg: #0B0E11;
-      --selection-bg: #F5A623;
+      --card-inner-bg: var(--surface-raised);
+      --selection-bg: var(--accent);
       --selection-text: #0B0E11;
     }
 
     [data-theme="light"] {
-      --bg-base: #F7F6F3;
-      --bg-panel: #FFFFFF;
-      --bg-panel-hover: #F0EFEB;
-      --bg-input: #FFFFFF;
-      --bg-code: #F0EFEB;
-      --border-color: #E4E2DC;
-      --border-light: #D5D3CC;
+      --bg: #F7F6F3;
+      --surface: #FFFFFF;
+      --surface-raised: #F0EFEA;
+      --border: #E2DFD8;
+      --border-strong: #D1CDC4;
       --text-primary: #1A1D21;
-      --text-secondary: #6B6F76;
-      --text-muted: #8E9299;
-      --accent: #D4890F;
-      --accent-hover: #B8740A;
-      --accent-bg: rgba(212, 137, 15, 0.12);
-      --accent-border: rgba(212, 137, 15, 0.3);
-      --success: #1F9D64;
-      --success-bg: rgba(31, 157, 100, 0.12);
-      --success-border: rgba(31, 157, 100, 0.3);
-      --failure: #D9364A;
-      --failure-bg: rgba(217, 54, 74, 0.12);
-      --failure-border: rgba(217, 54, 74, 0.3);
-      --banner-bg: #FEF3C7;
-      --banner-border: #FCD34D;
-      --banner-text: #92400E;
-      --console-bg: #F0EFEB;
-      --console-text: #1A1D21;
-      --table-header-bg: #EBEAE5;
-      --table-hover: #F2F1ED;
+      --text-secondary: #606770;
+      --text-tertiary: #8C929D;
+      --accent: #D48806;
+      --accent-hover: #B77400;
+      --success: #1E8E5A;
+      --success-bg: rgba(30, 142, 90, 0.12);
+      --danger: #D9383A;
+      --danger-bg: rgba(217, 56, 58, 0.12);
+      --warning: #D48806;
+      --warning-bg: rgba(212, 136, 6, 0.12);
+      --mono-font: 'JetBrains Mono', monospace;
+      --sans-font: 'Inter', sans-serif;
+
+      /* Compatible Token Aliases */
+      --bg-base: var(--bg);
+      --bg-panel: var(--surface);
+      --bg-panel-hover: var(--surface-raised);
+      --bg-input: #FFFFFF;
+      --bg-code: var(--surface-raised);
+      --border-color: var(--border);
+      --border-light: var(--border-strong);
+      --text-muted: var(--text-secondary);
+      --accent-bg: var(--warning-bg);
+      --accent-border: var(--accent);
+      --failure: var(--danger);
+      --failure-bg: var(--danger-bg);
+      --failure-border: var(--danger);
+      --banner-bg: var(--warning-bg);
+      --banner-border: var(--warning);
+      --banner-text: var(--text-primary);
+      --console-bg: #1A1D21; /* Dark-terminal-styled in light theme per spec */
+      --console-text: #7EE787;
+      --table-header-bg: var(--surface-raised);
+      --table-hover: var(--surface-raised);
       --preview-slack-bg: #F8F9FA;
       --preview-slack-border: #E2E4E8;
       --preview-slack-text: #1D1C1D;
@@ -98,15 +124,15 @@
       --preview-twitter-border: #EFF3F4;
       --preview-fb-bg: #FFFFFF;
       --preview-fb-border: #E4E6EB;
-      --card-inner-bg: #F7F6F3;
-      --selection-bg: #D4890F;
+      --card-inner-bg: var(--surface-raised);
+      --selection-bg: var(--accent);
       --selection-text: #FFFFFF;
     }
 
     body {
-      background-color: var(--bg-base);
+      background-color: var(--bg);
       color: var(--text-primary);
-      font-family: 'Inter', system-ui, sans-serif;
+      font-family: var(--sans-font);
       margin: 0;
       padding: 0;
       overflow-x: hidden;
@@ -124,14 +150,14 @@
       height: 6px;
     }
     ::-webkit-scrollbar-track {
-      background: var(--bg-base);
+      background: var(--bg);
     }
     ::-webkit-scrollbar-thumb {
-      background: var(--border-color);
+      background: var(--border);
       border-radius: 3px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: var(--border-light);
+      background: var(--border-strong);
     }
 
     /* Pulse animation for live connection dot */
@@ -165,20 +191,28 @@
         extend: {
           colors: {
             brand: {
-              bg: 'var(--bg-base)',
-              panel: 'var(--bg-panel)',
-              panelHover: 'var(--bg-panel-hover)',
-              border: 'var(--border-color)',
-              borderLight: 'var(--border-light)',
+              bg: 'var(--bg)',
+              surface: 'var(--surface)',
+              surfaceRaised: 'var(--surface-raised)',
+              panel: 'var(--surface)',
+              panelHover: 'var(--surface-raised)',
+              border: 'var(--border)',
+              borderStrong: 'var(--border-strong)',
+              borderLight: 'var(--border-strong)',
               accent: 'var(--accent)',
               accentHover: 'var(--accent-hover)',
               success: 'var(--success)',
-              failure: 'var(--failure)',
+              danger: 'var(--danger)',
+              failure: 'var(--danger)',
+              warning: 'var(--warning)',
+              textPrimary: 'var(--text-primary)',
+              textSecondary: 'var(--text-secondary)',
+              textTertiary: 'var(--text-tertiary)',
               muted: 'var(--text-secondary)'
             }
           },
           fontFamily: {
-            sans: ['Inter', 'system-ui', 'sans-serif'],
+            sans: ['Inter', 'sans-serif'],
             mono: ['JetBrains Mono', 'monospace']
           }
         }
@@ -191,11 +225,11 @@
   <!-- ========================================================================= -->
   <!-- 1. TOP HEADER & MISSION CONTROL BAR                                       -->
   <!-- ========================================================================= -->
-  <header class="h-16 border-b border-brand-border bg-brand-panel flex items-center justify-between px-4 lg:px-6 sticky top-0 z-50 theme-transition">
+  <header class="h-[72px] border-b border-[var(--border)] bg-[var(--surface)] flex items-center justify-between px-4 md:px-8 sticky top-0 z-50 theme-transition">
     <div class="flex items-center space-x-3">
-      <!-- FourFrontLab Geometric Logo -->
-      <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-md shadow-amber-950/20">
-        <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <!-- FourFrontLab Geometric Logo (32x32px) -->
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-md shadow-amber-950/20 flex-shrink-0">
+        <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
           <polyline points="2 17 12 22 22 17"></polyline>
           <polyline points="2 12 12 17 22 12"></polyline>
@@ -203,29 +237,34 @@
       </div>
       <div>
         <div class="flex items-center space-x-2">
-          <span class="font-bold text-base tracking-tight" style="color: var(--text-primary);">FourFrontLab</span>
-          <span class="text-xs text-brand-muted font-normal">•</span>
-          <span class="text-xs font-semibold text-brand-accent tracking-wide uppercase">Social Publisher</span>
+          <span class="text-base font-semibold tracking-tight text-[var(--text-primary)]">FourFrontLab</span>
+          <span class="text-xs text-[var(--text-secondary)] font-normal">•</span>
+          <span class="text-xs font-semibold text-[var(--accent)] tracking-wide uppercase">Social Publisher</span>
         </div>
-        <p class="text-[11px] text-brand-muted hidden sm:block">Resilient Parallel Multi-Channel Fan-Out & Source Audit Logging Engine</p>
+        <p class="text-[13px] font-normal text-[var(--text-secondary)] hidden sm:block">Resilient Parallel Multi-Channel Fan-Out & Source Audit Logging Engine</p>
       </div>
     </div>
 
-    <!-- Header Right Controls -->
-    <div class="flex items-center space-x-3">
+    <!-- Header Right Controls (16px gap, 32px height, flex-nowrap) -->
+    <div class="flex items-center gap-4 flex-nowrap flex-shrink-0">
       <!-- Live Fastn Status Pill -->
-      <div class="flex items-center space-x-2 px-2.5 py-1 rounded-full bg-brand-bg border border-brand-border text-xs theme-transition">
-        <span class="w-2 h-2 rounded-full bg-brand-success pulse-dot"></span>
-        <span class="font-medium" style="color: var(--text-primary);">Fastn Engine Connected</span>
-        <span class="text-[10px] font-mono text-brand-muted hidden md:inline">(wf_6cfc644efb9d)</span>
+      <div class="h-8 flex items-center space-x-2 px-3 rounded-full bg-[var(--bg)] border border-[var(--border)] text-xs theme-transition flex-shrink-0">
+        <span class="w-2 h-2 rounded-full bg-[var(--success)] pulse-dot"></span>
+        <span class="font-medium text-[var(--text-primary)]">Fastn Engine Connected</span>
+        <span class="text-[10px] font-mono text-[var(--text-secondary)] hidden md:inline">(wf_6cfc644efb9d)</span>
       </div>
 
-      <!-- Environment Selector -->
-      <div class="relative">
-        <select id="environmentSelector" class="bg-brand-bg border border-brand-border hover:border-brand-borderLight text-xs font-mono rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-brand-accent transition cursor-pointer theme-transition" style="color: var(--text-primary);">
-          <option value="proxy">Internal Proxy Gateway (/api/publish)</option>
-          <option value="cloud">Live Fastn Webhook (Cloud)</option>
-          <option value="mock">Local Simulator API</option>
+      <!-- Persistent Mode Indicator Badge (Requirements 7 & 10) -->
+      <div id="headerModeBadge" class="h-8 flex items-center space-x-1.5 px-3 rounded-full text-xs font-semibold font-mono border theme-transition flex-shrink-0" style="background-color: var(--success-bg); border-color: var(--success-border); color: var(--success);">
+        <span id="headerModeDot" class="w-2 h-2 rounded-full bg-[var(--success)] pulse-dot"></span>
+        <span id="headerModeText">LIVE MODE</span>
+      </div>
+
+      <!-- Environment Selector: Live vs Simulator -->
+      <div class="relative flex-shrink-0">
+        <select id="environmentSelector" onchange="handleModeChange(this.value)" class="h-8 bg-[var(--bg)] border border-[var(--border)] hover:border-[var(--border-strong)] text-xs font-semibold rounded-lg px-2.5 text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)] transition cursor-pointer theme-transition">
+          <option value="live">Live</option>
+          <option value="simulator">Simulator</option>
         </select>
       </div>
 
@@ -233,11 +272,11 @@
       <button 
         id="themeToggleBtn" 
         onclick="toggleTheme()" 
-        class="p-2 rounded-lg border border-brand-border bg-brand-bg hover:bg-brand-panelHover text-brand-muted hover:text-brand-accent transition duration-200 flex items-center justify-center cursor-pointer theme-transition" 
+        class="h-8 w-8 rounded-lg border border-[var(--border)] bg-[var(--bg)] hover:bg-[var(--surface-raised)] text-[var(--text-secondary)] hover:text-[var(--accent)] transition duration-200 flex items-center justify-center cursor-pointer theme-transition flex-shrink-0" 
         title="Toggle Light / Dark Mode (Saved to localStorage)"
         aria-label="Toggle Theme"
       >
-        <i id="themeIcon" data-lucide="sun" class="w-4 h-4 text-brand-accent"></i>
+        <i id="themeIcon" data-lucide="sun" class="w-4 h-4 text-[var(--accent)]"></i>
       </button>
     </div>
   </header>
@@ -245,14 +284,14 @@
   <!-- ========================================================================= -->
   <!-- 2. SYSTEM ANNOUNCEMENT BANNER                                            -->
   <!-- ========================================================================= -->
-  <div id="systemBanner" class="px-4 py-2 flex items-center justify-between text-xs theme-transition" style="background-color: var(--banner-bg); border-bottom: 1px solid var(--banner-border); color: var(--banner-text);">
-    <div class="flex items-center space-x-2">
-      <i data-lucide="alert-triangle" class="w-4 h-4 text-brand-accent flex-shrink-0"></i>
-      <span>
-        <strong>Twitter/X API v2 Connected:</strong> Configured with OAuth 2.0 credentials. Gracefully sandboxed on live 403 Forbidden (missing <code class="font-mono bg-black/20 px-1 py-0.5 rounded">tweet.write</code> scope) and 402 Credits Depleted. Dispatches demonstrate zero-drop fault isolation without blocking Slack, Discord, Facebook, or Google Sheets.
+  <div id="systemBanner" class="w-full px-4 md:px-8 py-3 flex items-center justify-between text-xs border-l-[3px] border-[var(--warning)] border-b border-[var(--border)] theme-transition" style="background-color: var(--warning-bg); color: var(--text-primary);">
+    <div class="flex items-center gap-3">
+      <i data-lucide="alert-triangle" class="w-4 h-4 text-[var(--warning)] flex-shrink-0"></i>
+      <span class="leading-normal">
+        <strong>Twitter/X API v2:</strong> X API 401: Unauthorized (Free-tier credits depleted). Gracefully sandboxed with zero-drop fault isolation without blocking Slack, Discord, Facebook, or Google Sheets.
       </span>
     </div>
-    <button onclick="dismissBanner()" class="hover:opacity-75 transition p-1" title="Dismiss" style="color: var(--banner-text);">
+    <button onclick="dismissBanner()" class="hover:opacity-75 transition p-1 cursor-pointer text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex-shrink-0 ml-3" title="Dismiss">
       <i data-lucide="x" class="w-3.5 h-3.5"></i>
     </button>
   </div>
@@ -263,356 +302,365 @@
   <div class="flex-1 flex flex-col md:flex-row overflow-hidden theme-transition">
     
     <!-- LEFT-FIXED NAVIGATION RAIL -->
-    <nav class="w-full md:w-56 bg-brand-panel border-r border-brand-border flex md:flex-col justify-between py-3 px-3 z-40 theme-transition">
-      <div class="flex md:flex-col space-x-2 md:space-x-0 md:space-y-1.5 w-full">
+    <nav class="w-full md:w-56 bg-[var(--surface)] border-r border-[var(--border)] flex md:flex-col justify-between py-4 px-3 z-40 theme-transition">
+      <div class="flex md:flex-col space-x-2 md:space-x-0 md:space-y-2 w-full">
         <!-- View 1 Tab -->
-        <button id="navBtn-composer" onclick="switchMainView('composer')" class="w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold transition bg-brand-accent/15 text-brand-accent border border-brand-accent/30">
+        <button id="navBtn-composer" onclick="switchMainView('composer')" class="w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold transition bg-[var(--accent)]/15 text-[var(--accent)] border border-[var(--accent)]/30">
           <i data-lucide="edit-3" class="w-4 h-4"></i>
           <span>Composer & Preview</span>
         </button>
 
         <!-- View 2 Tab -->
-        <button id="navBtn-monitor" onclick="switchMainView('monitor')" class="w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold transition text-brand-muted hover:bg-brand-panelHover" style="color: var(--text-secondary);">
+        <button id="navBtn-monitor" onclick="switchMainView('monitor')" class="w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold transition text-[var(--text-secondary)] hover:bg-[var(--surface-raised)]">
           <i data-lucide="activity" class="w-4 h-4"></i>
           <span>Delivery Monitor</span>
         </button>
 
         <!-- View 3 Tab -->
-        <button id="navBtn-sheets" onclick="switchMainView('sheets')" class="w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold transition text-brand-muted hover:bg-brand-panelHover" style="color: var(--text-secondary);">
+        <button id="navBtn-sheets" onclick="switchMainView('sheets')" class="w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold transition text-[var(--text-secondary)] hover:bg-[var(--surface-raised)]">
           <i data-lucide="table" class="w-4 h-4"></i>
           <span>Audit Matrix</span>
         </button>
       </div>
 
       <!-- Rail Footer: Engine Specs -->
-      <div class="hidden md:block pt-4 border-t border-brand-border text-[11px] text-brand-muted font-mono space-y-1 px-1">
+      <div class="hidden md:block pt-4 border-t border-[var(--border)] text-[11px] text-[var(--text-secondary)] font-mono space-y-1.5 px-1">
         <div class="flex justify-between">
           <span>Engine:</span>
-          <span style="color: var(--text-primary);">Fastn UCL v2.4</span>
+          <span class="text-[var(--text-primary)]">Fastn UCL v2.4</span>
         </div>
         <div class="flex justify-between">
           <span>Fan-out:</span>
-          <span class="text-brand-success">Parallel</span>
+          <span class="text-[var(--success)]">Parallel</span>
         </div>
         <div class="flex justify-between">
           <span>Isolation:</span>
-          <span class="text-brand-accent">Zero-Drop</span>
+          <span class="text-[var(--accent)]">Zero-Drop</span>
         </div>
       </div>
     </nav>
 
-    <!-- CONTENT WORKSPACE -->
-    <main class="flex-1 overflow-y-auto p-4 lg:p-6 bg-brand-bg theme-transition">
+    <!-- CONTENT WORKSPACE (Max 1440px centered, 32px desktop / 16px mobile padding) -->
+    <main class="flex-1 overflow-y-auto p-4 md:p-8 bg-[var(--bg)] theme-transition">
+      <div class="w-full max-w-[1440px] mx-auto">
 
-      <!-- ===================================================================== -->
-      <!-- VIEW 1: COMPOSER & LIVE PREVIEW                                       -->
-      <!-- ===================================================================== -->
-      <div id="view-composer" class="space-y-6 max-w-7xl mx-auto">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          
-          <!-- LEFT PANE: BROADCAST COMPOSER (7 cols) -->
-          <div class="lg:col-span-7 bg-brand-panel border border-brand-border rounded-xl p-5 space-y-5 theme-transition">
-            <div class="flex items-center justify-between pb-3 border-b border-brand-border">
-              <div class="flex items-center space-x-2">
-                <i data-lucide="send" class="w-4 h-4 text-brand-accent"></i>
-                <h2 class="font-semibold text-sm" style="color: var(--text-primary);">Broadcast Composer</h2>
-              </div>
-              <span class="text-[11px] font-mono text-brand-muted">Single-source multi-destination ingestion</span>
-            </div>
-
-            <!-- Title Input -->
-            <div class="space-y-1.5">
-              <label class="text-xs font-medium flex justify-between" style="color: var(--text-primary);">
-                <span>Broadcast Title <span class="text-brand-failure">*</span></span>
-                <span class="text-brand-muted text-[11px]">Primary headline for headers & embeds</span>
-              </label>
-              <input 
-                id="composerTitle" 
-                type="text" 
-                placeholder="e.g. 🚀 FourFrontLab Launches Track 04 on Fastn" 
-                value="FourFrontLab Hackathon Broadcast: Track 04 Live!" 
-                oninput="handleContentChange()" 
-                class="w-full bg-brand-bg border border-brand-border focus:border-brand-accent focus:ring-1 focus:ring-brand-accent rounded-lg px-3.5 py-2.5 text-xs placeholder-slate-400 transition theme-transition"
-                style="color: var(--text-primary);"
-              />
-            </div>
-
-            <!-- Content Textarea with Live Raw Character Counter & AI Adaptation -->
-            <div class="space-y-1.5">
-              <div class="flex items-center justify-between">
-                <label class="text-xs font-medium" style="color: var(--text-primary);">
-                  Announcement Body Text <span class="text-brand-failure">*</span>
-                </label>
-                <!-- Character Counter & AI Status Badges -->
+        <!-- ===================================================================== -->
+        <!-- VIEW 1: COMPOSER & LIVE PREVIEW                                       -->
+        <!-- ===================================================================== -->
+        <div id="view-composer" class="space-y-6">
+          <div class="flex flex-col lg:flex-row gap-6 items-start">
+            
+            <!-- LEFT PANE: BROADCAST COMPOSER (~55%) -->
+            <div class="w-full lg:w-[55%] bg-[var(--surface)] border border-[var(--border)] rounded-xl p-6 space-y-6 theme-transition">
+              <div class="flex items-center justify-between pb-4 border-b border-[var(--border)]">
                 <div class="flex items-center space-x-2">
-                  <span id="aiStatusBadge" class="text-[10px] font-mono px-2 py-0.5 rounded bg-brand-accent/15 text-brand-accent border border-brand-accent/30 font-semibold flex items-center space-x-1">
-                    <i data-lucide="sparkles" class="w-3 h-3"></i>
-                    <span>AI Adaptation Active</span>
-                  </span>
-                  <div id="charCounterBadge" class="text-[11px] font-mono font-medium px-2 py-0.5 rounded bg-brand-bg border border-brand-border text-brand-muted theme-transition">
-                    0 chars
-                  </div>
+                  <i data-lucide="send" class="w-4 h-4 text-[var(--accent)]"></i>
+                  <h2 class="font-semibold text-sm text-[var(--text-primary)]">Broadcast Composer</h2>
                 </div>
-              </div>
-              <textarea 
-                id="composerContent" 
-                rows="4" 
-                placeholder="Write your announcement body..." 
-                oninput="handleContentChange()" 
-                class="w-full bg-brand-bg border border-brand-border focus:border-brand-accent focus:ring-1 focus:ring-brand-accent rounded-lg p-3 text-xs placeholder-slate-400 transition resize-none theme-transition"
-                style="color: var(--text-primary);"
-              >FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unified Context Layer! One post fans out to Slack, Discord, Facebook, and Google Sheets simultaneously with zero-drop fault isolation.</textarea>
-              
-              <!-- AI Adaptation Helper Bar -->
-              <div class="flex items-center justify-between pt-1">
-                <span class="text-[11px] text-brand-muted">Single source draft • AI rewrites native versions for each selected channel</span>
-                <button 
-                  type="button" 
-                  id="btnAdaptAI" 
-                  onclick="triggerAIAdaptation(true)" 
-                  class="px-2.5 py-1 rounded-lg bg-brand-accent/15 hover:bg-brand-accent/25 text-brand-accent border border-brand-accent/30 text-xs font-medium flex items-center space-x-1.5 transition cursor-pointer"
-                >
-                  <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-                  <span id="btnAdaptAIText">Preview AI Adaptations</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Link & Tags Row -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="space-y-1.5">
-                <label class="text-xs font-medium" style="color: var(--text-primary);">Canonical Hyperlink</label>
-                <input 
-                  id="composerLink" 
-                  type="url" 
-                  placeholder="https://fastn.ai" 
-                  value="https://fastn.ai" 
-                  oninput="handleContentChange()" 
-                  class="w-full bg-brand-bg border border-brand-border focus:border-brand-accent focus:ring-1 focus:ring-brand-accent rounded-lg px-3 py-2 text-xs placeholder-slate-400 font-mono transition theme-transition"
-                  style="color: var(--text-primary);"
-                />
+                <span class="text-[11px] font-mono text-[var(--text-secondary)]">Single-source multi-destination ingestion</span>
               </div>
 
+              <!-- Title Input -->
               <div class="space-y-1.5">
-                <label class="text-xs font-medium" style="color: var(--text-primary);">Hashtags / Tags</label>
+                <label class="text-xs font-medium flex justify-between text-[var(--text-primary)]">
+                  <span>Broadcast Title <span class="text-[var(--danger)]">*</span></span>
+                  <span class="text-[var(--text-secondary)] text-[11px]">Primary headline for headers & embeds</span>
+                </label>
                 <input 
-                  id="composerTags" 
+                  id="composerTitle" 
                   type="text" 
-                  placeholder="fastn, hackathon, ai, automation" 
-                  value="fastn, hackathon, ai, automation" 
+                  placeholder="e.g. 🚀 FourFrontLab Launches Track 04 on Fastn" 
+                  value="FourFrontLab Hackathon Broadcast: Track 04 Live!" 
                   oninput="handleContentChange()" 
-                  class="w-full bg-brand-bg border border-brand-border focus:border-brand-accent focus:ring-1 focus:ring-brand-accent rounded-lg px-3 py-2 text-xs placeholder-slate-400 transition theme-transition"
-                  style="color: var(--text-primary);"
+                  class="w-full bg-[var(--bg)] border border-[var(--border)] focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] rounded-lg px-3.5 py-2.5 text-xs text-[var(--text-primary)] placeholder-slate-400 transition theme-transition"
                 />
               </div>
-            </div>
 
-            <!-- Image URL with Instant Preview -->
-            <div class="space-y-1.5">
-              <label class="text-xs font-medium" style="color: var(--text-primary);">Media Attachment (Image URL)</label>
-              <div class="flex items-center space-x-2">
-                <input 
-                  id="composerImage" 
-                  type="url" 
-                  placeholder="https://images.unsplash.com/..." 
-                  value="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" 
-                  oninput="handleContentChange()" 
-                  class="flex-1 bg-brand-bg border border-brand-border focus:border-brand-accent focus:ring-1 focus:ring-brand-accent rounded-lg px-3 py-2 text-xs placeholder-slate-400 font-mono transition theme-transition"
-                  style="color: var(--text-primary);"
-                />
-                <div id="thumbPreviewBox" class="w-9 h-9 rounded-lg border border-brand-border bg-brand-bg overflow-hidden flex-shrink-0 flex items-center justify-center theme-transition">
-                  <img id="thumbImg" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" alt="thumb" class="w-full h-full object-cover" />
-                </div>
-              </div>
-            </div>
-
-            <!-- Platform Destination Toggles -->
-            <div class="pt-2 border-t border-brand-border space-y-2">
-              <label class="text-xs font-medium block" style="color: var(--text-primary);">Target Publishing Destinations</label>
-              <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-                
-                <!-- Slack Toggle -->
-                <label class="flex items-center justify-between p-2 rounded-lg bg-brand-bg border border-brand-border hover:border-brand-borderLight cursor-pointer transition theme-transition">
-                  <div class="flex items-center space-x-1.5 overflow-hidden">
-                    <span class="w-2 h-2 rounded-full bg-brand-success flex-shrink-0"></span>
-                    <span class="text-xs font-medium truncate" style="color: var(--text-primary);">Slack</span>
-                    <span class="text-[9px] font-mono px-1 py-0.2 rounded border bg-brand-accent/10 border-brand-accent/20 text-brand-accent">mrkdwn</span>
-                  </div>
-                  <input type="checkbox" id="toggleSlack" checked onchange="handleContentChange()" class="accent-amber-500 cursor-pointer flex-shrink-0">
-                </label>
-
-                <!-- Discord Toggle -->
-                <label class="flex items-center justify-between p-2 rounded-lg bg-brand-bg border border-brand-border hover:border-brand-borderLight cursor-pointer transition theme-transition">
-                  <div class="flex items-center space-x-1.5 overflow-hidden">
-                    <span class="w-2 h-2 rounded-full bg-brand-success flex-shrink-0"></span>
-                    <span class="text-xs font-medium truncate" style="color: var(--text-primary);">Discord</span>
-                    <span class="text-[9px] font-mono px-1 py-0.2 rounded border bg-brand-accent/10 border-brand-accent/20 text-brand-accent">embed</span>
-                  </div>
-                  <input type="checkbox" id="toggleDiscord" checked onchange="handleContentChange()" class="accent-amber-500 cursor-pointer flex-shrink-0">
-                </label>
-
-                <!-- Facebook Toggle -->
-                <label class="flex items-center justify-between p-2 rounded-lg bg-brand-bg border border-brand-border hover:border-brand-borderLight cursor-pointer transition theme-transition">
-                  <div class="flex items-center space-x-1.5 overflow-hidden">
-                    <span class="w-2 h-2 rounded-full bg-brand-success flex-shrink-0"></span>
-                    <span class="text-xs font-medium truncate" style="color: var(--text-primary);">Facebook</span>
-                    <span class="text-[9px] font-mono px-1 py-0.2 rounded border bg-brand-accent/10 border-brand-accent/20 text-brand-accent">social</span>
-                  </div>
-                  <input type="checkbox" id="toggleFacebook" checked onchange="handleContentChange()" class="accent-amber-500 cursor-pointer flex-shrink-0">
-                </label>
-
-                <!-- Twitter / X Toggle -->
-                <label id="toggleTwitterWrap" class="flex items-center justify-between p-2 rounded-lg bg-brand-bg border border-brand-border hover:border-brand-borderLight cursor-pointer transition theme-transition" title="OAuth 2.0 Connected (Sandboxed on 403/402)">
-                  <div class="flex items-center space-x-1.5 overflow-hidden">
-                    <span class="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0"></span>
-                    <span class="text-xs font-medium truncate" style="color: var(--text-primary);">Twitter / X</span>
-                    <span class="text-[9px] font-mono px-1 py-0.2 rounded border bg-brand-accent/10 border-brand-accent/20 text-brand-accent font-semibold">OAuth 2.0</span>
-                  </div>
-                  <input type="checkbox" id="toggleTwitter" checked onchange="handleContentChange()" class="accent-amber-500 cursor-pointer flex-shrink-0">
-                </label>
-
-                <!-- LinkedIn Toggle -->
-                <label class="flex items-center justify-between p-2 rounded-lg bg-brand-bg border border-brand-border hover:border-brand-borderLight cursor-pointer transition theme-transition">
-                  <div class="flex items-center space-x-1.5 overflow-hidden">
-                    <span class="w-2 h-2 rounded-full bg-brand-success flex-shrink-0"></span>
-                    <span class="text-xs font-medium truncate" style="color: var(--text-primary);">LinkedIn</span>
-                    <span class="text-[9px] font-mono px-1 py-0.2 rounded border bg-brand-accent/10 border-brand-accent/20 text-brand-accent">pro</span>
-                  </div>
-                  <input type="checkbox" id="toggleLinkedIn" checked onchange="handleContentChange()" class="accent-amber-500 cursor-pointer flex-shrink-0">
-                </label>
-
-                <!-- Google Sheets Toggle (Always Active) -->
-                <div class="flex items-center justify-between p-2 rounded-lg bg-brand-bg border border-brand-border text-brand-muted theme-transition">
+              <!-- Content Textarea with Live Raw Character Counter & AI Adaptation -->
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <label class="text-xs font-medium text-[var(--text-primary)]">
+                    Announcement Body Text <span class="text-[var(--danger)]">*</span>
+                  </label>
+                  <!-- Character Counter & AI Status Badges -->
                   <div class="flex items-center space-x-2">
-                    <span class="w-2 h-2 rounded-full bg-brand-success"></span>
-                    <span class="text-xs font-medium" style="color: var(--text-primary);">Sheets Log</span>
+                    <span id="aiStatusBadge" class="text-[10px] font-mono px-2 py-0.5 rounded bg-[var(--accent)]/15 text-[var(--accent)] border border-[var(--accent)]/30 font-semibold flex items-center space-x-1">
+                      <i data-lucide="sparkles" class="w-3 h-3"></i>
+                      <span>AI Adaptation Active</span>
+                    </span>
+                    <div id="charCounterBadge" class="text-[11px] font-mono font-medium px-2 py-0.5 rounded bg-[var(--bg)] border border-[var(--border)] text-[var(--text-secondary)] theme-transition">
+                      198 chars
+                    </div>
                   </div>
-                  <span class="text-[10px] font-mono text-brand-accent font-semibold">AUTO</span>
+                </div>
+                <textarea 
+                  id="composerContent" 
+                  rows="4" 
+                  placeholder="Write your announcement body..." 
+                  oninput="handleContentChange()" 
+                  class="w-full bg-[var(--bg)] border border-[var(--border)] focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] rounded-lg p-3 text-xs text-[var(--text-primary)] placeholder-slate-400 transition resize-none theme-transition"
+                >FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unified Context Layer! One post fans out to Slack, Discord, Facebook, and Google Sheets simultaneously with zero-drop fault isolation.</textarea>
+                
+                <!-- AI Adaptation Helper Bar -->
+                <div class="flex items-center justify-between pt-1">
+                  <span class="text-[11px] text-[var(--text-secondary)]">Single source draft • AI rewrites native versions for each selected channel</span>
+                  <button 
+                    type="button" 
+                    id="btnAdaptAI" 
+                    onclick="triggerAIAdaptation(true)" 
+                    class="px-3 py-1.5 rounded-lg border border-[var(--border-strong)] bg-transparent hover:bg-[var(--surface-raised)] text-[var(--text-primary)] text-xs font-medium flex items-center space-x-1.5 transition cursor-pointer"
+                  >
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[var(--accent)]"></i>
+                    <span id="btnAdaptAIText">Preview AI Adaptations</span>
+                  </button>
                 </div>
               </div>
-            </div>
 
-            <!-- Fault Injection & Demo Control -->
-            <div class="pt-2 border-t border-brand-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div class="flex items-center space-x-2">
-                <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-brand-muted"></i>
-                <span class="text-xs text-brand-muted">Resilience Sandbox:</span>
-                <select id="composerFault" class="bg-brand-bg border border-brand-border text-xs font-mono rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-brand-accent theme-transition" style="color: var(--text-primary);">
-                  <option value="none">🟢 Normal Fan-Out (Pass)</option>
-                  <option id="faultOptTwitter" value="twitter">🔴 Inject Twitter 403 Forbidden / 402 Credits Depleted</option>
-                  <option value="slack">🔴 Inject Slack 429 Rate Limit</option>
-                  <option value="discord">🔴 Inject Discord 404 Token Revoked</option>
-                </select>
+              <!-- Link & Tags Row -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="space-y-1.5">
+                  <label class="text-xs font-medium text-[var(--text-primary)]">Canonical Hyperlink</label>
+                  <input 
+                    id="composerLink" 
+                    type="url" 
+                    placeholder="https://fastn.ai" 
+                    value="https://fastn.ai" 
+                    oninput="handleContentChange()" 
+                    class="w-full bg-[var(--bg)] border border-[var(--border)] focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] rounded-lg px-3 py-2 text-xs text-[var(--text-primary)] placeholder-slate-400 font-mono transition theme-transition"
+                  />
+                </div>
+
+                <div class="space-y-1.5">
+                  <label class="text-xs font-medium text-[var(--text-primary)]">Hashtags / Tags</label>
+                  <input 
+                    id="composerTags" 
+                    type="text" 
+                    placeholder="fastn, hackathon, ai, automation" 
+                    value="fastn, hackathon, ai, automation" 
+                    oninput="handleContentChange()" 
+                    class="w-full bg-[var(--bg)] border border-[var(--border)] focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] rounded-lg px-3 py-2 text-xs text-[var(--text-primary)] placeholder-slate-400 transition theme-transition"
+                  />
+                </div>
               </div>
 
-              <!-- Deduplication Force Checkbox -->
-              <label class="flex items-center space-x-1.5 text-xs text-brand-muted cursor-pointer">
-                <input type="checkbox" id="forcePublishToggle" class="accent-amber-500">
-                <span>Override Dedup Guard (force: true)</span>
-              </label>
-            </div>
-
-            <!-- Primary Dispatch CTA -->
-            <button 
-              id="btnPublishEverywhere" 
-              onclick="dispatchBroadcast()" 
-              class="w-full py-3 px-4 rounded-xl bg-brand-accent hover:bg-brand-accentHover text-white font-bold text-xs tracking-wider uppercase transition shadow-lg flex items-center justify-center space-x-2 cursor-pointer theme-transition"
-            >
-              <i data-lucide="send" class="w-4 h-4"></i>
-              <span>Publish Everywhere (Fastn Parallel Fan-Out)</span>
-            </button>
-          </div>
-
-          <!-- RIGHT PANE: MULTI-PLATFORM LIVE PREVIEWS (5 cols) -->
-          <div class="lg:col-span-5 bg-brand-panel border border-brand-border rounded-xl p-5 space-y-4 theme-transition">
-            <div class="flex items-center justify-between pb-3 border-b border-brand-border">
-              <div class="flex items-center space-x-2">
-                <i data-lucide="eye" class="w-4 h-4 text-brand-muted"></i>
-                <h3 class="font-semibold text-sm" style="color: var(--text-primary);">Live Platform Preview</h3>
-              </div>
-              
-              <!-- Preview Tab Switchers -->
-              <div class="flex items-center space-x-1 bg-brand-bg p-0.5 rounded-lg border border-brand-border text-[11px] theme-transition">
-                <button id="tabBtn-slack" onclick="switchPreviewCard('slack')" class="px-2 py-1 rounded font-medium bg-brand-panel transition" style="color: var(--text-primary);">Slack</button>
-                <button id="tabBtn-discord" onclick="switchPreviewCard('discord')" class="px-2 py-1 rounded font-medium text-brand-muted hover:text-brand-accent transition">Discord</button>
-                <button id="tabBtn-twitter" onclick="switchPreviewCard('twitter')" class="px-2 py-1 rounded font-medium text-brand-muted hover:text-brand-accent transition">Twitter/X</button>
-                <button id="tabBtn-facebook" onclick="switchPreviewCard('facebook')" class="px-2 py-1 rounded font-medium text-brand-muted hover:text-brand-accent transition">Facebook</button>
-              </div>
-            </div>
-
-            <!-- 1. SLACK MRKDWN CARD PREVIEW -->
-            <div id="cardPrev-slack" class="space-y-3 rounded-xl p-4 theme-transition" style="background-color: var(--preview-slack-bg); border: 1px solid var(--preview-slack-border); color: var(--preview-slack-text);">
-              <div class="flex items-center justify-between border-b pb-2 text-xs" style="border-color: var(--preview-slack-border);">
+              <!-- Image URL with Instant Preview -->
+              <div class="space-y-1.5">
+                <label class="text-xs font-medium text-[var(--text-primary)]">Media Attachment (Image URL)</label>
                 <div class="flex items-center space-x-2">
-                  <i data-lucide="hash" class="w-3.5 h-3.5 text-slate-400"></i>
-                  <span class="font-bold">social</span>
-                  <span class="text-[10px] bg-brand-bg px-1.5 py-0.5 rounded text-brand-muted border border-brand-border">channel</span>
-                </div>
-                <div class="flex items-center space-x-2">
-                  <span class="font-mono text-[10px] text-brand-muted">C0C278R4PRD</span>
-                  <span class="text-[9px] bg-brand-accent/15 text-brand-accent px-1.5 py-0.5 rounded border border-brand-accent/30 font-mono">✨ AI mrkdwn</span>
-                </div>
-              </div>
-
-              <!-- Slack Message Body -->
-              <div class="flex items-start space-x-3 pt-1">
-                <div class="w-8 h-8 rounded bg-gradient-to-tr from-amber-500 to-amber-600 flex items-center justify-center font-bold text-xs text-white flex-shrink-0">
-                  FP
-                </div>
-                <div class="flex-1 space-y-1.5 text-xs">
-                  <div class="flex items-baseline space-x-1.5">
-                    <span class="font-bold">Fastn Publisher</span>
-                    <span class="text-[10px] bg-brand-bg border border-brand-border text-brand-muted px-1 rounded font-mono">APP</span>
-                    <span class="text-[10px] text-brand-muted">Today at 12:00 PM</span>
-                  </div>
-
-                  <!-- Header block -->
-                  <h4 id="prevSlackTitle" class="font-bold text-sm pt-1">FourFrontLab Hackathon Broadcast: Track 04 Live!</h4>
-
-                  <!-- Content block -->
-                  <p id="prevSlackContent" class="leading-relaxed whitespace-pre-wrap opacity-90">FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unified Context Layer! One post fans out to Slack, Discord, Facebook, and Google Sheets simultaneously with zero-drop fault isolation.</p>
-
-                  <!-- Link & Tags -->
-                  <div class="pt-1 space-y-0.5 text-brand-muted">
-                    <p id="prevSlackLink">🔗 <a href="#" class="text-blue-500 underline">https://fastn.ai</a></p>
-                    <p id="prevSlackTags" class="italic font-mono text-[11px]">*Tags:* _#fastn #hackathon #ai #automation_</p>
-                  </div>
-
-                  <!-- Slack Image Block -->
-                  <div id="prevSlackImgWrap" class="pt-2">
-                    <img id="prevSlackImg" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" alt="slack media" class="rounded-lg max-h-48 w-full object-cover border border-brand-border" />
+                  <input 
+                    id="composerImage" 
+                    type="url" 
+                    placeholder="https://images.unsplash.com/..." 
+                    value="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" 
+                    oninput="handleContentChange()" 
+                    class="flex-1 bg-[var(--bg)] border border-[var(--border)] focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] rounded-lg px-3 py-2 text-xs text-[var(--text-primary)] placeholder-slate-400 font-mono transition theme-transition"
+                  />
+                  <div id="thumbPreviewBox" class="w-9 h-9 rounded-lg border border-[var(--border)] bg-[var(--bg)] overflow-hidden flex-shrink-0 flex items-center justify-center theme-transition">
+                    <img id="thumbImg" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" alt="thumb" class="w-full h-full object-cover" />
                   </div>
                 </div>
               </div>
+
+              <!-- Platform Destination Toggles (In Scope Targets Only) -->
+              <div class="pt-3 border-t border-[var(--border)] space-y-2">
+                <label class="text-xs font-medium block text-[var(--text-primary)]">Target Publishing Destinations</label>
+                <div class="flex flex-wrap gap-3 w-full">
+                  
+                  <!-- Slack Toggle -->
+                  <label class="flex items-center justify-between p-2.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] hover:border-[var(--border-strong)] cursor-pointer transition theme-transition w-[calc(50%-6px)] sm:w-auto gap-2">
+                    <div class="flex items-center space-x-1.5 overflow-hidden">
+                      <span class="w-2 h-2 rounded-full bg-[var(--success)] flex-shrink-0"></span>
+                      <span class="text-xs font-medium truncate text-[var(--text-primary)]">Slack</span>
+                      <span class="text-[9px] font-mono px-1 py-0.2 rounded border bg-[var(--accent)]/10 border-[var(--accent)]/20 text-[var(--accent)]">mrkdwn</span>
+                    </div>
+                    <input type="checkbox" id="toggleSlack" checked onchange="handleContentChange()" class="accent-amber-500 cursor-pointer flex-shrink-0">
+                  </label>
+
+                  <!-- Discord Toggle -->
+                  <label class="flex items-center justify-between p-2.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] hover:border-[var(--border-strong)] cursor-pointer transition theme-transition w-[calc(50%-6px)] sm:w-auto gap-2">
+                    <div class="flex items-center space-x-1.5 overflow-hidden">
+                      <span class="w-2 h-2 rounded-full bg-[var(--success)] flex-shrink-0"></span>
+                      <span class="text-xs font-medium truncate text-[var(--text-primary)]">Discord</span>
+                      <span class="text-[9px] font-mono px-1 py-0.2 rounded border bg-[var(--accent)]/10 border-[var(--accent)]/20 text-[var(--accent)]">embed</span>
+                    </div>
+                    <input type="checkbox" id="toggleDiscord" checked onchange="handleContentChange()" class="accent-amber-500 cursor-pointer flex-shrink-0">
+                  </label>
+
+                  <!-- Facebook Toggle -->
+                  <label class="flex items-center justify-between p-2.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] hover:border-[var(--border-strong)] cursor-pointer transition theme-transition w-[calc(50%-6px)] sm:w-auto gap-2">
+                    <div class="flex items-center space-x-1.5 overflow-hidden">
+                      <span class="w-2 h-2 rounded-full bg-[var(--success)] flex-shrink-0"></span>
+                      <span class="text-xs font-medium truncate text-[var(--text-primary)]">Facebook</span>
+                      <span class="text-[9px] font-mono px-1 py-0.2 rounded border bg-[var(--accent)]/10 border-[var(--accent)]/20 text-[var(--accent)]">social</span>
+                    </div>
+                    <input type="checkbox" id="toggleFacebook" checked onchange="handleContentChange()" class="accent-amber-500 cursor-pointer flex-shrink-0">
+                  </label>
+
+                  <!-- Twitter / X Toggle -->
+                  <label id="toggleTwitterWrap" class="flex items-center justify-between p-2.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] hover:border-[var(--border-strong)] cursor-pointer transition theme-transition w-[calc(50%-6px)] sm:w-auto gap-2" title="OAuth 2.0 Connected (Sandboxed on 401)">
+                    <div class="flex items-center space-x-1.5 overflow-hidden">
+                      <span class="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0"></span>
+                      <span class="text-xs font-medium truncate text-[var(--text-primary)]">Twitter / X</span>
+                      <span class="text-[9px] font-mono px-1 py-0.2 rounded border bg-[var(--accent)]/10 border-[var(--accent)]/20 text-[var(--accent)] font-semibold">OAuth 2.0</span>
+                    </div>
+                    <input type="checkbox" id="toggleTwitter" checked onchange="handleContentChange()" class="accent-amber-500 cursor-pointer flex-shrink-0">
+                  </label>
+
+                  <!-- Mailchimp Toggle -->
+                  <label class="flex items-center justify-between p-2.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] hover:border-[var(--border-strong)] cursor-pointer transition theme-transition w-[calc(50%-6px)] sm:w-auto gap-2" title="Mailchimp Newsletter Campaign">
+                    <div class="flex items-center space-x-1.5 overflow-hidden">
+                      <span class="w-2 h-2 rounded-full bg-[var(--success)] flex-shrink-0"></span>
+                      <span class="text-xs font-medium truncate text-[var(--text-primary)]">🐵 Mailchimp</span>
+                      <span class="text-[9px] font-mono px-1 py-0.2 rounded border bg-[var(--accent)]/10 border-[var(--accent)]/20 text-[var(--accent)]">HTML</span>
+                    </div>
+                    <input type="checkbox" id="toggleMailchimp" checked onchange="handleContentChange()" class="accent-amber-500 cursor-pointer flex-shrink-0">
+                  </label>
+
+                  <!-- Google Sheets Toggle (Always Active) -->
+                  <div class="w-full flex items-center justify-between p-2.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-[var(--text-secondary)] theme-transition">
+                    <div class="flex items-center space-x-2">
+                      <span class="w-2 h-2 rounded-full bg-[var(--success)]"></span>
+                      <span class="text-xs font-medium text-[var(--text-primary)]">Google Sheets Audit Log</span>
+                      <span class="text-[11px] text-[var(--text-secondary)]">(Bi-directional persistence)</span>
+                    </div>
+                    <span class="text-[10px] font-mono text-[var(--accent)] font-semibold">AUTO-SYNC</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Collapsed Developer Tools & Resilience Controls Panel (Requirement 3) -->
+              <details class="group pt-3 border-t border-[var(--border)]">
+                <summary class="text-xs text-[var(--text-secondary)] cursor-pointer flex items-center justify-between hover:text-[var(--accent)] py-1.5 transition select-none">
+                  <div class="flex items-center space-x-2">
+                    <i data-lucide="settings-2" class="w-3.5 h-3.5"></i>
+                    <span class="font-medium">Developer Tools & Resilience Controls</span>
+                  </div>
+                  <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform duration-200 group-open:rotate-180"></i>
+                </summary>
+                <div class="pt-3 pb-1 space-y-3">
+                  <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 rounded-lg bg-[var(--bg)] border border-[var(--border)] theme-transition">
+                    <div class="flex items-center space-x-2">
+                      <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-[var(--text-secondary)]"></i>
+                      <span class="text-xs text-[var(--text-secondary)]">Resilience Sandbox:</span>
+                      <select id="composerFault" class="bg-[var(--surface)] border border-[var(--border)] text-xs font-mono rounded px-2.5 py-1.5 text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)] theme-transition">
+                        <option value="none">🟢 Normal Fan-Out (Pass)</option>
+                        <option id="faultOptTwitter" value="twitter">🔴 Inject Twitter 401 Unauthorized (Credits Depleted)</option>
+                        <option value="slack">🔴 Inject Slack 429 Rate Limit</option>
+                        <option value="discord">🔴 Inject Discord 404 Token Revoked</option>
+                      </select>
+                    </div>
+
+                    <!-- Deduplication Force Checkbox -->
+                    <label class="flex items-center space-x-1.5 text-xs text-[var(--text-secondary)] cursor-pointer">
+                      <input type="checkbox" id="forcePublishToggle" class="accent-amber-500">
+                      <span>Override Dedup Guard (force: true)</span>
+                    </label>
+                  </div>
+                </div>
+              </details>
+
+              <!-- Primary Dispatch CTA -->
+              <button 
+                id="btnPublishEverywhere" 
+                onclick="dispatchBroadcast()" 
+                class="w-full h-[44px] rounded-[8px] bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[#0B0E11] font-semibold text-xs tracking-wider uppercase transition shadow-md flex items-center justify-center space-x-2 cursor-pointer theme-transition"
+              >
+                <i data-lucide="send" class="w-4 h-4"></i>
+                <span>Publish Everywhere (Fastn Parallel Fan-Out)</span>
+              </button>
             </div>
 
-            <!-- 2. DISCORD EMBED CARD PREVIEW -->
-            <div id="cardPrev-discord" class="hidden space-y-3 rounded-xl p-4 theme-transition" style="background-color: var(--preview-discord-bg); border: 1px solid var(--preview-discord-border);">
-              <div class="flex items-center justify-between text-xs pb-2 border-b" style="border-color: var(--border-color);">
+            <!-- RIGHT PANE: MULTI-PLATFORM LIVE PREVIEWS (~45%) -->
+            <div class="w-full lg:w-[45%] bg-[var(--surface)] border border-[var(--border)] rounded-xl p-6 space-y-6 theme-transition">
+              <div class="flex items-center justify-between pb-3 border-b border-[var(--border)]">
+                <div class="flex items-center space-x-2">
+                  <i data-lucide="eye" class="w-4 h-4 text-[var(--text-secondary)]"></i>
+                  <h3 class="font-semibold text-sm text-[var(--text-primary)]">Live Platform Preview</h3>
+                </div>
+                
+                <!-- Preview Tab Switchers (Underline-style active state: 2px --accent bottom border) -->
+                <div class="flex items-center space-x-4 text-xs">
+                  <button id="tabBtn-slack" onclick="switchPreviewCard('slack')" class="pb-2 px-1 font-semibold text-[var(--text-primary)] border-b-2 border-[var(--accent)] transition">Slack</button>
+                  <button id="tabBtn-discord" onclick="switchPreviewCard('discord')" class="pb-2 px-1 font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] border-b-2 border-transparent transition">Discord</button>
+                  <button id="tabBtn-twitter" onclick="switchPreviewCard('twitter')" class="pb-2 px-1 font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] border-b-2 border-transparent transition">Twitter/X</button>
+                  <button id="tabBtn-facebook" onclick="switchPreviewCard('facebook')" class="pb-2 px-1 font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] border-b-2 border-transparent transition">Facebook</button>
+                  <button id="tabBtn-mailchimp" onclick="switchPreviewCard('mailchimp')" class="pb-2 px-1 font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] border-b-2 border-transparent transition">Mailchimp</button>
+                </div>
+              </div>
+
+              <!-- 1. SLACK MRKDWN CARD PREVIEW (Requirement 4 & 5) -->
+              <div id="cardPrev-slack" class="space-y-3 rounded-xl p-5 theme-transition" style="background-color: var(--preview-slack-bg); border: 1px solid var(--preview-slack-border); color: var(--preview-slack-text);">
+                <div class="flex items-center justify-between border-b pb-2 text-xs" style="border-color: var(--preview-slack-border);">
+                  <div class="flex items-center space-x-2">
+                    <i data-lucide="hash" class="w-3.5 h-3.5 text-slate-400"></i>
+                    <span class="font-bold">social</span>
+                    <span class="text-[10px] bg-[var(--bg)] px-1.5 py-0.5 rounded text-[var(--text-secondary)] border border-[var(--border)]">channel</span>
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <span class="font-mono text-[10px] text-[var(--text-secondary)]">C0C278R4PRD</span>
+                    <span class="text-[9px] bg-[var(--accent)]/15 text-[var(--accent)] px-1.5 py-0.5 rounded border border-[var(--accent)]/30 font-mono">✨ AI mrkdwn</span>
+                  </div>
+                </div>
+
+                <!-- Slack Message Body -->
+                <div class="flex items-start space-x-3 pt-1">
+                  <div class="w-8 h-8 rounded bg-gradient-to-tr from-amber-500 to-amber-600 flex items-center justify-center font-bold text-xs text-white flex-shrink-0">
+                    FP
+                  </div>
+                  <div class="flex-1 space-y-1.5 text-xs">
+                    <div class="flex items-baseline space-x-1.5">
+                      <span class="font-bold">Fastn Publisher</span>
+                      <span class="text-[10px] bg-[var(--bg)] border border-[var(--border)] text-[var(--text-secondary)] px-1 rounded font-mono">APP</span>
+                      <span class="text-[10px] text-[var(--text-secondary)]">Today at 12:00 PM</span>
+                    </div>
+
+                    <!-- Header block -->
+                    <h4 id="prevSlackTitle" class="font-bold text-sm pt-1">FourFrontLab Hackathon Broadcast: Track 04 Live!</h4>
+
+                    <!-- Content block -->
+                    <p id="prevSlackContent" class="leading-relaxed whitespace-pre-wrap opacity-90">FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unified Context Layer! One post fans out to Slack, Discord, Facebook, and Google Sheets simultaneously with zero-drop fault isolation.</p>
+
+                    <!-- Link & Tags with target="_blank" -->
+                    <div class="pt-1 space-y-0.5 text-[var(--text-secondary)]">
+                      <p id="prevSlackLink">🔗 <a id="prevSlackLinkAnchor" href="https://fastn.ai" target="_blank" rel="noopener noreferrer" class="text-blue-500 underline">https://fastn.ai</a></p>
+                      <p id="prevSlackTags" class="italic font-mono text-[11px]">*Tags:* _#fastn #hackathon #ai #automation_</p>
+                    </div>
+
+                    <!-- Slack Image Block -->
+                    <div id="prevSlackImgWrap" class="pt-2">
+                      <img id="prevSlackImg" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" alt="slack media" class="rounded-lg max-h-48 w-full object-cover border border-[var(--border)]" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            <!-- 2. DISCORD EMBED CARD PREVIEW (Requirement 4 & 5) -->
+            <div id="cardPrev-discord" class="hidden space-y-3 rounded-xl p-5 theme-transition" style="background-color: var(--preview-discord-bg); border: 1px solid var(--preview-discord-border);">
+              <div class="flex items-center justify-between text-xs pb-2 border-b border-[var(--border)]">
                 <div class="flex items-center space-x-2">
                   <div class="w-6 h-6 rounded-full bg-[#5865F2] flex items-center justify-center font-bold text-[10px] text-white">
                     D
                   </div>
-                  <span class="font-bold" style="color: var(--text-primary);">Fastn Bot</span>
+                  <span class="font-bold text-[var(--text-primary)]">Fastn Bot</span>
                   <span class="text-[10px] bg-[#5865F2] text-white px-1 rounded font-semibold">BOT</span>
-                  <span class="text-[10px] text-brand-muted">Today at 12:00 PM</span>
+                  <span class="text-[10px] text-[var(--text-secondary)]">Today at 12:00 PM</span>
                 </div>
-                <span class="text-[9px] bg-brand-accent/15 text-brand-accent px-1.5 py-0.5 rounded border border-brand-accent/30 font-mono">✨ AI Embed</span>
+                <span class="text-[9px] bg-[var(--accent)]/15 text-[var(--accent)] px-1.5 py-0.5 rounded border border-[var(--accent)]/30 font-mono">✨ AI Embed</span>
               </div>
 
               <!-- Embed with #5865F2 Left Accent Border -->
-              <div class="border-l-4 border-[#5865F2] rounded p-3 space-y-2 text-xs theme-transition" style="background-color: var(--bg-panel); border-right: 1px solid var(--border-color); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
-                <a id="prevDiscordTitle" href="#" class="font-bold text-sm text-[#00A8FC] hover:underline block">FourFrontLab Hackathon Broadcast: Track 04 Live!</a>
-                <p id="prevDiscordContent" class="leading-relaxed" style="color: var(--text-primary); opacity: 0.9;">FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unified Context Layer! One post fans out to Slack, Discord, Facebook, and Google Sheets simultaneously with zero-drop fault isolation.</p>
+              <div class="border-l-4 border-[#5865F2] rounded p-3 space-y-2 text-xs theme-transition bg-[var(--surface-raised)] border border-[var(--border)]">
+                <a id="prevDiscordTitle" href="https://fastn.ai" target="_blank" rel="noopener noreferrer" class="font-bold text-sm text-[#00A8FC] hover:underline block">FourFrontLab Hackathon Broadcast: Track 04 Live!</a>
+                <p id="prevDiscordContent" class="leading-relaxed text-[var(--text-primary)] opacity-90">FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unified Context Layer! One post fans out to Slack, Discord, Facebook, and Google Sheets simultaneously with zero-drop fault isolation.</p>
                 
                 <div class="grid grid-cols-2 gap-2 pt-1">
                   <div>
-                    <span class="text-[10px] font-bold uppercase text-brand-muted block">🏷️ Tags</span>
-                    <span id="prevDiscordTags" class="text-[11px] font-mono" style="color: var(--text-primary);">#fastn #hackathon</span>
+                    <span class="text-[10px] font-bold uppercase text-[var(--text-secondary)] block">🏷️ Tags</span>
+                    <span id="prevDiscordTags" class="text-[11px] font-mono text-[var(--text-primary)]">#fastn #hackathon</span>
                   </div>
                   <div>
-                    <span class="text-[10px] font-bold uppercase text-brand-muted block">🔗 Source</span>
-                    <a id="prevDiscordLink" href="#" class="text-[11px] text-[#00A8FC] underline block">https://fastn.ai</a>
+                    <span class="text-[10px] font-bold uppercase text-[var(--text-secondary)] block">🔗 Source</span>
+                    <a id="prevDiscordLink" href="https://fastn.ai" target="_blank" rel="noopener noreferrer" class="text-[11px] text-[#00A8FC] underline block">https://fastn.ai</a>
                   </div>
                 </div>
 
@@ -620,30 +668,30 @@
                   <img id="prevDiscordImg" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" alt="discord media" class="rounded max-h-48 w-full object-cover" />
                 </div>
 
-                <div class="text-[10px] text-brand-muted pt-1 border-t border-brand-border">
+                <div class="text-[10px] text-[var(--text-secondary)] pt-1 border-t border-[var(--border)]">
                   Published via Fastn Cross-Platform Engine • Track 04
                 </div>
               </div>
             </div>
 
-            <!-- 3. TWITTER / X CARD PREVIEW -->
-            <div id="cardPrev-twitter" class="hidden space-y-3 rounded-xl p-4 theme-transition" style="background-color: var(--preview-twitter-bg); border: 1px solid var(--preview-twitter-border); color: var(--text-primary);">
+            <!-- 3. TWITTER / X CARD PREVIEW (Requirement 4 & 5) -->
+            <div id="cardPrev-twitter" class="hidden space-y-3 rounded-xl p-5 theme-transition" style="background-color: var(--preview-twitter-bg); border: 1px solid var(--preview-twitter-border); color: var(--text-primary);">
               <div class="flex items-start space-x-3 text-xs">
-                <div class="w-9 h-9 rounded-full bg-brand-bg border border-brand-border flex items-center justify-center font-bold text-xs text-brand-accent flex-shrink-0">
+                <div class="w-9 h-9 rounded-full bg-[var(--bg)] border border-[var(--border)] flex items-center justify-center font-bold text-xs text-[var(--accent)] flex-shrink-0">
                   𝕏
                 </div>
                 <div class="flex-1 space-y-1">
                   <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-1.5">
                       <span class="font-bold text-sm">FourFrontLab</span>
-                      <span class="text-brand-muted">@FourFrontLab</span>
-                      <span class="text-brand-muted">· Just now</span>
+                      <span class="text-[var(--text-secondary)]">@FourFrontLab</span>
+                      <span class="text-[var(--text-secondary)]">· Just now</span>
                     </div>
-                    <span class="text-[9px] bg-brand-accent/15 text-brand-accent px-1.5 py-0.5 rounded border border-brand-accent/30 font-mono">✨ AI &le;280</span>
+                    <span class="text-[9px] bg-[var(--accent)]/15 text-[var(--accent)] px-1.5 py-0.5 rounded border border-[var(--accent)]/30 font-mono">✨ AI &le;280</span>
                   </div>
 
                   <!-- Truncated 280-char Tweet -->
-                  <p id="prevTwitterText" class="text-xs leading-relaxed whitespace-pre-wrap opacity-90">FourFrontLab Hackathon Broadcast: Track 04 Live!
+                  <p id="prevTwitterText" class="text-xs leading-relaxed whitespace-pre-wrap opacity-90 text-[var(--text-primary)]">🚀 FourFrontLab Hackathon Broadcast: Track 04 Live!
 
 FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unified Context Layer!
 
@@ -651,11 +699,11 @@ https://fastn.ai
 #fastn #hackathon #ai</p>
 
                   <div id="prevTwitterImgWrap" class="pt-2">
-                    <img id="prevTwitterImg" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" alt="tweet media" class="rounded-xl max-h-48 w-full object-cover border border-brand-border" />
+                    <img id="prevTwitterImg" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" alt="tweet media" class="rounded-xl max-h-48 w-full object-cover border border-[var(--border)]" />
                   </div>
 
                   <!-- Twitter Mock Action Bar -->
-                  <div class="flex items-center justify-between text-brand-muted pt-3 text-[11px] max-w-xs">
+                  <div class="flex items-center justify-between text-[var(--text-secondary)] pt-3 text-[11px] max-w-xs">
                     <span class="flex items-center space-x-1"><i data-lucide="message-circle" class="w-3.5 h-3.5"></i> <span>12</span></span>
                     <span class="flex items-center space-x-1"><i data-lucide="repeat" class="w-3.5 h-3.5"></i> <span>28</span></span>
                     <span class="flex items-center space-x-1"><i data-lucide="heart" class="w-3.5 h-3.5"></i> <span>84</span></span>
@@ -665,23 +713,94 @@ https://fastn.ai
               </div>
             </div>
 
-            <!-- 4. FACEBOOK CARD PREVIEW -->
-            <div id="cardPrev-facebook" class="hidden space-y-3 rounded-xl p-4 theme-transition" style="background-color: var(--preview-fb-bg); border: 1px solid var(--preview-fb-border); color: var(--text-primary);">
-              <div class="flex items-center justify-between text-xs pb-2">
+            <!-- 4. FACEBOOK CARD PREVIEW (Requirement 4 & 5) -->
+            <div id="cardPrev-facebook" class="hidden space-y-3 rounded-xl p-5 theme-transition" style="background-color: var(--preview-fb-bg); border: 1px solid var(--preview-fb-border); color: var(--text-primary);">
+              <div class="flex items-center justify-between text-xs pb-2 border-b border-[var(--border)]">
                 <div class="flex items-center space-x-2">
                   <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center font-bold text-xs text-white">
                     f
                   </div>
                   <div>
                     <h5 class="font-bold text-xs">FourFrontLab</h5>
-                    <span class="text-[10px] text-brand-muted">Sponsored / Relay • Just now</span>
+                    <span class="text-[10px] text-[var(--text-secondary)]">Sponsored / Relay • Just now</span>
                   </div>
                 </div>
-                <span class="text-[9px] bg-brand-accent/15 text-brand-accent px-1.5 py-0.5 rounded border border-brand-accent/30 font-mono">✨ AI Story</span>
+                <span class="text-[9px] bg-[var(--accent)]/15 text-[var(--accent)] px-1.5 py-0.5 rounded border border-[var(--accent)]/30 font-mono">✨ AI Story</span>
               </div>
-              <p id="prevFbText" class="text-xs leading-relaxed opacity-90">FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unified Context Layer! One post fans out to Slack, Discord, Facebook, and Google Sheets simultaneously.</p>
+              <p id="prevFbText" class="text-xs leading-relaxed opacity-90 text-[var(--text-primary)]">FourFrontLab Update 📢
+
+FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unified Context Layer! One post fans out to Slack, Discord, Facebook, and Google Sheets simultaneously.</p>
+              
+              <!-- Canonical Link with target="_blank" -->
+              <div class="pt-1 text-xs">
+                <a id="prevFbLink" href="https://fastn.ai" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline flex items-center space-x-1">
+                  <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                  <span id="prevFbLinkText">https://fastn.ai</span>
+                </a>
+              </div>
+
               <div id="prevFbImgWrap" class="pt-1">
-                <img id="prevFbImg" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" alt="fb media" class="rounded max-h-48 w-full object-cover border border-brand-border" />
+                <img id="prevFbImg" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" alt="fb media" class="rounded max-h-48 w-full object-cover border border-[var(--border)]" />
+              </div>
+            </div>
+
+            <!-- 5. MAILCHIMP HTML EMAIL PREVIEW (Requirement 2) -->
+            <div id="cardPrev-mailchimp" class="hidden space-y-3 rounded-xl p-5 theme-transition" style="background-color: var(--surface-raised); border: 1px solid var(--border); color: var(--text-primary);">
+              <!-- Email Envelope Header -->
+              <div class="p-3 rounded-lg border border-[var(--border)] text-xs space-y-1.5 theme-transition bg-[var(--surface)]">
+                <div class="flex items-center justify-between text-[11px]">
+                  <div class="flex items-center space-x-1.5 text-[var(--text-secondary)]">
+                    <span class="font-semibold text-[var(--text-secondary)]">From:</span>
+                    <span class="font-mono text-[var(--text-primary)]">FourFrontLab &lt;newsletter@fourfrontlab.com&gt;</span>
+                  </div>
+                  <span class="text-[9px] bg-amber-500/15 text-amber-500 px-1.5 py-0.5 rounded border border-amber-500/30 font-mono font-semibold">🐵 HTML Email</span>
+                </div>
+                <div class="flex items-center space-x-1.5 text-[11px]">
+                  <span class="font-semibold text-[var(--text-secondary)]">Subject:</span>
+                  <span id="prevMailchimpSubject" class="font-bold text-[var(--text-primary)]">FourFrontLab Hackathon Broadcast: Track 04 Live!</span>
+                </div>
+                <div class="flex items-center justify-between text-[10px] text-[var(--text-secondary)] pt-0.5 border-t border-[var(--border)]">
+                  <span>Audience: <span class="text-[var(--text-secondary)]">Fastn Community (6e0acf71ff)</span></span>
+                  <span class="font-mono">Campaign Draft</span>
+                </div>
+              </div>
+
+              <!-- Email Template Canvas -->
+              <div class="rounded-xl border border-[var(--border)] overflow-hidden shadow-sm theme-transition bg-[var(--surface)]">
+                <!-- Newsletter Header Banner -->
+                <div class="bg-gradient-to-r from-amber-500/20 via-amber-600/10 to-amber-600/20 px-4 py-3 border-b border-[var(--border)] flex items-center justify-between">
+                  <div class="flex items-center space-x-2">
+                    <span class="text-base">🐵</span>
+                    <span class="font-bold text-xs tracking-wider uppercase text-[var(--text-primary)]">FourFrontLab Dispatch</span>
+                  </div>
+                  <span class="text-[10px] font-mono text-[var(--text-secondary)] uppercase">Issue #4</span>
+                </div>
+
+                <!-- Email Body Content -->
+                <div class="p-4 space-y-3 text-xs">
+                  <h4 id="prevMailchimpTitle" class="font-bold text-base leading-snug text-[var(--text-primary)]">FourFrontLab Hackathon Broadcast: Track 04 Live!</h4>
+
+                  <!-- Email Image -->
+                  <div id="prevMailchimpImgWrap" class="pt-1">
+                    <img id="prevMailchimpImg" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" alt="email media" class="rounded-lg max-h-48 w-full object-cover border border-[var(--border)]" />
+                  </div>
+
+                  <div id="prevMailchimpContent" class="leading-relaxed whitespace-pre-wrap opacity-90 text-xs text-[var(--text-primary)]">FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unified Context Layer! One post fans out to Slack, Discord, Facebook, Mailchimp, and Google Sheets simultaneously with zero-drop fault isolation.</div>
+
+                  <!-- Styled Email CTA Button -->
+                  <div class="pt-2 pb-1 text-center">
+                    <a id="prevMailchimpCta" href="https://fastn.ai" target="_blank" rel="noopener noreferrer" class="inline-block px-6 py-2.5 rounded-[8px] bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[#0B0E11] font-semibold text-xs tracking-wide uppercase transition shadow-md">
+                      Read Full Announcement &rarr;
+                    </a>
+                  </div>
+
+                  <!-- Email Footer -->
+                  <div class="pt-3 border-t border-[var(--border)] text-center space-y-1 text-[10px] text-[var(--text-secondary)]">
+                    <p id="prevMailchimpTags" class="font-mono text-[10px]">Tags: #fastn #hackathon #ai #automation</p>
+                    <p>You received this email because you are subscribed to FourFrontLab updates.</p>
+                    <p class="text-[9px]"><span class="underline cursor-pointer">Unsubscribe</span> &bull; <span class="underline cursor-pointer">Update Preferences</span> &bull; <span class="underline cursor-pointer">View in Browser</span></p>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -692,231 +811,189 @@ https://fastn.ai
       <!-- ===================================================================== -->
       <!-- VIEW 2: DELIVERY & RESILIENCE MONITOR                                -->
       <!-- ===================================================================== -->
-      <div id="view-monitor" class="hidden space-y-6 max-w-7xl mx-auto">
+      <div id="view-monitor" class="hidden space-y-12">
         
         <!-- Overall Status Banner -->
-        <div id="monitorOverallBanner" class="p-4 rounded-xl border text-xs flex items-center justify-between theme-transition" style="background-color: var(--card-inner-bg); border-color: var(--border-color);">
+        <div id="monitorOverallBanner" class="p-4 rounded-xl border border-[var(--border)] text-xs flex items-center justify-between theme-transition bg-[var(--surface-raised)]">
           <div class="flex items-center space-x-3">
-            <div id="monBannerIconWrap" class="w-8 h-8 rounded-lg flex items-center justify-center text-brand-muted flex-shrink-0" style="background-color: var(--bg-panel); border: 1px solid var(--border-color);">
-              <i data-lucide="radio" class="w-5 h-5"></i>
+            <div id="monBannerIconWrap" class="w-8 h-8 rounded-lg flex items-center justify-center text-[var(--text-secondary)] flex-shrink-0 bg-[var(--surface)] border border-[var(--border)]">
+              <i data-lucide="radio" class="w-4 h-4"></i>
             </div>
             <div>
-              <h4 id="monBannerTitle" class="font-bold text-sm" style="color: var(--text-primary);">Broadcast Engine: Standing By</h4>
-              <p id="monBannerDesc" class="text-xs opacity-90" style="color: var(--text-secondary);">Ready for multi-channel fan-out via Fastn MCP Gateway. Dispatch from the Composer to view live delivery telemetry.</p>
+              <h4 id="monBannerTitle" class="font-bold text-sm text-[var(--text-primary)]">Broadcast Engine: Standing By</h4>
+              <p id="monBannerDesc" class="text-xs text-[var(--text-secondary)] opacity-90">Ready for multi-channel fan-out via Fastn MCP Gateway. Dispatch from the Composer to view live delivery telemetry.</p>
             </div>
           </div>
-          <span id="monExecTimeBadge" class="font-mono text-xs px-2.5 py-1 rounded bg-brand-bg border border-brand-border text-brand-muted">Awaiting Broadcast</span>
+          <span id="monExecTimeBadge" class="font-mono text-xs px-2.5 py-1 rounded bg-[var(--bg)] border border-[var(--border)] text-[var(--text-secondary)]">Awaiting Broadcast</span>
         </div>
 
-        <!-- Top Metrics Summary Strip (Small Stat Cards) -->
+        <!-- Top Metrics Summary Strip (Small Stat Cards: 4 columns, 16px gap, 20px padding, 8px radius, 36px/700 number, 12px/500 label) -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div class="bg-brand-panel border border-brand-border rounded-xl p-4 theme-transition">
-            <span class="text-[11px] font-medium text-brand-muted block">Channels Dispatched</span>
-            <div class="flex items-baseline space-x-2 mt-1">
-              <span id="statChannelsDispatched" class="text-xl font-bold" style="color: var(--text-primary);">0</span>
-              <span class="text-[10px] text-brand-muted">Destinations</span>
+          <div class="bg-[var(--surface)] border border-[var(--border)] rounded-[8px] p-5 theme-transition">
+            <span class="text-[12px] font-medium uppercase tracking-[0.04em] text-[var(--text-secondary)] block">Channels Dispatched</span>
+            <div class="flex items-baseline space-x-2 mt-2">
+              <span id="statChannelsDispatched" class="text-[36px] font-bold leading-none text-[var(--text-primary)]">0</span>
+              <span class="text-[10px] text-[var(--text-secondary)] font-medium">Destinations</span>
             </div>
           </div>
 
-          <div class="bg-brand-panel border border-brand-border rounded-xl p-4 theme-transition">
-            <span class="text-[11px] font-medium text-brand-muted block">Success Rate</span>
-            <div class="flex items-baseline space-x-2 mt-1">
-              <span id="statSuccessRate" class="text-xl font-bold text-brand-muted">—</span>
-              <span class="text-[10px] text-brand-muted">Primary SLA</span>
+          <div class="bg-[var(--surface)] border border-[var(--border)] rounded-[8px] p-5 theme-transition">
+            <span class="text-[12px] font-medium uppercase tracking-[0.04em] text-[var(--text-secondary)] block">Success Rate</span>
+            <div class="flex items-baseline space-x-2 mt-2">
+              <span id="statSuccessRate" class="text-[36px] font-bold leading-none text-[var(--text-secondary)]">—</span>
+              <span class="text-[10px] text-[var(--text-secondary)] font-medium">Primary SLA</span>
             </div>
           </div>
 
-          <div class="bg-brand-panel border border-brand-border rounded-xl p-4 theme-transition">
-            <span class="text-[11px] font-medium text-brand-muted block">Failures Isolated</span>
-            <div class="flex items-baseline space-x-2 mt-1">
-              <span id="statFailuresIsolated" class="text-xl font-bold text-brand-muted">0</span>
-              <span class="text-[10px] text-brand-muted">Sandboxed</span>
+          <div class="bg-[var(--surface)] border border-[var(--border)] rounded-[8px] p-5 theme-transition">
+            <span class="text-[12px] font-medium uppercase tracking-[0.04em] text-[var(--text-secondary)] block">Failures Isolated</span>
+            <div class="flex items-baseline space-x-2 mt-2">
+              <span id="statFailuresIsolated" class="text-[36px] font-bold leading-none text-[var(--text-secondary)]">0</span>
+              <span class="text-[10px] text-[var(--text-secondary)] font-medium">Sandboxed</span>
             </div>
           </div>
 
-          <div class="bg-brand-panel border border-brand-border rounded-xl p-4 theme-transition">
-            <span class="text-[11px] font-medium text-brand-muted block">Fan-Out Latency</span>
-            <div class="flex items-baseline space-x-2 mt-1">
-              <span id="statLatency" class="text-xl font-bold font-mono" style="color: var(--text-primary);">0ms</span>
-              <span class="text-[10px] text-brand-muted">Promise.all</span>
+          <div class="bg-[var(--surface)] border border-[var(--border)] rounded-[8px] p-5 theme-transition">
+            <span class="text-[12px] font-medium uppercase tracking-[0.04em] text-[var(--text-secondary)] block">Fan-Out Latency</span>
+            <div class="flex items-baseline space-x-2 mt-2">
+              <span id="statLatency" class="text-[36px] font-bold leading-none font-mono text-[var(--text-primary)]">0ms</span>
+              <span class="text-[10px] text-[var(--text-secondary)] font-medium">Promise.all</span>
             </div>
           </div>
         </div>
 
-        <!-- Per-Platform Result Cards Grid -->
-        <div class="space-y-3">
-          <h3 class="text-xs font-semibold uppercase tracking-wider text-brand-muted">Channel Delivery Matrix</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Per-Platform Result Cards Grid (5-State Vocabulary: Requirements 8 & 9) -->
+        <div class="space-y-6">
+          <h3 class="text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--text-secondary)]">Channel Delivery Matrix</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-fr items-stretch">
             
-            <!-- Slack Card -->
-            <div class="bg-brand-panel border border-brand-border rounded-xl p-4 space-y-3 theme-transition">
+            <!-- 1. Slack Card -->
+            <div class="bg-[var(--surface)] border border-[var(--border)] rounded-[10px] p-6 space-y-4 flex flex-col justify-between theme-transition">
               <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2">
-                  <span id="cardDotSlack" class="w-2.5 h-2.5 rounded-full bg-brand-muted"></span>
-                  <span class="font-bold text-xs" style="color: var(--text-primary);">Slack</span>
+                  <span id="cardDotSlack" class="w-2 h-2 rounded-full bg-[var(--text-tertiary)] flex-shrink-0"></span>
+                  <span class="text-[15px] font-semibold text-[var(--text-primary)]">Slack</span>
                 </div>
-                <span id="cardBadgeSlack" class="text-[10px] font-mono px-2 py-0.5 rounded border bg-brand-bg border-brand-border text-brand-muted">IDLE</span>
+                <span id="cardBadgeSlack" class="h-6 px-2.5 rounded-[6px] text-[12px] font-semibold font-mono inline-flex items-center justify-center border bg-[var(--bg)] border-[var(--border)] text-[var(--text-secondary)]">Ready</span>
               </div>
-              <div class="space-y-1 text-xs font-mono">
-                <div class="text-brand-muted text-[11px]">Channel: <span style="color: var(--text-primary);">#social (C0C278R4PRD)</span></div>
-                <div class="text-brand-muted text-[11px]">Timestamp: <span id="cardTsSlack" style="color: var(--text-secondary);">None</span></div>
+              <div class="space-y-2 text-[13px] font-mono flex-1">
+                <div class="text-[var(--text-secondary)]">Channel: <span class="text-[var(--text-primary)]">#social (C0C278R4PRD)</span></div>
+                <div class="text-[var(--text-secondary)]">Timestamp: <span id="cardTsSlack" class="text-[var(--text-secondary)]">Awaiting dispatch</span></div>
               </div>
-              <a id="cardLinkSlack" href="https://fourfrontlab.slack.com/archives/C0C278R4PRD" target="_blank" class="block text-center py-1.5 text-xs font-medium text-brand-accent bg-brand-bg hover:bg-brand-panelHover border border-brand-border rounded-lg transition theme-transition">
+              <a id="cardLinkSlack" href="#" aria-disabled="true" class="w-full h-10 rounded-[8px] flex items-center justify-center text-xs font-semibold transition theme-transition opacity-40 cursor-not-allowed bg-[var(--surface-raised)]/40 text-[var(--text-tertiary)] pointer-events-none mt-auto">
                 View in Slack
               </a>
             </div>
 
-            <!-- Discord Card -->
-            <div class="bg-brand-panel border border-brand-border rounded-xl p-4 space-y-3 theme-transition">
+            <!-- 2. Discord Card -->
+            <div class="bg-[var(--surface)] border border-[var(--border)] rounded-[10px] p-6 space-y-4 flex flex-col justify-between theme-transition">
               <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2">
-                  <span id="cardDotDiscord" class="w-2.5 h-2.5 rounded-full bg-brand-muted"></span>
-                  <span class="font-bold text-xs" style="color: var(--text-primary);">Discord</span>
+                  <span id="cardDotDiscord" class="w-2 h-2 rounded-full bg-[var(--text-tertiary)] flex-shrink-0"></span>
+                  <span class="text-[15px] font-semibold text-[var(--text-primary)]">Discord</span>
                 </div>
-                <span id="cardBadgeDiscord" class="text-[10px] font-mono px-2 py-0.5 rounded border bg-brand-bg border-brand-border text-brand-muted">IDLE</span>
+                <span id="cardBadgeDiscord" class="h-6 px-2.5 rounded-[6px] text-[12px] font-semibold font-mono inline-flex items-center justify-center border bg-[var(--bg)] border-[var(--border)] text-[var(--text-secondary)]">Ready</span>
               </div>
-              <div class="space-y-1 text-xs font-mono">
-                <div class="text-brand-muted text-[11px]">Type: <span style="color: var(--text-primary);">Webhook Embed Card</span></div>
-                <div class="text-brand-muted text-[11px]">Message ID: <span id="cardIdDiscord" style="color: var(--text-secondary);">None</span></div>
+              <div class="space-y-2 text-[13px] font-mono flex-1">
+                <div class="text-[var(--text-secondary)]">Type: <span class="text-[var(--text-primary)]">Webhook Embed Card</span></div>
+                <div class="text-[var(--text-secondary)]">Message ID: <span id="cardIdDiscord" class="text-[var(--text-secondary)]">Awaiting dispatch</span></div>
               </div>
-              <a id="cardLinkDiscord" href="https://discord.com/channels/@me" target="_blank" class="block text-center py-1.5 text-xs font-medium text-brand-accent bg-brand-bg hover:bg-brand-panelHover border border-brand-border rounded-lg transition theme-transition">
+              <a id="cardLinkDiscord" href="#" aria-disabled="true" class="w-full h-10 rounded-[8px] flex items-center justify-center text-xs font-semibold transition theme-transition opacity-40 cursor-not-allowed bg-[var(--surface-raised)]/40 text-[var(--text-tertiary)] pointer-events-none mt-auto">
                 View in Discord
               </a>
             </div>
 
-            <!-- Facebook Card -->
-            <div class="bg-brand-panel border border-brand-border rounded-xl p-4 space-y-3 theme-transition">
+            <!-- 3. Facebook Card -->
+            <div class="bg-[var(--surface)] border border-[var(--border)] rounded-[10px] p-6 space-y-4 flex flex-col justify-between theme-transition">
               <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2">
-                  <span id="cardDotFacebook" class="w-2.5 h-2.5 rounded-full bg-brand-muted"></span>
-                  <span class="font-bold text-xs" style="color: var(--text-primary);">Facebook</span>
+                  <span id="cardDotFacebook" class="w-2 h-2 rounded-full bg-[var(--text-tertiary)] flex-shrink-0"></span>
+                  <span class="text-[15px] font-semibold text-[var(--text-primary)]">Facebook</span>
                 </div>
-                <span id="cardBadgeFacebook" class="text-[10px] font-mono px-2 py-0.5 rounded border bg-brand-bg border-brand-border text-brand-muted">IDLE</span>
+                <span id="cardBadgeFacebook" class="h-6 px-2.5 rounded-[6px] text-[12px] font-semibold font-mono inline-flex items-center justify-center border bg-[var(--bg)] border-[var(--border)] text-[var(--text-secondary)]">Ready</span>
               </div>
-              <div class="space-y-1 text-xs font-mono">
-                <div class="text-brand-muted text-[11px]">Relay: <span style="color: var(--text-primary);">Make.com Webhook Relay</span></div>
-                <div class="text-brand-muted text-[11px]">Relay ID: <span id="cardIdFacebook" style="color: var(--text-secondary);">None</span></div>
+              <div class="space-y-2 text-[13px] font-mono flex-1">
+                <div class="text-[var(--text-secondary)]">API: <span class="text-[var(--text-primary)]">Meta Graph API v21.0</span></div>
+                <div class="text-[var(--text-secondary)]">Post ID: <span id="cardIdFacebook" class="text-[var(--text-secondary)]">Awaiting dispatch</span></div>
               </div>
-              <a href="https://facebook.com" target="_blank" class="block text-center py-1.5 text-xs font-medium text-brand-accent bg-brand-bg hover:bg-brand-panelHover border border-brand-border rounded-lg transition theme-transition">
-                View Page Feed
+              <a id="cardLinkFacebook" href="#" aria-disabled="true" class="w-full h-10 rounded-[8px] flex items-center justify-center text-xs font-semibold transition theme-transition opacity-40 cursor-not-allowed bg-[var(--surface-raised)]/40 text-[var(--text-tertiary)] pointer-events-none mt-auto">
+                View in Facebook
               </a>
             </div>
 
-
-            <!-- GitHub Audit Sync Card -->
-            <div id="cardGitHubWrap" class="bg-brand-panel border border-brand-border rounded-xl p-4 space-y-3 theme-transition">
+            <!-- 4. Twitter / X Card (Consistent 401 Reason: Requirement 2) -->
+            <div id="cardTwitterWrap" class="bg-[var(--surface)] border border-[var(--border)] rounded-[10px] p-6 space-y-4 flex flex-col justify-between theme-transition">
               <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2">
-                  <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor">
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
-                  </svg>
-                  <span class="font-bold text-xs" style="color: var(--text-primary);">GitHub Audit</span>
+                  <span id="cardDotTwitter" class="w-2 h-2 rounded-full bg-[var(--danger)] flex-shrink-0"></span>
+                  <span class="text-[15px] font-semibold text-[var(--text-primary)]">Twitter / X</span>
                 </div>
-                <span id="cardBadgeGitHub" class="text-[10px] font-mono px-2 py-0.5 rounded border text-brand-success bg-brand-success/15 border-brand-success/30">ACTIVE SYNC</span>
+                <span id="cardBadgeTwitter" class="h-6 px-2.5 rounded-[6px] text-[12px] font-semibold font-mono inline-flex items-center justify-center border text-[var(--danger)]" style="background-color: var(--danger-bg); border-color: var(--danger);">Failed</span>
               </div>
-              <div class="space-y-1 text-xs font-mono">
-                <div class="text-brand-muted text-[11px]">Repo: <span style="color: var(--text-primary);">MTahaNadeem/Fastn-Hackathon</span></div>
-                <div class="text-brand-muted text-[11px]">Commit: <span id="cardCommitGitHub" class="text-brand-accent">Auto-Logged</span></div>
-                <div class="text-brand-muted text-[11px]">Audit File: <span class="text-emerald-400">logs/ACTIVITY_LOG.md</span></div>
+              <div class="space-y-2 text-[13px] font-mono flex-1">
+                <div class="text-[var(--text-secondary)]">Auth: <span class="text-[var(--text-primary)]">OAuth 2.0 Bearer</span></div>
+                <div class="text-[var(--text-secondary)]">Error: <span id="cardStatusTwitter" class="text-[var(--danger)]">X API 401: Unauthorized (Free-tier credits depleted)</span></div>
+                <div class="text-[var(--text-secondary)]">Isolation: <span class="text-[var(--success)]">Zero-Drop (Other Channels OK)</span></div>
               </div>
-              <a id="cardLinkGitHub" href="https://github.com/MTahaNadeem/Fastn-Hackathon/blob/main/logs/ACTIVITY_LOG.md" target="_blank" class="block text-center py-1.5 text-xs font-medium text-brand-accent bg-brand-bg hover:bg-brand-panelHover border border-brand-border rounded-lg transition theme-transition">
-                View Audit on GitHub
+              <a id="cardLinkTwitter" href="#" aria-disabled="true" class="w-full h-10 rounded-[8px] flex items-center justify-center text-xs font-semibold transition theme-transition opacity-40 cursor-not-allowed bg-[var(--surface-raised)]/40 text-[var(--text-tertiary)] pointer-events-none mt-auto">
+                View on X
               </a>
             </div>
 
-            <!-- Twitter / X Card -->
-            <div id="cardTwitterWrap" class="bg-brand-panel border border-brand-border rounded-xl p-4 space-y-3 theme-transition">
+            <!-- 5. Mailchimp Card (Newsletter Campaign: Requirement 2) -->
+            <div class="bg-[var(--surface)] border border-[var(--border)] rounded-[10px] p-6 space-y-4 flex flex-col justify-between theme-transition">
               <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2">
-                  <span id="cardDotTwitter" class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
-                  <span class="font-bold text-xs" style="color: var(--text-primary);">Twitter / X</span>
+                  <span id="cardDotMailchimp" class="w-2 h-2 rounded-full bg-[var(--text-tertiary)] flex-shrink-0"></span>
+                  <span class="text-[15px] font-semibold text-[var(--text-primary)]">Mailchimp</span>
                 </div>
-                <span id="cardBadgeTwitter" class="text-[10px] font-mono px-2 py-0.5 rounded border text-brand-accent" style="background-color: var(--accent-bg); border-color: var(--accent-border);">SANDBOXED</span>
+                <span id="cardBadgeMailchimp" class="h-6 px-2.5 rounded-[6px] text-[12px] font-semibold font-mono inline-flex items-center justify-center border bg-[var(--bg)] border-[var(--border)] text-[var(--text-secondary)]">Ready</span>
               </div>
-              <div class="space-y-1 text-xs font-mono">
-                <div class="text-brand-muted text-[11px]">Auth: <span class="text-emerald-400">OAuth 2.0 Bearer</span></div>
-                <div class="text-brand-muted text-[11px]">Status: <span id="cardStatusTwitter" class="text-amber-400">403 (Missing tweet.write)</span></div>
-                <div class="text-brand-muted text-[11px]">Isolation: <span class="text-emerald-400">Zero-Drop (Slack/DC OK)</span></div>
+              <div class="space-y-2 text-[13px] font-mono flex-1">
+                <div class="text-[var(--text-secondary)]">Target: <span class="text-[var(--text-primary)]">List (6e0acf71ff)</span></div>
+                <div class="text-[var(--text-secondary)]">Campaign ID: <span id="cardIdMailchimp" class="text-[var(--text-secondary)]">Awaiting dispatch</span></div>
+                <div class="text-[var(--text-secondary)]">Type: <span class="text-[var(--text-primary)]">HTML Newsletter Campaign</span></div>
               </div>
-              <a href="https://x.com/FourFrontLab" target="_blank" class="block text-center py-1.5 text-xs font-medium text-brand-accent bg-brand-bg hover:bg-brand-panelHover border border-brand-border rounded-lg transition theme-transition">
-                View @FourFrontLab
+              <a id="cardLinkMailchimp" href="#" aria-disabled="true" class="w-full h-10 rounded-[8px] flex items-center justify-center text-xs font-semibold transition theme-transition opacity-40 cursor-not-allowed bg-[var(--surface-raised)]/40 text-[var(--text-tertiary)] pointer-events-none mt-auto">
+                View Campaign
               </a>
             </div>
 
-            <!-- Google Sheets Card -->
-            <div class="bg-brand-panel border border-brand-border rounded-xl p-4 space-y-3 theme-transition">
+            <!-- 6. Google Sheets Card -->
+            <div class="bg-[var(--surface)] border border-[var(--border)] rounded-[10px] p-6 space-y-4 flex flex-col justify-between theme-transition">
               <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2">
-                  <span id="cardDotSheets" class="w-2.5 h-2.5 rounded-full bg-brand-success"></span>
-                  <span class="font-bold text-xs" style="color: var(--text-primary);">Google Sheets</span>
+                  <span id="cardDotSheets" class="w-2 h-2 rounded-full bg-[var(--text-tertiary)] flex-shrink-0"></span>
+                  <span class="text-[15px] font-semibold text-[var(--text-primary)]">Google Sheets</span>
                 </div>
-                <span id="cardBadgeSheets" class="text-[10px] font-mono px-2 py-0.5 rounded border text-brand-success" style="background-color: var(--success-bg); border-color: var(--success-border);">CONNECTED</span>
+                <span id="cardBadgeSheets" class="h-6 px-2.5 rounded-[6px] text-[12px] font-semibold font-mono inline-flex items-center justify-center border bg-[var(--bg)] border-[var(--border)] text-[var(--text-secondary)]">Ready</span>
               </div>
-              <div class="space-y-1 text-xs font-mono">
-                <div class="text-brand-muted text-[11px]">Action: <span style="color: var(--text-primary);">appendValues</span></div>
-                <div class="text-brand-muted text-[11px]">Range: <span id="cardRangeSheets" style="color: var(--text-secondary);">Sheet1!A1:H50</span></div>
+              <div class="space-y-2 text-[13px] font-mono flex-1">
+                <div class="text-[var(--text-secondary)]">Action: <span class="text-[var(--text-primary)]">appendValues</span></div>
+                <div class="text-[var(--text-secondary)]">Range: <span id="cardRangeSheets" class="text-[var(--text-secondary)]">Sheet1!A1:H50</span></div>
               </div>
-              <a href="https://docs.google.com/spreadsheets/d/1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s" target="_blank" class="block text-center py-1.5 text-xs font-medium text-brand-accent bg-brand-bg hover:bg-brand-panelHover border border-brand-border rounded-lg transition theme-transition">
+              <a id="cardLinkSheets" href="#" aria-disabled="true" class="w-full h-10 rounded-[8px] flex items-center justify-center text-xs font-semibold transition theme-transition opacity-40 cursor-not-allowed bg-[var(--surface-raised)]/40 text-[var(--text-tertiary)] pointer-events-none mt-auto">
                 Open Spreadsheet
               </a>
             </div>
 
-            <!-- LinkedIn Card -->
-            <div class="bg-brand-panel border border-brand-border rounded-xl p-4 space-y-3 theme-transition">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-2">
-                  <span id="cardDotLinkedIn" class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
-                  <span class="font-bold text-xs" style="color: var(--text-primary);">LinkedIn</span>
-                </div>
-                <span id="cardBadgeLinkedIn" class="text-[10px] font-mono px-2 py-0.5 rounded border text-brand-accent" style="background-color: var(--accent-bg); border-color: var(--accent-border);">UNVERIFIED</span>
-              </div>
-              <div class="space-y-1 text-xs font-mono">
-                <div class="text-brand-muted text-[11px]">Status: <span style="color: var(--text-primary);">No Fastn Connector</span></div>
-                <div class="text-brand-muted text-[11px]">Verification: <span id="cardIdLinkedIn" class="text-brand-accent">Unverified</span></div>
-              </div>
-              <button disabled class="w-full py-1.5 text-xs font-medium text-brand-muted bg-brand-bg border border-brand-border rounded-lg cursor-not-allowed theme-transition">
-                Not Connected
-              </button>
-            </div>
-
-            <!-- GitHub Card -->
-            <div class="bg-brand-panel border border-brand-border rounded-xl p-4 space-y-3 theme-transition">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-2">
-                  <span id="cardDotGitHub" class="w-2.5 h-2.5 rounded-full bg-brand-success"></span>
-                  <span class="font-bold text-xs" style="color: var(--text-primary);">GitHub</span>
-                </div>
-                <span id="cardBadgeGitHub" class="text-[10px] font-mono px-2 py-0.5 rounded border text-brand-success" style="background-color: var(--success-bg); border-color: var(--success-border);">AUTOMATED</span>
-              </div>
-              <div class="space-y-1 text-xs font-mono">
-                <div class="text-brand-muted text-[11px]">Action: <span style="color: var(--text-primary);">createIssue</span></div>
-                <div class="text-brand-muted text-[11px]">Issue ID: <span id="cardIdGitHub" style="color: var(--text-secondary);">None</span></div>
-              </div>
-              <a id="cardLinkGitHub" href="https://github.com/MTahaNadeem/Fastn-Hackathon/issues" target="_blank" class="block text-center py-1.5 text-xs font-medium text-brand-accent bg-brand-bg hover:bg-brand-panelHover border border-brand-border rounded-lg transition theme-transition">
-                View GitHub Issue
-              </a>
-            </div>
-
           </div>
         </div>
 
-          </div>
-        </div>
-
-        <!-- Live Event Console (Terminal-Style Block) -->
+        <!-- Live Event Console (Terminal-Style Block: 13px mono, soft green #7EE787, accent tags) -->
         <div class="space-y-2">
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-2">
-              <i data-lucide="terminal" class="w-4 h-4 text-brand-accent"></i>
-              <h4 class="text-xs font-semibold" style="color: var(--text-primary);">Live Event Console</h4>
+              <i data-lucide="terminal" class="w-4 h-4 text-[var(--accent)]"></i>
+              <h4 class="text-xs font-semibold text-[var(--text-primary)]">Live Event Console</h4>
             </div>
-            <button onclick="clearEventConsole()" class="text-[11px] font-mono text-brand-muted hover:text-brand-accent transition">Clear Logs</button>
+            <button onclick="clearEventConsole()" class="text-[11px] font-mono text-[var(--text-secondary)] hover:text-[var(--accent)] transition">Clear Logs</button>
           </div>
 
-          <div id="eventConsole" class="rounded-xl p-4 font-mono text-xs h-56 overflow-y-auto space-y-1 theme-transition" style="background-color: var(--console-bg); border: 1px solid var(--border-color); color: var(--console-text);">
-            <div class="text-brand-muted">// Fastn UCL Event Stream Initialized. Awaiting dispatch...</div>
-            <div class="text-brand-success">[SYSTEM] Fastn Runtime Gateway wf_6cfc644efb9d connected via connect.fastn.dev</div>
-            <div class="text-brand-muted">[CONNECTORS] slack (OAuth active), googleSheets (OAuth active), discord (Webhook), facebook (Relay)</div>
+          <div id="eventConsole" class="rounded-xl p-4 font-mono text-[13px] leading-[1.6] h-56 overflow-y-auto space-y-1 theme-transition" style="background-color: var(--console-bg); border: 1px solid var(--border); color: #7EE787;">
+            <div style="color: var(--text-secondary);">// Fastn UCL Event Stream Initialized. Awaiting dispatch...</div>
+            <div style="color: #7EE787;"><span style="color: var(--accent); font-weight: 600;">[SYSTEM]</span> Fastn Runtime Gateway wf_6cfc644efb9d connected via connect.fastn.dev</div>
+            <div style="color: #7EE787;"><span style="color: var(--accent); font-weight: 600;">[CONNECTORS]</span> slack (OAuth active), googleSheets (OAuth active), discord (Webhook), facebook (Relay)</div>
           </div>
         </div>
 
@@ -925,17 +1002,17 @@ https://fastn.ai
       <!-- ===================================================================== -->
       <!-- VIEW 3: GOOGLE SHEETS AUDIT MATRIX                                    -->
       <!-- ===================================================================== -->
-      <div id="view-sheets" class="hidden space-y-6 max-w-7xl mx-auto">
+      <div id="view-sheets" class="hidden space-y-6">
         
         <!-- Metadata Bar -->
-        <div class="bg-brand-panel border border-brand-border rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 theme-transition">
+        <div class="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 theme-transition">
           <div>
             <div class="flex items-center space-x-2">
               <i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-500"></i>
-              <h3 class="font-bold text-sm" style="color: var(--text-primary);">Google Sheets Audit Matrix</h3>
+              <h3 class="font-bold text-sm text-[var(--text-primary)]">Google Sheets Audit Matrix</h3>
             </div>
-            <p class="text-xs text-brand-muted mt-0.5">
-              Sheet ID: <code class="font-mono text-[11px]" style="color: var(--text-primary);">1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s</code>
+            <p class="text-xs text-[var(--text-secondary)] mt-0.5">
+              Sheet ID: <code class="font-mono text-[11px] text-[var(--text-primary)]">1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s</code>
             </p>
           </div>
 
@@ -943,9 +1020,9 @@ https://fastn.ai
             <a 
               href="https://docs.google.com/spreadsheets/d/1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s" 
               target="_blank" 
-              class="px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition flex items-center space-x-2"
+              class="px-3.5 py-2 rounded-lg border border-[var(--border-strong)] bg-transparent hover:bg-[var(--surface-raised)] text-[var(--text-primary)] font-semibold text-xs transition flex items-center space-x-2 cursor-pointer"
             >
-              <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+              <i data-lucide="external-link" class="w-3.5 h-3.5 text-[var(--accent)]"></i>
               <span>Open in Google Sheets</span>
             </a>
           </div>
@@ -954,10 +1031,10 @@ https://fastn.ai
         <!-- Filter & Search Bar -->
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <!-- Status Filter Pills -->
-          <div class="flex items-center space-x-1.5 bg-brand-panel p-1 rounded-lg border border-brand-border text-xs theme-transition">
-            <button onclick="filterTable('ALL')" id="filterBtn-ALL" class="px-3 py-1 rounded font-medium bg-brand-accent text-white transition">All</button>
-            <button onclick="filterTable('Published')" id="filterBtn-Published" class="px-3 py-1 rounded font-medium text-brand-muted hover:text-brand-accent transition">Published</button>
-            <button onclick="filterTable('Partially Published')" id="filterBtn-Partially" class="px-3 py-1 rounded font-medium text-brand-muted hover:text-brand-accent transition">Partially Published</button>
+          <div class="flex items-center space-x-1.5 bg-[var(--surface)] p-1 rounded-lg border border-[var(--border)] text-xs theme-transition">
+            <button onclick="filterTable('ALL')" id="filterBtn-ALL" class="px-3 py-1 rounded-[6px] font-semibold bg-[var(--accent)] text-[#0B0E11] transition">All</button>
+            <button onclick="filterTable('Published')" id="filterBtn-Published" class="px-3 py-1 rounded-[6px] font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition">Published</button>
+            <button onclick="filterTable('Partially Published')" id="filterBtn-Partially" class="px-3 py-1 rounded-[6px] font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition">Partially Published</button>
           </div>
 
           <!-- Search Input -->
@@ -967,18 +1044,17 @@ https://fastn.ai
               type="text" 
               placeholder="Search title, tags, or IDs..." 
               oninput="handleSearchTable()" 
-              class="w-full bg-brand-panel border border-brand-border focus:border-brand-accent focus:ring-1 focus:ring-brand-accent rounded-lg px-3 py-1.5 text-xs placeholder-slate-400 font-mono transition theme-transition"
-              style="color: var(--text-primary);"
+              class="w-full bg-[var(--surface)] border border-[var(--border)] focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] rounded-lg px-3 py-1.5 text-xs text-[var(--text-primary)] placeholder-slate-400 font-mono transition theme-transition"
             />
           </div>
         </div>
 
         <!-- 9-Column Data Table -->
-        <div class="bg-brand-panel border border-brand-border rounded-xl overflow-hidden theme-transition">
+        <div class="bg-[var(--surface)] border border-[var(--border)] rounded-xl overflow-hidden theme-transition">
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs border-collapse">
               <thead>
-                <tr class="border-b border-brand-border text-[11px] font-semibold text-brand-muted uppercase tracking-wider font-mono theme-transition" style="background-color: var(--table-header-bg);">
+                <tr class="border-b border-[var(--border)] text-[11px] font-semibold text-[var(--text-secondary)] uppercase tracking-wider font-mono theme-transition" style="background-color: var(--table-header-bg);">
                   <th class="py-3 px-4">Timestamp</th>
                   <th class="py-3 px-4">Title</th>
                   <th class="py-3 px-4">Content</th>
@@ -990,7 +1066,7 @@ https://fastn.ai
                   <th class="py-3 px-4">Error_Log</th>
                 </tr>
               </thead>
-              <tbody id="auditTableBody" class="divide-y divide-brand-border font-sans theme-transition">
+              <tbody id="auditTableBody" class="divide-y divide-[var(--border)] font-sans theme-transition">
                 <!-- Rows injected dynamically via JS -->
               </tbody>
             </table>
@@ -998,9 +1074,9 @@ https://fastn.ai
 
           <!-- Empty State -->
           <div id="tableEmptyState" class="hidden p-8 text-center space-y-2">
-            <i data-lucide="inbox" class="w-8 h-8 text-brand-muted mx-auto"></i>
-            <h4 class="text-sm font-semibold" style="color: var(--text-primary);">No matching audit records</h4>
-            <p class="text-xs text-brand-muted">No publications match your current filter. Dispatch a post from the Composer to append a live row.</p>
+            <i data-lucide="inbox" class="w-8 h-8 text-[var(--text-secondary)] mx-auto"></i>
+            <h4 class="text-sm font-semibold text-[var(--text-primary)]">No matching audit records</h4>
+            <p class="text-xs text-[var(--text-secondary)]">No publications match your current filter. Dispatch a post from the Composer to append a live row.</p>
           </div>
         </div>
 
@@ -1123,31 +1199,61 @@ https://fastn.ai
       }
     }
 
+    // Environment Mode Manager (Requirements 7 & 10)
+    let currentMode = 'live';
+
+    function handleModeChange(mode) {
+      currentMode = mode;
+      const badge = document.getElementById('headerModeBadge');
+      const text = document.getElementById('headerModeText');
+      const dot = document.getElementById('headerModeDot');
+
+      if (mode === 'live') {
+        badge.style.backgroundColor = 'var(--success-bg)';
+        badge.style.borderColor = 'var(--success-border)';
+        badge.style.color = 'var(--success)';
+        if (dot) dot.className = 'w-2 h-2 rounded-full bg-brand-success pulse-dot';
+        if (text) text.innerText = 'LIVE MODE';
+        logEvent('[MODE] Switched to LIVE MODE (real Fastn MCP execution)', 'green');
+        showToast('Switched to Live Mode: Dispatches call real Fastn API', 'info');
+      } else {
+        badge.style.backgroundColor = 'var(--accent-bg)';
+        badge.style.borderColor = 'var(--accent-border)';
+        badge.style.color = 'var(--accent)';
+        if (dot) dot.className = 'w-2 h-2 rounded-full bg-amber-500';
+        if (text) text.innerText = 'SIMULATOR MODE (MOCK)';
+        logEvent('[MODE] Switched to SIMULATOR MODE (mock responses for testing)', 'amber');
+        showToast('Switched to Simulator Mode: Dispatches return realistic mocks', 'warning');
+      }
+    }
+
     // 1. Navigation Switcher
     function switchMainView(viewName) {
       ['composer', 'monitor', 'sheets'].forEach(v => {
         document.getElementById(`view-${v}`).classList.add('hidden');
         const btn = document.getElementById(`navBtn-${v}`);
-        btn.className = 'w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold transition text-brand-muted hover:bg-brand-panelHover';
+        btn.className = 'w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold transition text-[var(--text-secondary)] hover:bg-[var(--surface-raised)]';
       });
 
       document.getElementById(`view-${viewName}`).classList.remove('hidden');
       const activeBtn = document.getElementById(`navBtn-${viewName}`);
-      activeBtn.className = 'w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold transition bg-brand-accent/15 text-brand-accent border border-brand-accent/30';
+      activeBtn.className = 'w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold transition bg-[var(--accent)]/15 text-[var(--accent)] border border-[var(--accent)]/30';
       lucide.createIcons();
     }
 
-    // 2. Preview Card Switcher
+    // 2. Preview Card Switcher (Underline-style active state: 2px --accent bottom border)
     function switchPreviewCard(tab) {
-      ['slack', 'discord', 'twitter', 'facebook'].forEach(t => {
-        document.getElementById(`cardPrev-${t}`).classList.add('hidden');
+      ['slack', 'discord', 'twitter', 'facebook', 'mailchimp'].forEach(t => {
+        const el = document.getElementById(`cardPrev-${t}`);
+        if (el) el.classList.add('hidden');
         const btn = document.getElementById(`tabBtn-${t}`);
-        btn.className = 'px-2 py-1 rounded font-medium text-brand-muted hover:text-brand-accent transition';
+        if (btn) btn.className = 'pb-2 px-1 font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] border-b-2 border-transparent transition';
       });
 
-      document.getElementById(`cardPrev-${tab}`).classList.remove('hidden');
+      const targetEl = document.getElementById(`cardPrev-${tab}`);
+      if (targetEl) targetEl.classList.remove('hidden');
       const activeBtn = document.getElementById(`tabBtn-${tab}`);
-      activeBtn.className = 'px-2 py-1 rounded font-medium bg-brand-panel text-brand-accent transition';
+      if (activeBtn) activeBtn.className = 'pb-2 px-1 font-semibold text-[var(--text-primary)] border-b-2 border-[var(--accent)] transition';
       lucide.createIcons();
     }
 
@@ -1159,16 +1265,16 @@ https://fastn.ai
       if (document.getElementById('toggleSlack')?.checked) platforms.push('slack');
       if (document.getElementById('toggleDiscord')?.checked) platforms.push('discord');
       if (document.getElementById('toggleFacebook')?.checked) platforms.push('facebook');
+      if (document.getElementById('toggleMailchimp')?.checked) platforms.push('mailchimp');
       if (TWITTER_ENABLED && document.getElementById('toggleTwitter')?.checked) platforms.push('twitter');
-      if (document.getElementById('toggleLinkedIn')?.checked) platforms.push('linkedin');
       return platforms;
     }
 
-    // 3. Live Preview & Raw Character Counter Handler
+    // 3. Live Preview & Raw Character Counter Handler (Requirements 4, 5, 6)
     function handleContentChange() {
       const title = document.getElementById('composerTitle').value || 'Untitled Broadcast';
       const content = document.getElementById('composerContent').value || '';
-      const link = document.getElementById('composerLink').value || '';
+      const link = document.getElementById('composerLink').value || 'https://fastn.ai';
       const tags = document.getElementById('composerTags').value || '';
       const image = document.getElementById('composerImage').value || '';
 
@@ -1176,9 +1282,11 @@ https://fastn.ai
       const bodyLength = content.length;
       const counterEl = document.getElementById('charCounterBadge');
 
-      // Live raw character count for writer reference (no hardcoded Twitter limit)
-      counterEl.innerText = `${bodyLength} chars`;
-      counterEl.className = 'text-[11px] font-mono font-medium px-2 py-0.5 rounded bg-brand-bg border border-brand-border text-brand-muted theme-transition';
+      // Live character counter reflecting live textarea value (Requirement 6)
+      if (counterEl) {
+        counterEl.innerText = `${bodyLength} chars`;
+        counterEl.className = 'text-[11px] font-mono font-medium px-2 py-0.5 rounded bg-[var(--bg)] border border-[var(--border)] text-[var(--text-secondary)] theme-transition';
+      }
 
       // Thumbnail
       const thumbImg = document.getElementById('thumbImg');
@@ -1189,14 +1297,49 @@ https://fastn.ai
         thumbImg.classList.add('hidden');
       }
 
-      // Live Title & Media Sync
-      document.getElementById('prevSlackTitle').innerText = title;
-      document.getElementById('prevDiscordTitle').innerText = title;
-      document.getElementById('prevSlackLink').innerHTML = link ? `🔗 <a href="${link}" target="_blank" class="text-blue-500 underline">${link}</a>` : '';
-      document.getElementById('prevSlackTags').innerText = tagsFormatted ? `*Tags:* _${tagsFormatted}_` : '';
-      document.getElementById('prevDiscordTags').innerText = tagsFormatted || 'General';
-      document.getElementById('prevDiscordLink').innerText = link || 'N/A';
+      // Live Title & Canonical Links Sync (Requirement 5 - target="_blank")
+      const slackTitle = document.getElementById('prevSlackTitle');
+      if (slackTitle) slackTitle.innerText = title;
+      const discordTitle = document.getElementById('prevDiscordTitle');
+      if (discordTitle) {
+        discordTitle.innerText = title;
+        discordTitle.href = link;
+      }
 
+      const slackLinkAnchor = document.getElementById('prevSlackLinkAnchor');
+      if (slackLinkAnchor) {
+        slackLinkAnchor.href = link;
+        slackLinkAnchor.innerText = link;
+      }
+
+      const slackTags = document.getElementById('prevSlackTags');
+      if (slackTags) slackTags.innerText = tagsFormatted ? `*Tags:* _${tagsFormatted}_` : '';
+
+      const discordTags = document.getElementById('prevDiscordTags');
+      if (discordTags) discordTags.innerText = tagsFormatted || 'General';
+
+      const discordLink = document.getElementById('prevDiscordLink');
+      if (discordLink) {
+        discordLink.href = link;
+        discordLink.innerText = link;
+      }
+
+      const fbLink = document.getElementById('prevFbLink');
+      const fbLinkText = document.getElementById('prevFbLinkText');
+      if (fbLink) fbLink.href = link;
+      if (fbLinkText) fbLinkText.innerText = link;
+
+      // Mailchimp preview elements sync
+      const mcTitle = document.getElementById('prevMailchimpTitle');
+      if (mcTitle) mcTitle.innerText = title;
+      const mcSubj = document.getElementById('prevMailchimpSubject');
+      if (mcSubj) mcSubj.innerText = title;
+      const mcCta = document.getElementById('prevMailchimpCta');
+      if (mcCta) mcCta.href = link;
+      const mcTags = document.getElementById('prevMailchimpTags');
+      if (mcTags) mcTags.innerText = tagsFormatted ? `Tags: ${tagsFormatted}` : 'Tags: #fastn #hackathon #ai #automation';
+
+      // Image sync across previews
       const slackImg = document.getElementById('prevSlackImg');
       if (image) { slackImg.src = image; document.getElementById('prevSlackImgWrap').classList.remove('hidden'); }
       else { document.getElementById('prevSlackImgWrap').classList.add('hidden'); }
@@ -1213,12 +1356,35 @@ https://fastn.ai
       if (image) { fbImg.src = image; document.getElementById('prevFbImgWrap').classList.remove('hidden'); }
       else { document.getElementById('prevFbImgWrap').classList.add('hidden'); }
 
-      // Default baseline previews before AI adaptation finishes
+      const mcImg = document.getElementById('prevMailchimpImg');
+      if (image) { if (mcImg) mcImg.src = image; document.getElementById('prevMailchimpImgWrap')?.classList.remove('hidden'); }
+      else { document.getElementById('prevMailchimpImgWrap')?.classList.add('hidden'); }
+
+      // Default baseline platform-native previews before AI adaptation finishes (Requirement 4)
       if (!currentAdapted) {
+        // Slack: Team announcement
         document.getElementById('prevSlackContent').innerText = content;
+
+        // Discord: High-energy community tone
         document.getElementById('prevDiscordContent').innerText = content;
-        document.getElementById('prevTwitterText').innerText = `${title}\n\n${content}${link ? '\n' + link : ''}${tagsFormatted ? '\n' + tagsFormatted : ''}`.trim();
-        document.getElementById('prevFbText').innerText = `${title}\n\n${content}${link ? '\n' + link : ''}\n\n${tagsFormatted}`.trim();
+
+        // Twitter/X: ≤280 chars, punchy headline, concise body, inline link & hashtags
+        const twPrefix = `🚀 ${title}\n\n`;
+        const twSuffix = `${link ? '\n' + link : ''}${tagsFormatted ? '\n' + tagsFormatted : ''}`.trim();
+        const maxBodyLen = 280 - (twPrefix.length + twSuffix.length + 2);
+        let twBody = content;
+        if (twBody.length > maxBodyLen) {
+          twBody = twBody.substring(0, Math.max(0, maxBodyLen - 3)).trim() + '...';
+        }
+        const twFull = `${twPrefix}${twBody}\n\n${twSuffix}`.trim();
+        document.getElementById('prevTwitterText').innerText = twFull.length > 280 ? twFull.substring(0, 277) + '...' : twFull;
+
+        // Facebook: Conversational narrative
+        document.getElementById('prevFbText').innerText = `FourFrontLab Update 📢\n\n${title}\n\n${content}\n\n${tagsFormatted}`.trim();
+
+        // Mailchimp: HTML Email Newsletter body
+        const mcContent = document.getElementById('prevMailchimpContent');
+        if (mcContent) mcContent.innerText = content;
       } else {
         applyAdaptedContentToPreviews(currentAdapted, title, link, tags);
       }
@@ -1278,7 +1444,7 @@ https://fastn.ai
       }
     }
 
-    // 5. Apply AI-Adapted Text to Multi-Platform Previews
+    // 5. Apply AI-Adapted Text to Multi-Platform Previews (Requirement 4)
     function applyAdaptedContentToPreviews(adapted, title, link, tags) {
       if (!adapted) return;
 
@@ -1293,6 +1459,60 @@ https://fastn.ai
       }
       if (adapted.facebook) {
         document.getElementById('prevFbText').innerText = adapted.facebook;
+      }
+      if (adapted.mailchimp) {
+        const mcContent = document.getElementById('prevMailchimpContent');
+        if (mcContent) {
+          mcContent.innerText = typeof adapted.mailchimp === 'string' ? adapted.mailchimp : (adapted.mailchimp.body || JSON.stringify(adapted.mailchimp));
+        }
+      }
+    }
+
+    // Helper: Standardized 5-State Taxonomy Updater (Requirements 8 & 9)
+    // States: 'Not Connected' | 'Ready' | 'Delivering' | 'Delivered' | 'Failed'
+    function setChannelCardState(channel, state, detailText, permalink = null, buttonLabel = null) {
+      const badge = document.getElementById(`cardBadge${channel}`);
+      const dot = document.getElementById(`cardDot${channel}`);
+      const link = document.getElementById(`cardLink${channel}`);
+
+      const badgeBaseClass = 'h-6 px-2.5 rounded-[6px] text-[12px] font-semibold font-mono inline-flex items-center justify-center border';
+
+      if (badge) {
+        badge.innerText = state;
+        if (state === 'Delivered') {
+          badge.className = `${badgeBaseClass} text-[var(--success)]`;
+          badge.style = 'background-color: var(--success-bg); border-color: var(--success);';
+        } else if (state === 'Delivering') {
+          badge.className = `${badgeBaseClass} text-[var(--accent)]`;
+          badge.style = 'background-color: var(--warning-bg); border-color: var(--accent);';
+        } else if (state === 'Failed') {
+          badge.className = `${badgeBaseClass} text-[var(--danger)]`;
+          badge.style = 'background-color: var(--danger-bg); border-color: var(--danger);';
+        } else { // 'Ready' or 'Not Connected'
+          badge.className = `${badgeBaseClass} bg-[var(--bg)] border-[var(--border)] text-[var(--text-secondary)]`;
+          badge.style = '';
+        }
+      }
+
+      if (dot) {
+        if (state === 'Delivered') dot.className = 'w-2 h-2 rounded-full bg-[var(--success)] flex-shrink-0';
+        else if (state === 'Delivering') dot.className = 'w-2 h-2 rounded-full bg-[var(--accent)] pulse-dot flex-shrink-0';
+        else if (state === 'Failed') dot.className = 'w-2 h-2 rounded-full bg-[var(--danger)] flex-shrink-0';
+        else dot.className = 'w-2 h-2 rounded-full bg-[var(--text-tertiary)] flex-shrink-0';
+      }
+
+      if (link) {
+        if (state === 'Delivered' && permalink) {
+          link.href = permalink;
+          link.removeAttribute('aria-disabled');
+          link.className = 'w-full h-10 rounded-[8px] flex items-center justify-center text-xs font-semibold transition theme-transition pointer-events-auto opacity-100 cursor-pointer bg-[var(--surface-raised)] text-[var(--accent)] border border-[var(--border-strong)] hover:border-[var(--accent)] shadow-sm mt-auto';
+          if (buttonLabel) link.innerText = buttonLabel;
+        } else {
+          link.href = '#';
+          link.setAttribute('aria-disabled', 'true');
+          link.className = 'w-full h-10 rounded-[8px] flex items-center justify-center text-xs font-semibold transition theme-transition opacity-40 cursor-not-allowed bg-[var(--surface-raised)]/40 text-[var(--text-tertiary)] border border-transparent pointer-events-none mt-auto';
+          if (buttonLabel) link.innerText = buttonLabel;
+        }
       }
     }
 
@@ -1314,18 +1534,32 @@ https://fastn.ai
 
       // Button loading state
       btn.disabled = true;
-      btn.className = 'w-full py-3 px-4 rounded-xl bg-brand-accent/50 text-white font-bold text-xs tracking-wider uppercase transition flex items-center justify-center space-x-2 cursor-wait btn-dispatching';
-      btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Broadcasting to Fastn UCL...</span>`;
+      btn.className = 'w-full h-[44px] rounded-[8px] bg-[var(--accent)]/50 text-[#0B0E11] font-semibold text-xs tracking-wider uppercase transition flex items-center justify-center space-x-2 cursor-wait btn-dispatching';
+      btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Broadcasting (${currentMode.toUpperCase()} MODE)...</span>`;
       lucide.createIcons();
 
-      logEvent(`[DISPATCH] Initiating parallel broadcast: "${Title}" (force=${force})`, 'cyan');
-      if (TWITTER_ENABLED) {
-        logEvent(`[AI] Dispatching platform-native adapted payloads (Twitter ≤280, Slack mrkdwn, Discord embed, FB narrative)`, 'amber');
-        logEvent(`[TARGETS] Slack (#social), Discord (Embed), Facebook (Relay), Twitter/X (Active), Sheets (Audit)`, 'slate');
-      } else {
-        logEvent(`[AI] Dispatching platform-native adapted payloads (Slack mrkdwn, Discord embed, FB narrative, LinkedIn pro)`, 'amber');
-        logEvent(`[TARGETS] Slack (#social), Discord (Embed), Facebook (Relay), LinkedIn, Sheets (Audit)`, 'slate');
+      // Set in-flight Delivering state across active cards (Requirement 8)
+      if (document.getElementById('toggleSlack')?.checked) {
+        setChannelCardState('Slack', 'Delivering', 'Broadcasting via Fastn UCL...');
+        document.getElementById('cardTsSlack').innerText = 'In-flight dispatch...';
       }
+      if (document.getElementById('toggleDiscord')?.checked) {
+        setChannelCardState('Discord', 'Delivering', 'Broadcasting via Fastn UCL...');
+        document.getElementById('cardIdDiscord').innerText = 'In-flight dispatch...';
+      }
+      if (document.getElementById('toggleFacebook')?.checked) {
+        setChannelCardState('Facebook', 'Delivering', 'Broadcasting via Fastn UCL...');
+        document.getElementById('cardIdFacebook').innerText = 'In-flight dispatch...';
+      }
+      if (document.getElementById('toggleMailchimp')?.checked) {
+        setChannelCardState('Mailchimp', 'Delivering', 'Broadcasting via Fastn UCL...');
+        document.getElementById('cardIdMailchimp').innerText = 'In-flight dispatch...';
+      }
+      setChannelCardState('Sheets', 'Delivering', 'Appending row to Sheet1...');
+
+      logEvent(`[DISPATCH] Initiating parallel broadcast: "${Title}" (mode=${currentMode}, force=${force})`, 'cyan');
+      logEvent(`[AI] Dispatching platform-native adapted payloads (Slack mrkdwn, Discord embed, FB narrative, Mailchimp HTML)`, 'amber');
+      logEvent(`[TARGETS] Slack (#social), Discord (Embed), Facebook (Relay), Mailchimp (HTML), Sheets (Audit Log)`, 'slate');
 
       const startTime = Date.now();
 
@@ -1338,6 +1572,7 @@ https://fastn.ai
         Status: 'Ready',
         fault,
         force,
+        simulator: currentMode === 'simulator',
         TWITTER_ENABLED,
         adapted: currentAdapted
       };
@@ -1366,17 +1601,12 @@ https://fastn.ai
           logEvent(`[DEDUP] ${data.message || 'Duplicate post detected'}`, 'amber');
           logEvent(`[DEDUP] Previous Slack TS: ${data.results?.slack?.id || 'N/A'} | Discord ID: ${data.results?.discord?.id || 'N/A'}`, 'slate');
         } else {
-          showToast(`Published successfully in ${elapsed}ms`, 'success');
-          logEvent(`[SUCCESS] Completed in ${elapsed}ms. Status: ${data.status}`, 'green');
+          showToast(`Published successfully in ${elapsed}ms (${currentMode === 'simulator' ? 'Simulated' : 'Live'})`, 'success');
+          logEvent(`[SUCCESS] Completed in ${elapsed}ms. Status: ${data.status} (${currentMode === 'simulator' ? 'Simulator Mock' : 'Live Fastn'})`, 'green');
           logEvent(`[SLACK] Delivered to #social | TS: ${data.results?.slack?.id || 'None'}`, 'slate');
           logEvent(`[DISCORD] Embed ID: ${data.results?.discord?.id || 'None'}`, 'slate');
           logEvent(`[FACEBOOK] Relay ID: ${data.results?.facebook?.id || 'None'}`, 'slate');
-          if (data.results?.github?.id) {
-            logEvent(`[GITHUB] Issue #${data.results.github.id} Created | ${data.results.github.permalink}`, 'slate');
-          }
-          if (data.githubAudit?.commit_hash) {
-            logEvent(`[GITHUB] Auto-recorded audit log to GitHub (${data.githubAudit.commit_hash})`, 'green');
-          }
+          logEvent(`[MAILCHIMP] Campaign ID: ${data.results?.mailchimp?.id || 'None'}`, 'slate');
           logEvent(`[AUDIT] Logged to Google Sheet 1wquYVUl_...`, 'slate');
         }
 
@@ -1389,7 +1619,7 @@ https://fastn.ai
           Image_URL,
           Status: data.status,
           Slack_ID: data.results?.slack?.id || (data.status === 'Skipped' ? 'DEDUP' : 'FAILED'),
-          Social_ID: data.results?.discord?.id || data.results?.facebook?.id || 'None',
+          Social_ID: data.results?.discord?.id || data.results?.facebook?.id || data.results?.mailchimp?.id || 'None',
           Error_Log: data.auditLog?.errors || 'None'
         };
 
@@ -1407,13 +1637,13 @@ https://fastn.ai
         logEvent(`[ERROR] Network failure: ${err.message}`, 'red');
       } finally {
         btn.disabled = false;
-        btn.className = 'w-full py-3 px-4 rounded-xl bg-brand-accent hover:bg-brand-accentHover text-white font-bold text-xs tracking-wider uppercase transition shadow-lg flex items-center justify-center space-x-2 cursor-pointer theme-transition';
+        btn.className = 'w-full h-[44px] rounded-[8px] bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[#0B0E11] font-semibold text-xs tracking-wider uppercase transition shadow-md flex items-center justify-center space-x-2 cursor-pointer theme-transition';
         btn.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i><span>Publish Everywhere (Fastn Parallel Fan-Out)</span>`;
         lucide.createIcons();
       }
     }
 
-    // 5. Update Delivery Monitor with Strict Safeguards
+    // 7. Update Delivery Monitor with Standardized 5 States (Requirements 8 & 9)
     function updateMonitorView(data, elapsed) {
       document.getElementById('statLatency').innerText = `${elapsed}ms`;
       document.getElementById('monExecTimeBadge').innerText = `Executed in ${elapsed}ms`;
@@ -1421,22 +1651,22 @@ https://fastn.ai
       const banner = document.getElementById('monitorOverallBanner');
       if (data.status === 'Published') {
         banner.style.backgroundColor = 'var(--success-bg)';
-        banner.style.borderColor = 'var(--success-border)';
+        banner.style.borderColor = 'var(--success)';
         document.getElementById('monBannerTitle').innerText = 'Broadcast Status: Published';
         document.getElementById('monBannerDesc').innerText = 'All primary production channels delivered successfully. Fault-isolated channels sandboxed without interruption.';
       } else if (data.status === 'Skipped') {
-        banner.style.backgroundColor = 'var(--accent-bg)';
-        banner.style.borderColor = 'var(--accent-border)';
+        banner.style.backgroundColor = 'var(--warning-bg)';
+        banner.style.borderColor = 'var(--accent)';
         document.getElementById('monBannerTitle').innerText = 'Broadcast Status: Skipped (Duplicate Post)';
         document.getElementById('monBannerDesc').innerText = data.message || 'Duplicate post detected. Toggle "Override Dedup Guard (force: true)" to re-broadcast.';
       } else if (data.status === 'Partially Published') {
-        banner.style.backgroundColor = 'var(--accent-bg)';
-        banner.style.borderColor = 'var(--accent-border)';
+        banner.style.backgroundColor = 'var(--warning-bg)';
+        banner.style.borderColor = 'var(--accent)';
         document.getElementById('monBannerTitle').innerText = `Broadcast Status: Partially Published`;
         document.getElementById('monBannerDesc').innerText = `Completed with isolated faults: ${data.auditLog?.errors || 'Check error log'}`;
       } else {
-        banner.style.backgroundColor = 'var(--failure-bg)';
-        banner.style.borderColor = 'var(--failure-border)';
+        banner.style.backgroundColor = 'var(--danger-bg)';
+        banner.style.borderColor = 'var(--danger)';
         document.getElementById('monBannerTitle').innerText = `Broadcast Status: ${data.status || 'Failed'}`;
         document.getElementById('monBannerDesc').innerText = data.error || 'Broadcast failed to execute.';
       }
@@ -1444,171 +1674,66 @@ https://fastn.ai
       let deliveredCount = 0;
       let isolatedCount = 0;
 
-      // 1. Slack Check (Real permalink & ID required)
-      const slackBadge = document.getElementById('cardBadgeSlack');
-      const slackDot = document.getElementById('cardDotSlack');
-      if (data.results?.slack?.skipped) {
+      // 1. Slack (Delivered | Failed)
+      if (data.results?.slack?.success && data.results?.slack?.id) {
         deliveredCount++;
-        slackBadge.innerText = 'DEDUP SKIPPED';
-        slackBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-accent';
-        slackBadge.style = 'background-color: var(--accent-bg); border-color: var(--accent-border);';
-        if (slackDot) slackDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-500';
-        document.getElementById('cardTsSlack').innerText = `${data.results.slack.id} (Existing)`;
-      } else if (data.results?.slack?.success && data.results?.slack?.id) {
-        deliveredCount++;
-        slackBadge.innerText = 'DELIVERED';
-        slackBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-success';
-        slackBadge.style = 'background-color: var(--success-bg); border-color: var(--success-border);';
-        if (slackDot) slackDot.className = 'w-2.5 h-2.5 rounded-full bg-brand-success';
-        document.getElementById('cardTsSlack').innerText = data.results.slack.id;
-        if (data.results.slack.permalink) {
-          document.getElementById('cardLinkSlack').href = data.results.slack.permalink;
-        }
+        setChannelCardState('Slack', 'Delivered', data.results.slack.id, data.results.slack.permalink, 'View in Slack');
+        document.getElementById('cardTsSlack').innerText = data.results.slack.skipped ? `${data.results.slack.id} (Existing)` : data.results.slack.id;
       } else {
-        slackBadge.innerText = 'FAILED';
-        slackBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-failure';
-        slackBadge.style = 'background-color: var(--failure-bg); border-color: var(--failure-border);';
-        if (slackDot) slackDot.className = 'w-2.5 h-2.5 rounded-full bg-brand-failure';
+        setChannelCardState('Slack', 'Failed', data.results?.slack?.error || 'Failed', null, 'View in Slack');
         document.getElementById('cardTsSlack').innerText = data.results?.slack?.error || 'Failed';
       }
 
-      // 2. Discord Check
-      const discordBadge = document.getElementById('cardBadgeDiscord');
-      const discordDot = document.getElementById('cardDotDiscord');
-      if (data.results?.discord?.skipped) {
+      // 2. Discord (Delivered | Failed)
+      if (data.results?.discord?.success && data.results?.discord?.id) {
         deliveredCount++;
-        discordBadge.innerText = 'DEDUP SKIPPED';
-        discordBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-accent';
-        discordBadge.style = 'background-color: var(--accent-bg); border-color: var(--accent-border);';
-        if (discordDot) discordDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-500';
-        document.getElementById('cardIdDiscord').innerText = `${data.results.discord.id} (Existing)`;
-      } else if (data.results?.discord?.success && data.results?.discord?.id) {
-        deliveredCount++;
-        discordBadge.innerText = 'DELIVERED';
-        discordBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-success';
-        discordBadge.style = 'background-color: var(--success-bg); border-color: var(--success-border);';
-        if (discordDot) discordDot.className = 'w-2.5 h-2.5 rounded-full bg-brand-success';
-        document.getElementById('cardIdDiscord').innerText = data.results.discord.id;
-        if (data.results.discord.permalink) {
-          document.getElementById('cardLinkDiscord').href = data.results.discord.permalink;
-        }
+        setChannelCardState('Discord', 'Delivered', data.results.discord.id, data.results.discord.permalink, 'View in Discord');
+        document.getElementById('cardIdDiscord').innerText = data.results.discord.skipped ? `${data.results.discord.id} (Existing)` : data.results.discord.id;
       } else {
-        discordBadge.innerText = 'FAILED';
-        discordBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-failure';
-        discordBadge.style = 'background-color: var(--failure-bg); border-color: var(--failure-border);';
-        if (discordDot) discordDot.className = 'w-2.5 h-2.5 rounded-full bg-brand-failure';
+        setChannelCardState('Discord', 'Failed', data.results?.discord?.error || 'Failed', null, 'View in Discord');
         document.getElementById('cardIdDiscord').innerText = data.results?.discord?.error || 'Failed';
       }
 
-      // 3. Facebook Check
-      const fbBadge = document.getElementById('cardBadgeFacebook');
-      const fbDot = document.getElementById('cardDotFacebook');
-      if (data.results?.facebook?.skipped) {
+      // 3. Facebook (Delivered | Failed)
+      if (data.results?.facebook?.success && data.results?.facebook?.id) {
         deliveredCount++;
-        fbBadge.innerText = 'DEDUP SKIPPED';
-        fbBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-accent';
-        fbBadge.style = 'background-color: var(--accent-bg); border-color: var(--accent-border);';
-        if (fbDot) fbDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-500';
-        document.getElementById('cardIdFacebook').innerText = 'Previously Relayed';
-      } else if (data.results?.facebook?.success && data.results?.facebook?.id) {
-        deliveredCount++;
-        fbBadge.innerText = 'DELIVERED';
-        fbBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-success';
-        fbBadge.style = 'background-color: var(--success-bg); border-color: var(--success-border);';
-        if (fbDot) fbDot.className = 'w-2.5 h-2.5 rounded-full bg-brand-success';
-        document.getElementById('cardIdFacebook').innerText = data.results.facebook.id;
+        setChannelCardState('Facebook', 'Delivered', data.results.facebook.id, data.results.facebook.permalink, 'View in Facebook');
+        document.getElementById('cardIdFacebook').innerText = data.results.facebook.skipped ? 'Previously Relayed' : data.results.facebook.id;
       } else {
-        fbBadge.innerText = 'FAILED';
-        fbBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-failure';
-        fbBadge.style = 'background-color: var(--failure-bg); border-color: var(--failure-border);';
-        if (fbDot) fbDot.className = 'w-2.5 h-2.5 rounded-full bg-brand-failure';
+        setChannelCardState('Facebook', 'Failed', data.results?.facebook?.error || 'Failed', null, 'View in Facebook');
         document.getElementById('cardIdFacebook').innerText = data.results?.facebook?.error || 'Failed';
       }
 
-      // 4. Google Sheets Check
-      const sheetsBadge = document.getElementById('cardBadgeSheets');
-      const sheetsDot = document.getElementById('cardDotSheets');
+      // 4. Twitter / X (Consistently Failed with 401: Requirement 2)
+      if (data.results?.twitter_x?.success) {
+        deliveredCount++;
+        setChannelCardState('Twitter', 'Delivered', '200 OK', data.results.twitter_x.permalink, 'View on X');
+        document.getElementById('cardStatusTwitter').innerText = '200 OK';
+      } else {
+        isolatedCount++;
+        setChannelCardState('Twitter', 'Failed', 'X API 401: Unauthorized (Free-tier credits depleted)', null, 'View on X');
+        document.getElementById('cardStatusTwitter').innerText = 'X API 401: Unauthorized (Free-tier credits depleted)';
+      }
+
+      // 5. Mailchimp (Delivered | Failed)
+      if (data.results?.mailchimp?.success && data.results?.mailchimp?.id) {
+        deliveredCount++;
+        setChannelCardState('Mailchimp', 'Delivered', data.results.mailchimp.id, data.results.mailchimp.permalink, 'View Campaign');
+        document.getElementById('cardIdMailchimp').innerText = data.results.mailchimp.skipped ? `${data.results.mailchimp.id} (Existing)` : data.results.mailchimp.id;
+      } else {
+        setChannelCardState('Mailchimp', 'Failed', data.results?.mailchimp?.error || 'Failed', null, 'View Campaign');
+        document.getElementById('cardIdMailchimp').innerText = data.results?.mailchimp?.error || 'Failed';
+      }
+
+      // 6. Google Sheets (Delivered | Failed)
       if (data.results?.google_sheets?.success) {
         deliveredCount++;
-        sheetsBadge.innerText = 'LOGGED';
-        sheetsBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-success';
-        sheetsBadge.style = 'background-color: var(--success-bg); border-color: var(--success-border);';
-        if (sheetsDot) sheetsDot.className = 'w-2.5 h-2.5 rounded-full bg-brand-success';
+        setChannelCardState('Sheets', 'Delivered', data.results.google_sheets.range || 'Sheet1!A1:H50', data.results.google_sheets.permalink || 'https://docs.google.com/spreadsheets/d/1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s', 'Open Spreadsheet');
         if (data.results.google_sheets.range) {
           document.getElementById('cardRangeSheets').innerText = data.results.google_sheets.range;
         }
-      }
-
-      // 5. Twitter / X (Gracefully sandboxed or Delivered when enabled)
-      if (TWITTER_ENABLED) {
-        const twBadge = document.getElementById('cardBadgeTwitter');
-        const twDot = document.getElementById('cardDotTwitter');
-        const twStatus = document.getElementById('cardStatusTwitter');
-        if (data.results?.twitter_x?.success) {
-          deliveredCount++;
-          if (twBadge) {
-            twBadge.innerText = 'DELIVERED';
-            twBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-success';
-            twBadge.style = 'background-color: var(--success-bg); border-color: var(--success-border);';
-          }
-          if (twDot) twDot.className = 'w-2.5 h-2.5 rounded-full bg-brand-success';
-          if (twStatus) twStatus.innerText = '200 OK';
-        } else {
-          isolatedCount++;
-          if (twBadge) {
-            twBadge.innerText = 'SANDBOXED';
-            twBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-accent';
-            twBadge.style = 'background-color: var(--accent-bg); border-color: var(--accent-border);';
-          }
-          if (twDot) twDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-500';
-          if (twStatus) twStatus.innerText = data.results?.twitter_x?.error ? String(data.results.twitter_x.error).replace('X API ', '') : '403 (tweet.write missing)';
-        }
-      }
-
-      // 6. LinkedIn (Strict Anti-Mock Safeguard: Unverified if no OAuth connection in Fastn)
-      const liBadge = document.getElementById('cardBadgeLinkedIn');
-      const liId = document.getElementById('cardIdLinkedIn');
-      const liDot = document.getElementById('cardDotLinkedIn');
-      if (data.results?.linkedin?.success && data.results?.linkedin?.permalink && !data.results?.linkedin?.unverified) {
-        deliveredCount++;
-        liBadge.innerText = 'DELIVERED';
-        liBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-success';
-        liBadge.style = 'background-color: var(--success-bg); border-color: var(--success-border);';
-        if (liDot) liDot.className = 'w-2.5 h-2.5 rounded-full bg-brand-success';
-        liId.innerText = data.results.linkedin.id;
       } else {
-        isolatedCount++;
-        liBadge.innerText = 'UNVERIFIED';
-        liBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-accent';
-        liBadge.style = 'background-color: var(--accent-bg); border-color: var(--accent-border);';
-        if (liDot) liDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-500';
-        liId.innerText = 'Not Connected in Fastn';
-      }
-
-      // 7. GitHub Automation Check
-      const ghBadge = document.getElementById('cardBadgeGitHub');
-      const ghId = document.getElementById('cardIdGitHub');
-      const ghDot = document.getElementById('cardDotGitHub');
-      const ghLink = document.getElementById('cardLinkGitHub');
-      if (data.results?.github?.success && data.results?.github?.id) {
-        deliveredCount++;
-        if (ghBadge) {
-          ghBadge.innerText = 'DELIVERED';
-          ghBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-success';
-          ghBadge.style = 'background-color: var(--success-bg); border-color: var(--success-border);';
-        }
-        if (ghDot) ghDot.className = 'w-2.5 h-2.5 rounded-full bg-brand-success';
-        if (ghId) ghId.innerText = `Issue #${data.results.github.id}`;
-        if (ghLink && data.results.github.permalink) ghLink.href = data.results.github.permalink;
-      } else if (data.results?.github) {
-        isolatedCount++;
-        if (ghBadge) {
-          ghBadge.innerText = 'FAILED';
-          ghBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border text-brand-failure';
-          ghBadge.style = 'background-color: var(--failure-bg); border-color: var(--failure-border);';
-        }
-        if (ghDot) ghDot.className = 'w-2.5 h-2.5 rounded-full bg-brand-failure';
-        if (ghId) ghId.innerText = data.results.github.error || 'Failed';
+        setChannelCardState('Sheets', 'Failed', data.results?.google_sheets?.error || 'Failed', null, 'Open Spreadsheet');
       }
 
       // Update Summary Statistics
@@ -1618,16 +1743,6 @@ https://fastn.ai
       document.getElementById('statSuccessRate').innerText = `${rate}%`;
       document.getElementById('statFailuresIsolated').innerText = isolatedCount;
     }
-
-          // 7. GitHub Audit Log Check
-      if (data.githubAudit?.commit_hash) {
-        const ghBadge = document.getElementById('cardBadgeGitHub');
-        const ghCommit = document.getElementById('cardCommitGitHub');
-        const ghLink = document.getElementById('cardLinkGitHub');
-        if (ghBadge) ghBadge.innerText = '✓ COMMITTED';
-        if (ghCommit) ghCommit.innerText = data.githubAudit.commit_hash;
-        if (ghLink && data.githubAudit.commit_url) ghLink.href = data.githubAudit.commit_url;
-      }
 
     // 6. Table Renderer
     function renderTable() {
@@ -1655,33 +1770,30 @@ https://fastn.ai
       tbody.innerHTML = filtered.map(row => {
         let statusBadge = '';
         if (row.Status === 'Published') {
-          statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold border text-brand-success" style="background-color: var(--success-bg); border-color: var(--success-border);">Published</span>`;
+          statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold border text-[var(--success)]" style="background-color: var(--success-bg); border-color: var(--success);">Published</span>`;
         } else if (row.Status === 'Partially Published') {
-          statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold border text-brand-accent" style="background-color: var(--accent-bg); border-color: var(--accent-border);">Partially Published</span>`;
+          statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold border text-[var(--accent)]" style="background-color: var(--warning-bg); border-color: var(--accent);">Partially Published</span>`;
         } else {
-          statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-brand-bg border border-brand-border text-brand-muted">Draft</span>`;
+          statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-[var(--bg)] border border-[var(--border)] text-[var(--text-secondary)]">Draft</span>`;
         }
 
         const slackCell = row.Slack_ID && row.Slack_ID !== 'FAILED'
-          ? `<a href="https://fourfrontlab.slack.com/archives/C0C278R4PRD/p${String(row.Slack_ID).replace('.', '')}" target="_blank" class="text-brand-accent hover:underline font-mono text-[11px]">${escapeHtml(row.Slack_ID)}</a>`
-          : `<span class="text-brand-failure font-mono text-[11px]">${escapeHtml(row.Slack_ID || 'None')}</span>`;
-
-        const rawTime = row.Timestamp || row.Updated_At || '';
-        const timeStr = rawTime ? String(rawTime).replace('T', ' ').substring(0, 19) : new Date().toISOString().replace('T', ' ').substring(0, 19);
+          ? `<a href="https://fourfrontlab.slack.com/archives/C0C278R4PRD/p${row.Slack_ID.replace('.', '')}" target="_blank" class="text-[var(--accent)] hover:underline font-mono text-[11px]">${row.Slack_ID}</a>`
+          : `<span class="text-[var(--danger)] font-mono text-[11px]">${row.Slack_ID}</span>`;
 
         return `
-          <tr class="hover:bg-brand-panelHover/60 transition">
-            <td class="py-3 px-4 font-mono text-brand-muted text-[11px] whitespace-nowrap">${timeStr}</td>
-            <td class="py-3 px-4 font-medium max-w-xs truncate" style="color: var(--text-primary);">${escapeHtml(row.Title)}</td>
-            <td class="py-3 px-4 max-w-xs truncate text-[11px]" style="color: var(--text-secondary);">${escapeHtml(row.Content)}</td>
-            <td class="py-3 px-4 font-mono text-[11px] text-brand-muted">${escapeHtml(row.Tags || 'None')}</td>
+          <tr class="hover:bg-[var(--surface-raised)] transition">
+            <td class="py-3 px-4 font-mono text-[var(--text-secondary)] text-[11px] whitespace-nowrap">${row.Timestamp.replace('T', ' ').substring(0, 19)}</td>
+            <td class="py-3 px-4 font-medium max-w-xs truncate text-[var(--text-primary)]">${escapeHtml(row.Title)}</td>
+            <td class="py-3 px-4 max-w-xs truncate text-[11px] text-[var(--text-secondary)]">${escapeHtml(row.Content)}</td>
+            <td class="py-3 px-4 font-mono text-[11px] text-[var(--text-secondary)]">${escapeHtml(row.Tags || 'None')}</td>
             <td class="py-3 px-4">
-              ${row.Image_URL ? `<img src="${row.Image_URL}" alt="thumb" class="w-7 h-7 object-cover rounded border border-brand-border">` : `<span class="text-brand-muted text-[10px]">None</span>`}
+              ${row.Image_URL ? `<img src="${row.Image_URL}" alt="thumb" class="w-7 h-7 object-cover rounded border border-[var(--border)]">` : `<span class="text-[var(--text-secondary)] text-[10px]">None</span>`}
             </td>
             <td class="py-3 px-4">${statusBadge}</td>
             <td class="py-3 px-4">${slackCell}</td>
-            <td class="py-3 px-4 font-mono text-[11px]" style="color: var(--text-primary);">${escapeHtml(row.Social_ID || 'None')}</td>
-            <td class="py-3 px-4 font-mono text-brand-muted text-[11px] max-w-xs truncate" title="${escapeHtml(row.Error_Log || 'None')}">${escapeHtml(row.Error_Log || 'None')}</td>
+            <td class="py-3 px-4 font-mono text-[11px] text-[var(--text-primary)]">${escapeHtml(row.Social_ID)}</td>
+            <td class="py-3 px-4 font-mono text-[var(--text-secondary)] text-[11px] max-w-xs truncate" title="${escapeHtml(row.Error_Log)}">${escapeHtml(row.Error_Log)}</td>
           </tr>
         `;
       }).join('');
@@ -1695,8 +1807,8 @@ https://fastn.ai
         const btn = document.getElementById(`filterBtn-${f === 'Partially Published' ? 'Partially' : f}`);
         if (btn) {
           btn.className = (f === filter)
-            ? 'px-3 py-1 rounded font-medium bg-brand-accent text-white transition'
-            : 'px-3 py-1 rounded font-medium text-brand-muted hover:text-brand-accent transition';
+            ? 'px-3 py-1 rounded-[6px] font-semibold bg-[var(--accent)] text-[#0B0E11] transition'
+            : 'px-3 py-1 rounded-[6px] font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition';
         }
       });
       renderTable();
@@ -1706,37 +1818,36 @@ https://fastn.ai
       renderTable();
     }
 
-    // 7. Logging & Toast Utilities
-    function logEvent(msg, color = 'slate') {
+    // 7. Logging & Toast Utilities (Syntax-colored tags in --accent, body in soft green #7EE787)
+    function logEvent(msg, color = 'softgreen') {
       const consoleEl = document.getElementById('eventConsole');
+      if (!consoleEl) return;
       const time = new Date().toTimeString().split(' ')[0];
       const div = document.createElement('div');
-      
-      let colorClass = 'text-brand-muted';
-      if (color === 'green') colorClass = 'text-brand-success font-semibold';
-      if (color === 'cyan') colorClass = 'text-blue-400 font-semibold';
-      if (color === 'amber') colorClass = 'text-brand-accent font-semibold';
-      if (color === 'red') colorClass = 'text-brand-failure font-semibold';
-      if (color === 'slate') colorClass = 'text-brand-muted';
+      div.className = 'text-[13px] leading-[1.6]';
+      div.style.color = '#7EE787';
 
-      div.className = `${colorClass} text-[11px] leading-relaxed`;
-      div.innerText = `[${time}] ${msg}`;
+      // Syntax-color bracketed tags in --accent
+      const escapedMsg = escapeHtml(msg);
+      const coloredMsg = escapedMsg.replace(/(\[[A-Z0-9_\-]+\])/g, '<span style="color: var(--accent); font-weight: 600;">$1</span>');
+
+      div.innerHTML = `<span style="color: var(--text-secondary);">[${time}]</span> ${coloredMsg}`;
       consoleEl.appendChild(div);
       consoleEl.scrollTop = consoleEl.scrollHeight;
     }
 
     function clearEventConsole() {
-      document.getElementById('eventConsole').innerHTML = '<div class="text-brand-muted">// Console cleared</div>';
+      document.getElementById('eventConsole').innerHTML = '<div style="color: var(--text-secondary);">// Console cleared</div>';
     }
 
     function showToast(msg, type = 'info') {
       const container = document.getElementById('toastContainer');
       const toast = document.createElement('div');
       
-      let bgStyle = 'background-color: var(--bg-panel); border-color: var(--border-color); color: var(--text-primary);';
-      if (type === 'success') bgStyle = 'background-color: var(--success-bg); border-color: var(--success-border); color: var(--success);';
-      if (type === 'warning') bgStyle = 'background-color: var(--accent-bg); border-color: var(--accent-border); color: var(--accent);';
-      if (type === 'error') bgStyle = 'background-color: var(--failure-bg); border-color: var(--failure-border); color: var(--failure);';
+      let bgStyle = 'background-color: var(--surface-raised); border-color: var(--border-strong); color: var(--text-primary);';
+      if (type === 'success') bgStyle = 'background-color: var(--success-bg); border-color: var(--success); color: var(--success);';
+      if (type === 'warning') bgStyle = 'background-color: var(--warning-bg); border-color: var(--warning); color: var(--warning);';
+      if (type === 'error') bgStyle = 'background-color: var(--danger-bg); border-color: var(--danger); color: var(--danger);';
 
       toast.className = 'pointer-events-auto px-4 py-2.5 rounded-xl border text-xs shadow-xl flex items-center space-x-2 transition transform duration-300 translate-y-2 opacity-0 font-medium theme-transition';
       toast.style = bgStyle;
