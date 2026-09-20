@@ -649,6 +649,23 @@ async function handlePublish(req, res) {
       if (!slackSuccess) {
         const slackToken = process.env.SLACK_BOT_TOKEN || Buffer.from('eG94Yi0xMjA4ODcxNjI4NDEwMi0xMjEzNjk0NzAyODY4OC1RZ1ZDRGV1dmZBUXJDM0tkT0RsRUw4SGw=', 'base64').toString('utf8');
         try {
+          const slackBlocks = [
+            {
+              type: 'section',
+              text: {
+                type: 'mrkdwn',
+                text: Content ? `*${Title}*\n${Content}` : `*${Title}*`
+              }
+            }
+          ];
+          if (Image_URL && Image_URL.startsWith('http')) {
+            slackBlocks.push({
+              type: 'image',
+              image_url: Image_URL,
+              alt_text: Title || 'Post Image'
+            });
+          }
+
           const sRes = await fetch('https://slack.com/api/chat.postMessage', {
             method: 'POST',
             headers: {
@@ -657,7 +674,8 @@ async function handlePublish(req, res) {
             },
             body: JSON.stringify({
               channel: 'C0C278R4PRD',
-              text: Content ? `*${Title}*\n${Content}` : Title
+              text: Content ? `*${Title}*\n${Content}` : Title,
+              blocks: slackBlocks
             })
           });
           const sJson = await sRes.json();
