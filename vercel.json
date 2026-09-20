@@ -6,8 +6,12 @@
   },
   "rewrites": [
     {
+      "source": "/api/(.*)",
+      "destination": "/server.js?__route=/api/$1"
+    },
+    {
       "source": "/(.*)",
-      "destination": "/server.js"
+      "destination": "/server.js?__route=/$1"
     }
   ]
 }
