@@ -366,11 +366,19 @@ async function fetchGoogleSheetsRows() {
           const rows = [];
           for (let i = values.length - 1; i >= 1; i--) {
             const r = values[i];
+            const title = (r[1] || '').trim();
+            const content = (r[2] || '').trim();
+            const lowerTitle = title.toLowerCase();
+            // Filter out junk/test rows per Spec 9
+            if (!title && !content) continue;
+            if (['test', 'testing', 'asdf', 'kbsjfkdsfnklse'].includes(lowerTitle)) continue;
+            if (/^[a-z]{8,}$/i.test(lowerTitle) && !lowerTitle.includes(' ')) continue;
+
             rows.push({
               row_id: String(i),
               Timestamp: r[0] || '',
-              Title: r[1] || 'Untitled',
-              Content: r[2] || '',
+              Title: title || 'Untitled',
+              Content: content,
               Tags: r[3] || '',
               Image_URL: '',
               Status: r[4] || 'Published',
