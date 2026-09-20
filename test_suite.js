@@ -184,7 +184,7 @@ async function runAllTests() {
       content: sourceContent,
       link: sourceLink,
       tags: sourceTags,
-      platforms: ['twitter', 'linkedin', 'slack', 'discord', 'facebook']
+      platforms: ['twitter', 'slack', 'discord', 'facebook', 'mailchimp']
     });
 
     assert(Boolean(adapted.twitter), 'Twitter adapted version generated');
@@ -195,8 +195,8 @@ async function runAllTests() {
     assert(Boolean(adapted.discord), 'Discord adapted version generated');
     assert(adapted.discord.includes('⚡') || adapted.discord.includes('**'), 'Discord version contains embed/emoji formatting');
     assert(Boolean(adapted.facebook), 'Facebook conversational version generated');
-    assert(Boolean(adapted.linkedin), 'LinkedIn professional version generated');
-    assert(adapted.linkedin.includes('Key Highlights'), 'LinkedIn version contains professional bullet structure');
+    assert(Boolean(adapted.mailchimp), 'Mailchimp email newsletter version generated');
+    assert(adapted.mailchimp.includes('Subject:') || adapted.mailchimp.includes('Key Updates'), 'Mailchimp version contains structured newsletter format');
   }
   console.log('\n');
 

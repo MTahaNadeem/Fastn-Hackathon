@@ -20,7 +20,7 @@ Marketing teams, developer advocates, and community managers waste **30 to 45 mi
 
 ### Our Fastn-Native Innovation
 A resilient, enterprise-grade multi-channel broadcast engine built on Fastn:
-1. **Multi-Protocol Content Adapters:** Generates customized payloads for Slack (Block Kit), Discord (rich embeds), Facebook (webhook relay), Twitter/X (280-char math), LinkedIn (executive hook), and Mailchimp (responsive HTML cards).
+1. **Multi-Protocol Content Adapters:** Generates customized payloads for Slack (Block Kit), Discord (rich embeds), Facebook (webhook relay), Twitter/X (280-char math), and Mailchimp (responsive HTML cards).
 2. **Parallel Fan-out with Failure Isolation (`Promise.allSettled` Pattern):** Independent error sandboxing ensures one channel's failure (e.g., Twitter 401 or Telegram connector) never blocks Slack, Discord, or Facebook.
 3. **True Stateful Deduplication (Fastn State Store):** Uses `fastn.state.get()` and `fastn.state.set()` to detect duplicate submissions by title signature and skip re-broadcasting unless `force: true` is passed.
 4. **Bi-Directional Google Sheets Audit Loop:** Automatically appends confirmation post IDs (`ts`, `message_id`), permalinks, and diagnostic error logs back to the tracking spreadsheet in real-time.

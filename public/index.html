@@ -434,7 +434,7 @@
             <!-- Platform Destination Toggles (In Scope Targets Only) -->
             <div class="pt-2 border-t border-brand-border space-y-2">
               <label class="text-xs font-medium block" style="color: var(--text-primary);">Target Publishing Destinations</label>
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
                 
                 <!-- Slack Toggle -->
                 <label class="flex items-center justify-between p-2 rounded-lg bg-brand-bg border border-brand-border hover:border-brand-borderLight cursor-pointer transition theme-transition">
@@ -476,8 +476,18 @@
                   <input type="checkbox" id="toggleTwitter" checked onchange="handleContentChange()" class="accent-amber-500 cursor-pointer flex-shrink-0">
                 </label>
 
+                <!-- Mailchimp Toggle -->
+                <label class="flex items-center justify-between p-2 rounded-lg bg-brand-bg border border-brand-border hover:border-brand-borderLight cursor-pointer transition theme-transition" title="Mailchimp Newsletter Campaign">
+                  <div class="flex items-center space-x-1.5 overflow-hidden">
+                    <span class="w-2 h-2 rounded-full bg-brand-success flex-shrink-0"></span>
+                    <span class="text-xs font-medium truncate" style="color: var(--text-primary);">🐵 Mailchimp</span>
+                    <span class="text-[9px] font-mono px-1 py-0.2 rounded border bg-brand-accent/10 border-brand-accent/20 text-brand-accent">HTML</span>
+                  </div>
+                  <input type="checkbox" id="toggleMailchimp" checked onchange="handleContentChange()" class="accent-amber-500 cursor-pointer flex-shrink-0">
+                </label>
+
                 <!-- Google Sheets Toggle (Always Active) -->
-                <div class="col-span-2 sm:col-span-4 flex items-center justify-between p-2 rounded-lg bg-brand-bg border border-brand-border text-brand-muted theme-transition">
+                <div class="col-span-2 sm:col-span-3 lg:col-span-5 flex items-center justify-between p-2 rounded-lg bg-brand-bg border border-brand-border text-brand-muted theme-transition">
                   <div class="flex items-center space-x-2">
                     <span class="w-2 h-2 rounded-full bg-brand-success"></span>
                     <span class="text-xs font-medium" style="color: var(--text-primary);">Google Sheets Audit Log</span>
@@ -544,6 +554,7 @@
                 <button id="tabBtn-discord" onclick="switchPreviewCard('discord')" class="px-2 py-1 rounded font-medium text-brand-muted hover:text-brand-accent transition">Discord</button>
                 <button id="tabBtn-twitter" onclick="switchPreviewCard('twitter')" class="px-2 py-1 rounded font-medium text-brand-muted hover:text-brand-accent transition">Twitter/X</button>
                 <button id="tabBtn-facebook" onclick="switchPreviewCard('facebook')" class="px-2 py-1 rounded font-medium text-brand-muted hover:text-brand-accent transition">Facebook</button>
+                <button id="tabBtn-mailchimp" onclick="switchPreviewCard('mailchimp')" class="px-2 py-1 rounded font-medium text-brand-muted hover:text-brand-accent transition">Mailchimp</button>
               </div>
             </div>
 
@@ -703,6 +714,66 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
               </div>
             </div>
 
+            <!-- 5. MAILCHIMP HTML EMAIL PREVIEW (Requirement 2) -->
+            <div id="cardPrev-mailchimp" class="hidden space-y-3 rounded-xl p-4 theme-transition" style="background-color: var(--card-inner-bg); border: 1px solid var(--border-color); color: var(--text-primary);">
+              <!-- Email Envelope Header -->
+              <div class="p-3 rounded-lg border text-xs space-y-1.5 theme-transition" style="background-color: var(--bg-panel); border-color: var(--border-color);">
+                <div class="flex items-center justify-between text-[11px]">
+                  <div class="flex items-center space-x-1.5 text-brand-muted">
+                    <span class="font-semibold text-brand-muted">From:</span>
+                    <span class="font-mono" style="color: var(--text-primary);">FourFrontLab &lt;newsletter@fourfrontlab.com&gt;</span>
+                  </div>
+                  <span class="text-[9px] bg-amber-500/15 text-amber-500 px-1.5 py-0.5 rounded border border-amber-500/30 font-mono font-semibold">🐵 HTML Email</span>
+                </div>
+                <div class="flex items-center space-x-1.5 text-[11px]">
+                  <span class="font-semibold text-brand-muted">Subject:</span>
+                  <span id="prevMailchimpSubject" class="font-bold" style="color: var(--text-primary);">FourFrontLab Hackathon Broadcast: Track 04 Live!</span>
+                </div>
+                <div class="flex items-center justify-between text-[10px] text-brand-muted pt-0.5 border-t border-brand-border">
+                  <span>Audience: <span style="color: var(--text-secondary);">Fastn Community (6e0acf71ff)</span></span>
+                  <span class="font-mono">Campaign Draft</span>
+                </div>
+              </div>
+
+              <!-- Email Template Canvas -->
+              <div class="rounded-xl border overflow-hidden shadow-sm theme-transition" style="background-color: var(--bg-panel); border-color: var(--border-color);">
+                <!-- Newsletter Header Banner -->
+                <div class="bg-gradient-to-r from-amber-500/20 via-brand-accent/20 to-amber-600/20 px-4 py-3 border-b border-brand-border flex items-center justify-between">
+                  <div class="flex items-center space-x-2">
+                    <span class="text-base">🐵</span>
+                    <span class="font-bold text-xs tracking-wider uppercase" style="color: var(--text-primary);">FourFrontLab Dispatch</span>
+                  </div>
+                  <span class="text-[10px] font-mono text-brand-muted uppercase">Issue #4</span>
+                </div>
+
+                <!-- Email Body Content -->
+                <div class="p-4 space-y-3 text-xs">
+                  <h4 id="prevMailchimpTitle" class="font-bold text-base leading-snug" style="color: var(--text-primary);">FourFrontLab Hackathon Broadcast: Track 04 Live!</h4>
+
+                  <!-- Email Image -->
+                  <div id="prevMailchimpImgWrap" class="pt-1">
+                    <img id="prevMailchimpImg" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" alt="email media" class="rounded-lg max-h-48 w-full object-cover border border-brand-border" />
+                  </div>
+
+                  <div id="prevMailchimpContent" class="leading-relaxed whitespace-pre-wrap opacity-90 text-xs" style="color: var(--text-primary);">FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unified Context Layer! One post fans out to Slack, Discord, Facebook, Mailchimp, and Google Sheets simultaneously with zero-drop fault isolation.</div>
+
+                  <!-- Styled Email CTA Button -->
+                  <div class="pt-2 pb-1 text-center">
+                    <a id="prevMailchimpCta" href="https://fastn.ai" target="_blank" rel="noopener noreferrer" class="inline-block px-6 py-2.5 rounded-lg bg-brand-accent hover:bg-brand-accentHover text-white font-bold text-xs tracking-wide uppercase transition shadow-md">
+                      Read Full Announcement &rarr;
+                    </a>
+                  </div>
+
+                  <!-- Email Footer -->
+                  <div class="pt-3 border-t border-brand-border text-center space-y-1 text-[10px] text-brand-muted">
+                    <p id="prevMailchimpTags" class="font-mono text-[10px]">Tags: #fastn #hackathon #ai #automation</p>
+                    <p>You received this email because you are subscribed to FourFrontLab updates.</p>
+                    <p class="text-[9px]"><span class="underline cursor-pointer">Unsubscribe</span> &bull; <span class="underline cursor-pointer">Update Preferences</span> &bull; <span class="underline cursor-pointer">View in Browser</span></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
@@ -710,7 +781,7 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
       <!-- ===================================================================== -->
       <!-- VIEW 2: DELIVERY & RESILIENCE MONITOR                                -->
       <!-- ===================================================================== -->
-      <div id="view-monitor" class="hidden space-y-6 max-w-7xl mx-auto">
+      <div id="view-monitor" class="hidden space-y-10 max-w-7xl mx-auto">
         
         <!-- Overall Status Banner -->
         <div id="monitorOverallBanner" class="p-4 rounded-xl border text-xs flex items-center justify-between theme-transition" style="background-color: var(--card-inner-bg); border-color: var(--border-color);">
@@ -727,151 +798,152 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
         </div>
 
         <!-- Top Metrics Summary Strip (Small Stat Cards) -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div class="bg-brand-panel border border-brand-border rounded-xl p-4 theme-transition">
-            <span class="text-[11px] font-medium text-brand-muted block">Channels Dispatched</span>
-            <div class="flex items-baseline space-x-2 mt-1">
-              <span id="statChannelsDispatched" class="text-xl font-bold" style="color: var(--text-primary);">0</span>
-              <span class="text-[10px] text-brand-muted">Destinations</span>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="bg-brand-panel border border-brand-border rounded-xl p-6 theme-transition">
+            <span class="text-xs font-semibold text-brand-muted uppercase tracking-wider block">Channels Dispatched</span>
+            <div class="flex items-baseline space-x-2 mt-2">
+              <span id="statChannelsDispatched" class="text-3xl font-extrabold tracking-tight" style="color: var(--text-primary);">0</span>
+              <span class="text-[10px] text-brand-muted font-medium">Destinations</span>
             </div>
           </div>
 
-          <div class="bg-brand-panel border border-brand-border rounded-xl p-4 theme-transition">
-            <span class="text-[11px] font-medium text-brand-muted block">Success Rate</span>
-            <div class="flex items-baseline space-x-2 mt-1">
-              <span id="statSuccessRate" class="text-xl font-bold text-brand-muted">—</span>
-              <span class="text-[10px] text-brand-muted">Primary SLA</span>
+          <div class="bg-brand-panel border border-brand-border rounded-xl p-6 theme-transition">
+            <span class="text-xs font-semibold text-brand-muted uppercase tracking-wider block">Success Rate</span>
+            <div class="flex items-baseline space-x-2 mt-2">
+              <span id="statSuccessRate" class="text-3xl font-extrabold tracking-tight text-brand-muted">—</span>
+              <span class="text-[10px] text-brand-muted font-medium">Primary SLA</span>
             </div>
           </div>
 
-          <div class="bg-brand-panel border border-brand-border rounded-xl p-4 theme-transition">
-            <span class="text-[11px] font-medium text-brand-muted block">Failures Isolated</span>
-            <div class="flex items-baseline space-x-2 mt-1">
-              <span id="statFailuresIsolated" class="text-xl font-bold text-brand-muted">0</span>
-              <span class="text-[10px] text-brand-muted">Sandboxed</span>
+          <div class="bg-brand-panel border border-brand-border rounded-xl p-6 theme-transition">
+            <span class="text-xs font-semibold text-brand-muted uppercase tracking-wider block">Failures Isolated</span>
+            <div class="flex items-baseline space-x-2 mt-2">
+              <span id="statFailuresIsolated" class="text-3xl font-extrabold tracking-tight text-brand-muted">0</span>
+              <span class="text-[10px] text-brand-muted font-medium">Sandboxed</span>
             </div>
           </div>
 
-          <div class="bg-brand-panel border border-brand-border rounded-xl p-4 theme-transition">
-            <span class="text-[11px] font-medium text-brand-muted block">Fan-Out Latency</span>
-            <div class="flex items-baseline space-x-2 mt-1">
-              <span id="statLatency" class="text-xl font-bold font-mono" style="color: var(--text-primary);">0ms</span>
-              <span class="text-[10px] text-brand-muted">Promise.all</span>
+          <div class="bg-brand-panel border border-brand-border rounded-xl p-6 theme-transition">
+            <span class="text-xs font-semibold text-brand-muted uppercase tracking-wider block">Fan-Out Latency</span>
+            <div class="flex items-baseline space-x-2 mt-2">
+              <span id="statLatency" class="text-3xl font-extrabold tracking-tight font-mono" style="color: var(--text-primary);">0ms</span>
+              <span class="text-[10px] text-brand-muted font-medium">Promise.all</span>
             </div>
           </div>
         </div>
 
         <!-- Per-Platform Result Cards Grid (5-State Vocabulary: Requirements 8 & 9) -->
-        <div class="space-y-3">
+        <div class="space-y-4">
           <h3 class="text-xs font-semibold uppercase tracking-wider text-brand-muted">Channel Delivery Matrix</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr items-stretch">
             
             <!-- 1. Slack Card -->
-            <div class="bg-brand-panel border border-brand-border rounded-xl p-4 space-y-3 theme-transition">
+            <div class="bg-brand-panel border border-brand-border rounded-xl p-6 space-y-4 flex flex-col justify-between theme-transition">
               <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2">
-                  <span id="cardDotSlack" class="w-2.5 h-2.5 rounded-full bg-brand-muted"></span>
-                  <span class="font-bold text-xs" style="color: var(--text-primary);">Slack</span>
+                  <span id="cardDotSlack" class="w-2.5 h-2.5 rounded-full bg-brand-muted flex-shrink-0"></span>
+                  <span class="text-sm font-bold tracking-tight" style="color: var(--text-primary);">Slack</span>
                 </div>
-                <span id="cardBadgeSlack" class="text-[10px] font-mono px-2 py-0.5 rounded border bg-brand-bg border-brand-border text-brand-muted font-semibold">Ready</span>
+                <span id="cardBadgeSlack" class="h-6 px-2.5 py-0.5 rounded-md text-[11px] font-mono font-semibold inline-flex items-center justify-center border bg-brand-bg border-brand-border text-brand-muted">Ready</span>
               </div>
-              <div class="space-y-1 text-xs font-mono">
+              <div class="space-y-2 text-xs font-mono flex-1">
                 <div class="text-brand-muted text-[11px]">Channel: <span style="color: var(--text-primary);">#social (C0C278R4PRD)</span></div>
                 <div class="text-brand-muted text-[11px]">Timestamp: <span id="cardTsSlack" style="color: var(--text-secondary);">Awaiting dispatch</span></div>
               </div>
-              <a id="cardLinkSlack" href="#" aria-disabled="true" class="pointer-events-none opacity-50 cursor-not-allowed block text-center py-1.5 text-xs font-medium text-brand-muted bg-brand-bg border border-brand-border rounded-lg transition theme-transition">
+              <a id="cardLinkSlack" href="#" aria-disabled="true" class="w-full block text-center py-2 text-xs font-semibold rounded-lg transition theme-transition opacity-40 cursor-not-allowed bg-brand-bg/50 border border-brand-border/60 text-brand-muted/60 pointer-events-none mt-auto">
                 View in Slack
               </a>
             </div>
 
             <!-- 2. Discord Card -->
-            <div class="bg-brand-panel border border-brand-border rounded-xl p-4 space-y-3 theme-transition">
+            <div class="bg-brand-panel border border-brand-border rounded-xl p-6 space-y-4 flex flex-col justify-between theme-transition">
               <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2">
-                  <span id="cardDotDiscord" class="w-2.5 h-2.5 rounded-full bg-brand-muted"></span>
-                  <span class="font-bold text-xs" style="color: var(--text-primary);">Discord</span>
+                  <span id="cardDotDiscord" class="w-2.5 h-2.5 rounded-full bg-brand-muted flex-shrink-0"></span>
+                  <span class="text-sm font-bold tracking-tight" style="color: var(--text-primary);">Discord</span>
                 </div>
-                <span id="cardBadgeDiscord" class="text-[10px] font-mono px-2 py-0.5 rounded border bg-brand-bg border-brand-border text-brand-muted font-semibold">Ready</span>
+                <span id="cardBadgeDiscord" class="h-6 px-2.5 py-0.5 rounded-md text-[11px] font-mono font-semibold inline-flex items-center justify-center border bg-brand-bg border-brand-border text-brand-muted">Ready</span>
               </div>
-              <div class="space-y-1 text-xs font-mono">
+              <div class="space-y-2 text-xs font-mono flex-1">
                 <div class="text-brand-muted text-[11px]">Type: <span style="color: var(--text-primary);">Webhook Embed Card</span></div>
                 <div class="text-brand-muted text-[11px]">Message ID: <span id="cardIdDiscord" style="color: var(--text-secondary);">Awaiting dispatch</span></div>
               </div>
-              <a id="cardLinkDiscord" href="#" aria-disabled="true" class="pointer-events-none opacity-50 cursor-not-allowed block text-center py-1.5 text-xs font-medium text-brand-muted bg-brand-bg border border-brand-border rounded-lg transition theme-transition">
+              <a id="cardLinkDiscord" href="#" aria-disabled="true" class="w-full block text-center py-2 text-xs font-semibold rounded-lg transition theme-transition opacity-40 cursor-not-allowed bg-brand-bg/50 border border-brand-border/60 text-brand-muted/60 pointer-events-none mt-auto">
                 View in Discord
               </a>
             </div>
 
             <!-- 3. Facebook Card -->
-            <div class="bg-brand-panel border border-brand-border rounded-xl p-4 space-y-3 theme-transition">
+            <div class="bg-brand-panel border border-brand-border rounded-xl p-6 space-y-4 flex flex-col justify-between theme-transition">
               <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2">
-                  <span id="cardDotFacebook" class="w-2.5 h-2.5 rounded-full bg-brand-muted"></span>
-                  <span class="font-bold text-xs" style="color: var(--text-primary);">Facebook</span>
+                  <span id="cardDotFacebook" class="w-2.5 h-2.5 rounded-full bg-brand-muted flex-shrink-0"></span>
+                  <span class="text-sm font-bold tracking-tight" style="color: var(--text-primary);">Facebook</span>
                 </div>
-                <span id="cardBadgeFacebook" class="text-[10px] font-mono px-2 py-0.5 rounded border bg-brand-bg border-brand-border text-brand-muted font-semibold">Ready</span>
+                <span id="cardBadgeFacebook" class="h-6 px-2.5 py-0.5 rounded-md text-[11px] font-mono font-semibold inline-flex items-center justify-center border bg-brand-bg border-brand-border text-brand-muted">Ready</span>
               </div>
-              <div class="space-y-1 text-xs font-mono">
+              <div class="space-y-2 text-xs font-mono flex-1">
                 <div class="text-brand-muted text-[11px]">API: <span style="color: var(--text-primary);">Meta Graph API v21.0</span></div>
                 <div class="text-brand-muted text-[11px]">Post ID: <span id="cardIdFacebook" style="color: var(--text-secondary);">Awaiting dispatch</span></div>
               </div>
-              <a id="cardLinkFacebook" href="#" aria-disabled="true" class="pointer-events-none opacity-50 cursor-not-allowed block text-center py-1.5 text-xs font-medium text-brand-muted bg-brand-bg border border-brand-border rounded-lg transition theme-transition">
+              <a id="cardLinkFacebook" href="#" aria-disabled="true" class="w-full block text-center py-2 text-xs font-semibold rounded-lg transition theme-transition opacity-40 cursor-not-allowed bg-brand-bg/50 border border-brand-border/60 text-brand-muted/60 pointer-events-none mt-auto">
                 View in Facebook
               </a>
             </div>
 
             <!-- 4. Twitter / X Card (Consistent 401 Reason: Requirement 2) -->
-            <div id="cardTwitterWrap" class="bg-brand-panel border border-brand-border rounded-xl p-4 space-y-3 theme-transition">
+            <div id="cardTwitterWrap" class="bg-brand-panel border border-brand-border rounded-xl p-6 space-y-4 flex flex-col justify-between theme-transition">
               <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2">
-                  <span id="cardDotTwitter" class="w-2.5 h-2.5 rounded-full bg-brand-failure"></span>
-                  <span class="font-bold text-xs" style="color: var(--text-primary);">Twitter / X</span>
+                  <span id="cardDotTwitter" class="w-2.5 h-2.5 rounded-full bg-brand-failure flex-shrink-0"></span>
+                  <span class="text-sm font-bold tracking-tight" style="color: var(--text-primary);">Twitter / X</span>
                 </div>
-                <span id="cardBadgeTwitter" class="text-[10px] font-mono px-2 py-0.5 rounded border font-semibold text-brand-failure" style="background-color: var(--failure-bg); border-color: var(--failure-border);">Failed</span>
+                <span id="cardBadgeTwitter" class="h-6 px-2.5 py-0.5 rounded-md text-[11px] font-mono font-semibold inline-flex items-center justify-center border font-semibold text-brand-failure" style="background-color: var(--failure-bg); border-color: var(--failure-border);">Failed</span>
               </div>
-              <div class="space-y-1 text-xs font-mono">
+              <div class="space-y-2 text-xs font-mono flex-1">
                 <div class="text-brand-muted text-[11px]">Auth: <span style="color: var(--text-primary);">OAuth 2.0 Bearer</span></div>
                 <div class="text-brand-muted text-[11px]">Error: <span id="cardStatusTwitter" class="text-brand-failure">X API 401: Unauthorized (Free-tier credits depleted)</span></div>
                 <div class="text-brand-muted text-[11px]">Isolation: <span class="text-brand-success">Zero-Drop (Other Channels OK)</span></div>
               </div>
-              <a id="cardLinkTwitter" href="#" aria-disabled="true" class="pointer-events-none opacity-50 cursor-not-allowed block text-center py-1.5 text-xs font-medium text-brand-muted bg-brand-bg border border-brand-border rounded-lg transition theme-transition">
+              <a id="cardLinkTwitter" href="#" aria-disabled="true" class="w-full block text-center py-2 text-xs font-semibold rounded-lg transition theme-transition opacity-40 cursor-not-allowed bg-brand-bg/50 border border-brand-border/60 text-brand-muted/60 pointer-events-none mt-auto">
                 View on X
               </a>
             </div>
 
-            <!-- 5. Google Sheets Card -->
-            <div class="bg-brand-panel border border-brand-border rounded-xl p-4 space-y-3 theme-transition">
+            <!-- 5. Mailchimp Card (Newsletter Campaign: Requirement 2) -->
+            <div class="bg-brand-panel border border-brand-border rounded-xl p-6 space-y-4 flex flex-col justify-between theme-transition">
               <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2">
-                  <span id="cardDotSheets" class="w-2.5 h-2.5 rounded-full bg-brand-muted"></span>
-                  <span class="font-bold text-xs" style="color: var(--text-primary);">Google Sheets</span>
+                  <span id="cardDotMailchimp" class="w-2.5 h-2.5 rounded-full bg-brand-muted flex-shrink-0"></span>
+                  <span class="text-sm font-bold tracking-tight" style="color: var(--text-primary);">Mailchimp</span>
                 </div>
-                <span id="cardBadgeSheets" class="text-[10px] font-mono px-2 py-0.5 rounded border bg-brand-bg border-brand-border text-brand-muted font-semibold">Ready</span>
+                <span id="cardBadgeMailchimp" class="h-6 px-2.5 py-0.5 rounded-md text-[11px] font-mono font-semibold inline-flex items-center justify-center border bg-brand-bg border-brand-border text-brand-muted">Ready</span>
               </div>
-              <div class="space-y-1 text-xs font-mono">
-                <div class="text-brand-muted text-[11px]">Action: <span style="color: var(--text-primary);">appendValues</span></div>
-                <div class="text-brand-muted text-[11px]">Range: <span id="cardRangeSheets" style="color: var(--text-secondary);">Sheet1!A1:H50</span></div>
+              <div class="space-y-2 text-xs font-mono flex-1">
+                <div class="text-brand-muted text-[11px]">Target: <span style="color: var(--text-primary);">List (6e0acf71ff)</span></div>
+                <div class="text-brand-muted text-[11px]">Campaign ID: <span id="cardIdMailchimp" style="color: var(--text-secondary);">Awaiting dispatch</span></div>
+                <div class="text-brand-muted text-[11px]">Type: <span style="color: var(--text-primary);">HTML Newsletter Campaign</span></div>
               </div>
-              <a id="cardLinkSheets" href="#" aria-disabled="true" class="pointer-events-none opacity-50 cursor-not-allowed block text-center py-1.5 text-xs font-medium text-brand-muted bg-brand-bg border border-brand-border rounded-lg transition theme-transition">
-                Open Spreadsheet
+              <a id="cardLinkMailchimp" href="#" aria-disabled="true" class="w-full block text-center py-2 text-xs font-semibold rounded-lg transition theme-transition opacity-40 cursor-not-allowed bg-brand-bg/50 border border-brand-border/60 text-brand-muted/60 pointer-events-none mt-auto">
+                View Campaign
               </a>
             </div>
 
-            <!-- 6. LinkedIn Card (Not Connected in Fastn: Requirement 8) -->
-            <div class="bg-brand-panel border border-brand-border rounded-xl p-4 space-y-3 theme-transition">
+            <!-- 6. Google Sheets Card -->
+            <div class="bg-brand-panel border border-brand-border rounded-xl p-6 space-y-4 flex flex-col justify-between theme-transition">
               <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2">
-                  <span id="cardDotLinkedIn" class="w-2.5 h-2.5 rounded-full bg-brand-muted"></span>
-                  <span class="font-bold text-xs" style="color: var(--text-primary);">LinkedIn</span>
+                  <span id="cardDotSheets" class="w-2.5 h-2.5 rounded-full bg-brand-muted flex-shrink-0"></span>
+                  <span class="text-sm font-bold tracking-tight" style="color: var(--text-primary);">Google Sheets</span>
                 </div>
-                <span id="cardBadgeLinkedIn" class="text-[10px] font-mono px-2 py-0.5 rounded border bg-brand-bg border-brand-border text-brand-muted font-semibold">Not Connected</span>
+                <span id="cardBadgeSheets" class="h-6 px-2.5 py-0.5 rounded-md text-[11px] font-mono font-semibold inline-flex items-center justify-center border bg-brand-bg border-brand-border text-brand-muted">Ready</span>
               </div>
-              <div class="space-y-1 text-xs font-mono">
-                <div class="text-brand-muted text-[11px]">Connector: <span style="color: var(--text-secondary);">None configured</span></div>
-                <div class="text-brand-muted text-[11px]">Status: <span style="color: var(--text-secondary);">Not Connected in Fastn</span></div>
+              <div class="space-y-2 text-xs font-mono flex-1">
+                <div class="text-brand-muted text-[11px]">Action: <span style="color: var(--text-primary);">appendValues</span></div>
+                <div class="text-brand-muted text-[11px]">Range: <span id="cardRangeSheets" style="color: var(--text-secondary);">Sheet1!A1:H50</span></div>
               </div>
-              <a id="cardLinkLinkedIn" href="#" aria-disabled="true" class="pointer-events-none opacity-50 cursor-not-allowed block text-center py-1.5 text-xs font-medium text-brand-muted bg-brand-bg border border-brand-border rounded-lg transition theme-transition">
-                View in LinkedIn
+              <a id="cardLinkSheets" href="#" aria-disabled="true" class="w-full block text-center py-2 text-xs font-semibold rounded-lg transition theme-transition opacity-40 cursor-not-allowed bg-brand-bg/50 border border-brand-border/60 text-brand-muted/60 pointer-events-none mt-auto">
+                Open Spreadsheet
               </a>
             </div>
 
@@ -1142,7 +1214,7 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
 
     // 2. Preview Card Switcher
     function switchPreviewCard(tab) {
-      ['slack', 'discord', 'twitter', 'facebook'].forEach(t => {
+      ['slack', 'discord', 'twitter', 'facebook', 'mailchimp'].forEach(t => {
         const el = document.getElementById(`cardPrev-${t}`);
         if (el) el.classList.add('hidden');
         const btn = document.getElementById(`tabBtn-${t}`);
@@ -1164,6 +1236,7 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
       if (document.getElementById('toggleSlack')?.checked) platforms.push('slack');
       if (document.getElementById('toggleDiscord')?.checked) platforms.push('discord');
       if (document.getElementById('toggleFacebook')?.checked) platforms.push('facebook');
+      if (document.getElementById('toggleMailchimp')?.checked) platforms.push('mailchimp');
       if (TWITTER_ENABLED && document.getElementById('toggleTwitter')?.checked) platforms.push('twitter');
       return platforms;
     }
@@ -1227,6 +1300,16 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
       if (fbLink) fbLink.href = link;
       if (fbLinkText) fbLinkText.innerText = link;
 
+      // Mailchimp preview elements sync
+      const mcTitle = document.getElementById('prevMailchimpTitle');
+      if (mcTitle) mcTitle.innerText = title;
+      const mcSubj = document.getElementById('prevMailchimpSubject');
+      if (mcSubj) mcSubj.innerText = title;
+      const mcCta = document.getElementById('prevMailchimpCta');
+      if (mcCta) mcCta.href = link;
+      const mcTags = document.getElementById('prevMailchimpTags');
+      if (mcTags) mcTags.innerText = tagsFormatted ? `Tags: ${tagsFormatted}` : 'Tags: #fastn #hackathon #ai #automation';
+
       // Image sync across previews
       const slackImg = document.getElementById('prevSlackImg');
       if (image) { slackImg.src = image; document.getElementById('prevSlackImgWrap').classList.remove('hidden'); }
@@ -1243,6 +1326,10 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
       const fbImg = document.getElementById('prevFbImg');
       if (image) { fbImg.src = image; document.getElementById('prevFbImgWrap').classList.remove('hidden'); }
       else { document.getElementById('prevFbImgWrap').classList.add('hidden'); }
+
+      const mcImg = document.getElementById('prevMailchimpImg');
+      if (image) { if (mcImg) mcImg.src = image; document.getElementById('prevMailchimpImgWrap')?.classList.remove('hidden'); }
+      else { document.getElementById('prevMailchimpImgWrap')?.classList.add('hidden'); }
 
       // Default baseline platform-native previews before AI adaptation finishes (Requirement 4)
       if (!currentAdapted) {
@@ -1265,6 +1352,10 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
 
         // Facebook: Conversational narrative
         document.getElementById('prevFbText').innerText = `FourFrontLab Update 📢\n\n${title}\n\n${content}\n\n${tagsFormatted}`.trim();
+
+        // Mailchimp: HTML Email Newsletter body
+        const mcContent = document.getElementById('prevMailchimpContent');
+        if (mcContent) mcContent.innerText = content;
       } else {
         applyAdaptedContentToPreviews(currentAdapted, title, link, tags);
       }
@@ -1340,6 +1431,12 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
       if (adapted.facebook) {
         document.getElementById('prevFbText').innerText = adapted.facebook;
       }
+      if (adapted.mailchimp) {
+        const mcContent = document.getElementById('prevMailchimpContent');
+        if (mcContent) {
+          mcContent.innerText = typeof adapted.mailchimp === 'string' ? adapted.mailchimp : (adapted.mailchimp.body || JSON.stringify(adapted.mailchimp));
+        }
+      }
     }
 
     // Helper: Standardized 5-State Taxonomy Updater (Requirements 8 & 9)
@@ -1349,40 +1446,42 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
       const dot = document.getElementById(`cardDot${channel}`);
       const link = document.getElementById(`cardLink${channel}`);
 
+      const badgeBaseClass = 'h-6 px-2.5 py-0.5 rounded-md text-[11px] font-mono font-semibold inline-flex items-center justify-center border';
+
       if (badge) {
         badge.innerText = state;
         if (state === 'Delivered') {
-          badge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border font-semibold text-brand-success';
+          badge.className = `${badgeBaseClass} text-brand-success`;
           badge.style = 'background-color: var(--success-bg); border-color: var(--success-border);';
         } else if (state === 'Delivering') {
-          badge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border font-semibold text-brand-accent';
+          badge.className = `${badgeBaseClass} text-brand-accent`;
           badge.style = 'background-color: var(--accent-bg); border-color: var(--accent-border);';
         } else if (state === 'Failed') {
-          badge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border font-semibold text-brand-failure';
+          badge.className = `${badgeBaseClass} text-brand-failure`;
           badge.style = 'background-color: var(--failure-bg); border-color: var(--failure-border);';
         } else { // 'Ready' or 'Not Connected'
-          badge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border bg-brand-bg border-brand-border text-brand-muted font-semibold';
+          badge.className = `${badgeBaseClass} bg-brand-bg border-brand-border text-brand-muted`;
           badge.style = '';
         }
       }
 
       if (dot) {
-        if (state === 'Delivered') dot.className = 'w-2.5 h-2.5 rounded-full bg-brand-success';
-        else if (state === 'Delivering') dot.className = 'w-2.5 h-2.5 rounded-full bg-brand-accent pulse-dot';
-        else if (state === 'Failed') dot.className = 'w-2.5 h-2.5 rounded-full bg-brand-failure';
-        else dot.className = 'w-2.5 h-2.5 rounded-full bg-brand-muted';
+        if (state === 'Delivered') dot.className = 'w-2.5 h-2.5 rounded-full bg-brand-success flex-shrink-0';
+        else if (state === 'Delivering') dot.className = 'w-2.5 h-2.5 rounded-full bg-brand-accent pulse-dot flex-shrink-0';
+        else if (state === 'Failed') dot.className = 'w-2.5 h-2.5 rounded-full bg-brand-failure flex-shrink-0';
+        else dot.className = 'w-2.5 h-2.5 rounded-full bg-brand-muted flex-shrink-0';
       }
 
       if (link) {
         if (state === 'Delivered' && permalink) {
           link.href = permalink;
           link.removeAttribute('aria-disabled');
-          link.className = 'pointer-events-auto opacity-100 cursor-pointer block text-center py-1.5 text-xs font-medium text-brand-accent bg-brand-bg hover:bg-brand-panelHover border border-brand-border rounded-lg transition theme-transition';
+          link.className = 'w-full block text-center py-2 text-xs font-semibold rounded-lg transition theme-transition pointer-events-auto opacity-100 cursor-pointer text-brand-accent bg-brand-bg hover:bg-brand-panelHover border border-brand-border shadow-sm mt-auto';
           if (buttonLabel) link.innerText = buttonLabel;
         } else {
           link.href = '#';
           link.setAttribute('aria-disabled', 'true');
-          link.className = 'pointer-events-none opacity-50 cursor-not-allowed block text-center py-1.5 text-xs font-medium text-brand-muted bg-brand-bg border border-brand-border rounded-lg transition theme-transition';
+          link.className = 'w-full block text-center py-2 text-xs font-semibold rounded-lg transition theme-transition opacity-40 cursor-not-allowed bg-brand-bg/50 border border-brand-border/60 text-brand-muted/60 pointer-events-none mt-auto';
           if (buttonLabel) link.innerText = buttonLabel;
         }
       }
@@ -1423,11 +1522,15 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
         setChannelCardState('Facebook', 'Delivering', 'Broadcasting via Fastn UCL...');
         document.getElementById('cardIdFacebook').innerText = 'In-flight dispatch...';
       }
+      if (document.getElementById('toggleMailchimp')?.checked) {
+        setChannelCardState('Mailchimp', 'Delivering', 'Broadcasting via Fastn UCL...');
+        document.getElementById('cardIdMailchimp').innerText = 'In-flight dispatch...';
+      }
       setChannelCardState('Sheets', 'Delivering', 'Appending row to Sheet1...');
 
       logEvent(`[DISPATCH] Initiating parallel broadcast: "${Title}" (mode=${currentMode}, force=${force})`, 'cyan');
-      logEvent(`[AI] Dispatching platform-native adapted payloads (Slack mrkdwn, Discord embed, FB narrative)`, 'amber');
-      logEvent(`[TARGETS] Slack (#social), Discord (Embed), Facebook (Relay), Sheets (Audit Log)`, 'slate');
+      logEvent(`[AI] Dispatching platform-native adapted payloads (Slack mrkdwn, Discord embed, FB narrative, Mailchimp HTML)`, 'amber');
+      logEvent(`[TARGETS] Slack (#social), Discord (Embed), Facebook (Relay), Mailchimp (HTML), Sheets (Audit Log)`, 'slate');
 
       const startTime = Date.now();
 
@@ -1474,6 +1577,7 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
           logEvent(`[SLACK] Delivered to #social | TS: ${data.results?.slack?.id || 'None'}`, 'slate');
           logEvent(`[DISCORD] Embed ID: ${data.results?.discord?.id || 'None'}`, 'slate');
           logEvent(`[FACEBOOK] Relay ID: ${data.results?.facebook?.id || 'None'}`, 'slate');
+          logEvent(`[MAILCHIMP] Campaign ID: ${data.results?.mailchimp?.id || 'None'}`, 'slate');
           logEvent(`[AUDIT] Logged to Google Sheet 1wquYVUl_...`, 'slate');
         }
 
@@ -1486,7 +1590,7 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
           Image_URL,
           Status: data.status,
           Slack_ID: data.results?.slack?.id || (data.status === 'Skipped' ? 'DEDUP' : 'FAILED'),
-          Social_ID: data.results?.discord?.id || data.results?.facebook?.id || 'None',
+          Social_ID: data.results?.discord?.id || data.results?.facebook?.id || data.results?.mailchimp?.id || 'None',
           Error_Log: data.auditLog?.errors || 'None'
         };
 
@@ -1510,7 +1614,7 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
       }
     }
 
-    // 7. Update Delivery Monitor with Standardized 5 States (Requirement 8 & 9)
+    // 7. Update Delivery Monitor with Standardized 5 States (Requirements 8 & 9)
     function updateMonitorView(data, elapsed) {
       document.getElementById('statLatency').innerText = `${elapsed}ms`;
       document.getElementById('monExecTimeBadge').innerText = `Executed in ${elapsed}ms`;
@@ -1582,7 +1686,17 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
         document.getElementById('cardStatusTwitter').innerText = 'X API 401: Unauthorized (Free-tier credits depleted)';
       }
 
-      // 5. Google Sheets (Delivered | Failed)
+      // 5. Mailchimp (Delivered | Failed)
+      if (data.results?.mailchimp?.success && data.results?.mailchimp?.id) {
+        deliveredCount++;
+        setChannelCardState('Mailchimp', 'Delivered', data.results.mailchimp.id, data.results.mailchimp.permalink, 'View Campaign');
+        document.getElementById('cardIdMailchimp').innerText = data.results.mailchimp.skipped ? `${data.results.mailchimp.id} (Existing)` : data.results.mailchimp.id;
+      } else {
+        setChannelCardState('Mailchimp', 'Failed', data.results?.mailchimp?.error || 'Failed', null, 'View Campaign');
+        document.getElementById('cardIdMailchimp').innerText = data.results?.mailchimp?.error || 'Failed';
+      }
+
+      // 6. Google Sheets (Delivered | Failed)
       if (data.results?.google_sheets?.success) {
         deliveredCount++;
         setChannelCardState('Sheets', 'Delivered', data.results.google_sheets.range || 'Sheet1!A1:H50', data.results.google_sheets.permalink || 'https://docs.google.com/spreadsheets/d/1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s', 'Open Spreadsheet');
@@ -1592,9 +1706,6 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
       } else {
         setChannelCardState('Sheets', 'Failed', data.results?.google_sheets?.error || 'Failed', null, 'Open Spreadsheet');
       }
-
-      // 6. LinkedIn (Always Not Connected: Requirement 8)
-      setChannelCardState('LinkedIn', 'Not Connected', 'Not Connected in Fastn', null, 'View in LinkedIn');
 
       // Update Summary Statistics
       const totalDispatched = deliveredCount + isolatedCount;

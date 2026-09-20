@@ -87,14 +87,14 @@ function createConnectors(failurePlatform) {
 }
 
 // AI-Powered Per-Platform Content Adaptation Engine
-async function adaptContentForPlatforms({ title, content, link, tags, platforms = ['twitter', 'linkedin', 'slack', 'discord', 'facebook'] }) {
-  const selectedPlatforms = Array.isArray(platforms) ? platforms : ['twitter', 'linkedin', 'slack', 'discord', 'facebook'];
+async function adaptContentForPlatforms({ title, content, link, tags, platforms = ['twitter', 'slack', 'discord', 'facebook', 'mailchimp'] }) {
+  const selectedPlatforms = Array.isArray(platforms) ? platforms : ['twitter', 'slack', 'discord', 'facebook', 'mailchimp'];
   const formattedTags = (tags || '').split(',').map(t => t.trim().startsWith('#') ? t.trim() : `#${t.trim()}`).filter(t => t !== '#').join(' ');
 
   // 1. If ANTHROPIC_API_KEY is configured, try live Claude API call (claude-sonnet-4-6)
   if (process.env.ANTHROPIC_API_KEY) {
     try {
-      const prompt = `Given this source content: "${content}", "${title}", "${link}", "${tags}" — rewrite it as a separate, platform-native version for each of the following selected destinations: ${selectedPlatforms.join(', ')}. For each, respect that platform's real constraints and conventions (e.g. Twitter/X: ≤280 chars, punchy, hashtags inline; LinkedIn: longer-form, professional tone, line breaks; Slack: mrkdwn formatting; Discord: embed-friendly with emoji; Facebook: conversational). Return strict JSON: { "platform_key": "adapted text" } for only the selected platforms.`;
+      const prompt = `Given this source content: "${content}", "${title}", "${link}", "${tags}" — rewrite it as a separate, platform-native version for each of the following selected destinations: ${selectedPlatforms.join(', ')}. For each, respect that platform's real constraints and conventions (e.g. Twitter/X: ≤280 chars, punchy, hashtags inline; Slack: mrkdwn formatting; Discord: embed-friendly with emoji; Facebook: conversational; Mailchimp: newsletter/email format with subject, header, body paragraphs, and call-to-action). Return strict JSON: { "platform_key": "adapted text" } for only the selected platforms.`;
 
       const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -142,9 +142,9 @@ async function adaptContentForPlatforms({ title, content, link, tags, platforms 
     adapted.twitter = tweet.length > 280 ? tweet.substring(0, 277) + '...' : tweet;
   }
 
-  if (selectedPlatforms.includes('linkedin')) {
-    // LinkedIn: Longer-form, executive professional tone, line breaks, structured takeaways
-    adapted.linkedin = `🚀 ${title}\n\n${content}\n\nKey Highlights:\n• Automated multi-platform fan-out via Fastn MCP Gateway\n• Zero-drop fault isolation & stateful deduplication\n• Bi-directional audit logging to Google Sheets\n\n${link ? `🔗 Explore the architecture: ${link}\n\n` : ''}${formattedTags || '#Fastn #DevTools #Architecture #SaaS'}`;
+  if (selectedPlatforms.includes('mailchimp')) {
+    // Mailchimp: Structured email newsletter format with subject, greeting, narrative, highlights, and CTA
+    adapted.mailchimp = `Subject: 🚀 ${title}\n\nDear Subscriber,\n\n${content}\n\nKey Updates:\n• Multi-channel parallel broadcast via Fastn MCP Gateway\n• Zero-drop fault isolation & stateful deduplication\n• Bi-directional audit logging to Google Sheets\n\n${link ? `Explore the release: ${link}\n\n` : ''}Best regards,\nThe FourFrontLab Team`;
   }
 
   if (selectedPlatforms.includes('slack')) {
@@ -224,7 +224,7 @@ const server = http.createServer(async (req, res) => {
         const content = data.Content || data.content || '';
         const link = data.Link || data.link || '';
         const tags = data.Tags || data.tags || '';
-        const platforms = data.platforms || ['twitter', 'linkedin', 'slack', 'discord', 'facebook'];
+        const platforms = data.platforms || ['twitter', 'slack', 'discord', 'facebook', 'mailchimp'];
 
         const { adapted, engine } = await adaptContentForPlatforms({ title, content, link, tags, platforms });
         res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -405,6 +405,7 @@ async function fetchGoogleSheetsRows() {
           const simTs = (Date.now() / 1000).toFixed(6);
           const simDiscordId = String(Date.now());
           const simFbId = 'fb_' + Math.floor(100000 + Math.random() * 900000);
+          const simMcId = 'mc_' + Date.now().toString().slice(-6);
           const results = {
             slack: {
               success: true,
@@ -424,6 +425,12 @@ async function fetchGoogleSheetsRows() {
               permalink: `https://facebook.com/1288938340978227/posts/${simFbId}`,
               error: null
             },
+            mailchimp: {
+              success: true,
+              id: simMcId,
+              permalink: `https://us16.campaign-archive.com/?id=${simMcId}`,
+              error: null
+            },
             google_sheets: {
               success: true,
               id: '1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s',
@@ -435,13 +442,6 @@ async function fetchGoogleSheetsRows() {
               id: null,
               permalink: null,
               error: 'X API 401: Unauthorized (Free-tier credits depleted)'
-            },
-            linkedin: {
-              success: false,
-              id: null,
-              permalink: null,
-              notConnected: true,
-              error: 'LinkedIn: Not Connected'
             }
           };
 
@@ -454,8 +454,8 @@ async function fetchGoogleSheetsRows() {
             Image_URL,
             Status: 'Published',
             Slack_ID: simTs,
-            Social_ID: `DC:${simDiscordId} | FB:${simFbId}`,
-            Error_Log: 'twitter_x: X API 401: Unauthorized (Free-tier credits depleted); linkedin: Not Connected'
+            Social_ID: `DC:${simDiscordId} | FB:${simFbId} | MC:${simMcId}`,
+            Error_Log: 'twitter_x: X API 401: Unauthorized (Free-tier credits depleted)'
           };
 
           googleSheetsDb.unshift(sheetRow);
@@ -466,7 +466,7 @@ async function fetchGoogleSheetsRows() {
             status: 'Published',
             simulated: true,
             results,
-            auditLog: { Status: 'Published', Updated_At: new Date().toISOString(), errors: 'twitter_x: X API 401: Unauthorized (Free-tier credits depleted); linkedin: Not Connected' },
+            auditLog: { Status: 'Published', Updated_At: new Date().toISOString(), errors: 'twitter_x: X API 401: Unauthorized (Free-tier credits depleted)' },
             adapted: data.adapted || null,
             updatedDb: googleSheetsDb
           }));
@@ -517,6 +517,13 @@ async function fetchGoogleSheetsRows() {
                 skipped: true,
                 error: null
               },
+              mailchimp: {
+                success: true,
+                id: existing.mailchimpId || 'Previously Dispatched',
+                permalink: existing.mailchimpId ? `https://us16.campaign-archive.com/?id=${existing.mailchimpId}` : 'https://mailchimp.com',
+                skipped: true,
+                error: null
+              },
               google_sheets: {
                 success: true,
                 id: '1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s',
@@ -528,13 +535,6 @@ async function fetchGoogleSheetsRows() {
                 id: null,
                 permalink: null,
                 error: 'X API 401: Unauthorized (Free-tier credits depleted)'
-              },
-              linkedin: {
-                success: false,
-                id: null,
-                permalink: null,
-                notConnected: true,
-                error: 'LinkedIn: Not Connected'
               }
             };
 
@@ -559,6 +559,7 @@ async function fetchGoogleSheetsRows() {
           const slackRes = fastnResult.results?.slack || {};
           const discordRes = fastnResult.results?.discord || {};
           const fbRes = fastnResult.results?.facebook || {};
+          const mcRes = fastnResult.results?.mailchimp || {};
 
           // Safeguard: strictly verify permalink and id
           const results = {
@@ -580,6 +581,12 @@ async function fetchGoogleSheetsRows() {
               permalink: fbRes.permalink || null,
               error: fbRes.error || (fbRes.success ? null : 'Failed to deliver to Facebook')
             },
+            mailchimp: {
+              success: mcRes.success === true,
+              id: mcRes.id || null,
+              permalink: mcRes.permalink || (mcRes.id ? `https://us16.campaign-archive.com/?id=${mcRes.id}` : null),
+              error: mcRes.error || (mcRes.success ? null : 'Failed to deliver to Mailchimp')
+            },
             google_sheets: {
               success: true,
               id: '1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s',
@@ -591,13 +598,6 @@ async function fetchGoogleSheetsRows() {
               id: null,
               permalink: null,
               error: 'X API 401: Unauthorized (Free-tier credits depleted)'
-            },
-            linkedin: {
-              success: false,
-              id: null,
-              permalink: null,
-              notConnected: true,
-              error: 'LinkedIn: Not Connected'
             }
           };
 
@@ -610,7 +610,7 @@ async function fetchGoogleSheetsRows() {
             Image_URL,
             Status: fastnResult.status || 'Published',
             Slack_ID: results.slack.id || 'FAILED',
-            Social_ID: `DC:${results.discord.id || 'ERR'} | FB:${results.facebook.id || 'ERR'}`,
+            Social_ID: `DC:${results.discord.id || 'ERR'} | FB:${results.facebook.id || 'ERR'} | MC:${results.mailchimp.id || 'ERR'}`,
             Error_Log: fastnResult.auditLog?.errors || 'None'
           };
 
@@ -637,9 +637,9 @@ async function fetchGoogleSheetsRows() {
             slack: { success: false, error: executionError },
             discord: { success: false, error: executionError },
             facebook: { success: false, error: executionError },
+            mailchimp: { success: false, error: executionError },
             google_sheets: { success: false, error: executionError },
-            twitter_x: { success: false, error: 'X API 401: Unauthorized (Free-tier credits depleted)' },
-            linkedin: { success: false, notConnected: true, error: 'LinkedIn: Not Connected' }
+            twitter_x: { success: false, error: 'X API 401: Unauthorized (Free-tier credits depleted)' }
           }
         }));
       } catch (err) {
