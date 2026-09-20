@@ -762,11 +762,12 @@
                     </div>
                   </div>
                 </div>
-                <!-- Feature 2: Best time to post -->
-                <div class="best-time-caption" id="bestTime-slack">
-                  <span class="bt-icon">💡</span>
-                  <span>Post now — internal channels have no real engagement curve</span>
-                </div>
+              </div>
+              <!-- Feature 2: Best time to post -->
+              <div class="best-time-caption" id="bestTime-slack">
+                <span class="bt-icon">💡</span>
+                <span>Post now — internal channels have no real engagement curve</span>
+              </div>
 
             <!-- 2. DISCORD EMBED CARD PREVIEW (Requirement 4 & 5) -->
             <div id="cardPrev-discord" class="hidden space-y-3 rounded-xl p-5 theme-transition" style="background-color: var(--preview-discord-bg); border: 1px solid var(--preview-discord-border);">
@@ -2024,45 +2025,48 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
       emptyState.classList.add('hidden');
       const badgeBase = 'h-6 px-2.5 rounded-[var(--radius-sm)] text-[12px] font-semibold font-mono inline-flex items-center justify-center';
       tbody.innerHTML = filtered.map(row => {
+        if (!row) return '';
         let statusBadge = '';
-        if (row.Status === 'Published') {
+        const status = row?.Status ?? 'Draft';
+        if (status === 'Published') {
           statusBadge = `<span class="${badgeBase} text-[var(--success)]" style="background-color: var(--success-bg); border: none;">Published</span>`;
-        } else if (row.Status === 'Partially Published') {
+        } else if (status === 'Partially Published') {
           statusBadge = `<span class="${badgeBase} text-[var(--accent)]" style="background-color: var(--warning-bg); border: none;">Partially Published</span>`;
         } else {
-          statusBadge = `<span class="${badgeBase} text-[var(--text-secondary)] border border-[var(--border-strong)]" style="background-color: transparent;">Draft</span>`;
+          statusBadge = `<span class="${badgeBase} text-[var(--text-secondary)] border border-[var(--border-strong)]" style="background-color: transparent;">${escapeHtml(status)}</span>`;
         }
 
-        const slackIdStr = String(row.Slack_ID || '');
-        const slackCell = row.Slack_ID && row.Slack_ID !== 'FAILED' && row.Slack_ID !== 'None'
+        const slackIdStr = String(row?.Slack_ID ?? '');
+        const slackCell = (row?.Slack_ID && row.Slack_ID !== 'FAILED' && row.Slack_ID !== 'None')
           ? `<a href="https://fourfrontlab.slack.com/archives/C0C278R4PRD/p${slackIdStr.replace('.', '')}" target="_blank" class="text-[var(--accent)] hover:underline font-mono text-[11px]">${escapeHtml(slackIdStr)}</a>`
           : `<span class="text-[var(--danger)] font-mono text-[11px]">${escapeHtml(slackIdStr || 'None')}</span>`;
 
-        const rawTimestamp = row.Timestamp || row.Updated_At || new Date().toISOString();
-        const formattedTime = (typeof rawTimestamp === 'string' ? rawTimestamp : String(rawTimestamp || ''))
+        const rawTimestamp = row?.Timestamp ?? row?.Updated_At ?? new Date().toISOString();
+        const formattedTime = (typeof rawTimestamp === 'string' ? rawTimestamp : String(rawTimestamp ?? ''))
           .replace('T', ' ')
           .substring(0, 19);
 
-        // Feature 3: triggeredVia badge — defaults to "Manual" for legacy rows
-        const via = row.triggeredVia || 'Manual';
-        const triggerBadge = via === 'Webhook'
+        // Feature 3: triggeredVia badge — defensive null-guard
+        const via = String(row?.triggeredVia ?? row?.triggerType ?? 'Manual').trim();
+        const isWebhook = via.toLowerCase() === 'webhook';
+        const triggerBadge = isWebhook
           ? `<span class="h-5 px-2 rounded text-[10px] font-mono font-semibold inline-flex items-center" style="background:rgba(245,166,35,0.12);color:var(--accent);border:1px solid rgba(245,166,35,0.3)">⚡ Webhook</span>`
           : `<span class="h-5 px-2 rounded text-[10px] font-mono font-semibold inline-flex items-center" style="background:var(--surface-raised);color:var(--text-secondary);border:1px solid var(--border)">Manual</span>`;
 
         return `
           <tr class="hover:bg-[var(--surface-raised)] transition">
             <td class="py-3.5 px-4 font-mono text-[var(--text-secondary)] text-[11px] whitespace-nowrap">${formattedTime}</td>
-            <td class="py-3.5 px-4 font-medium max-w-xs truncate text-[13px] text-[var(--text-primary)]">${escapeHtml(row.Title || 'Untitled')}</td>
-            <td class="py-3.5 px-4 max-w-xs truncate text-[11px] text-[var(--text-secondary)]">${escapeHtml(row.Content || '')}</td>
-            <td class="py-3.5 px-4 font-mono text-[11px] text-[var(--text-secondary)]">${escapeHtml(row.Tags || 'None')}</td>
+            <td class="py-3.5 px-4 font-medium max-w-xs truncate text-[13px] text-[var(--text-primary)]">${escapeHtml(row?.Title ?? 'Untitled')}</td>
+            <td class="py-3.5 px-4 max-w-xs truncate text-[11px] text-[var(--text-secondary)]">${escapeHtml(row?.Content ?? '')}</td>
+            <td class="py-3.5 px-4 font-mono text-[11px] text-[var(--text-secondary)]">${escapeHtml(row?.Tags ?? 'None')}</td>
             <td class="py-3.5 px-4">
-              ${row.Image_URL ? `<img src="${row.Image_URL}" alt="thumb" class="w-7 h-7 object-cover rounded-[var(--radius-sm)] border border-[var(--border)]">` : `<span class="text-[var(--text-secondary)] text-[10px]">None</span>`}
+              ${row?.Image_URL ? `<img src="${row.Image_URL}" alt="thumb" class="w-7 h-7 object-cover rounded-[var(--radius-sm)] border border-[var(--border)]">` : `<span class="text-[var(--text-secondary)] text-[10px]">None</span>`}
             </td>
             <td class="py-3.5 px-4">${statusBadge}</td>
             <td class="py-3.5 px-4">${triggerBadge}</td>
             <td class="py-3.5 px-4">${slackCell}</td>
-            <td class="py-3.5 px-4 font-mono text-[11px] text-[var(--text-primary)]">${escapeHtml(row.Social_ID || 'None')}</td>
-            <td class="py-3.5 px-4 font-mono text-[var(--text-secondary)] text-[11px] max-w-xs truncate" title="${escapeHtml(row.Error_Log || 'None')}">${escapeHtml(row.Error_Log || 'None')}</td>
+            <td class="py-3.5 px-4 font-mono text-[11px] text-[var(--text-primary)]">${escapeHtml(row?.Social_ID ?? 'None')}</td>
+            <td class="py-3.5 px-4 font-mono text-[var(--text-secondary)] text-[11px] max-w-xs truncate" title="${escapeHtml(row?.Error_Log ?? 'None')}">${escapeHtml(row?.Error_Log ?? 'None')}</td>
           </tr>
         `;
       }).join('');
@@ -2146,8 +2150,9 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
 
     // Filter out junk/test rows per Spec 9
     function isJunkRecord(row) {
-      const title = (row.Title || '').trim().toLowerCase();
-      const content = (row.Content || '').trim().toLowerCase();
+      if (!row) return true;
+      const title = String(row?.Title ?? '').trim().toLowerCase();
+      const content = String(row?.Content ?? '').trim().toLowerCase();
       if (!title && !content) return true;
       if (['test', 'testing', 'asdf', 'kbsjfkdsfnklse'].includes(title)) return true;
       if (/^[a-z]{8,}$/i.test(title) && !title.includes(' ')) return true;
