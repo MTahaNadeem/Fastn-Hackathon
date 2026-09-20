@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FourFrontLab — System Status</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    /* Reuse same CSS custom properties as index.html for visual consistency */
+    :root, [data-theme="dark"] {
+      --bg: #0B0E11;
+      --surface: #13181F;
+      --surface-raised: #1C2330;
+      --border: rgba(255,255,255,0.08);
+      --border-strong: rgba(255,255,255,0.15);
+      --text-primary: #F1F5F9;
+      --text-secondary: #8B9CB5;
+      --text-tertiary: #4A5568;
+      --accent: #F5A623;
+      --accent-hover: #E8941A;
+      --success: #3DDC97;
+      --success-bg: rgba(61,220,151,0.1);
+      --danger: #FF5D5D;
+      --danger-bg: rgba(255,93,93,0.1);
+      --warning: #F5A623;
+      --warning-bg: rgba(245,166,35,0.1);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --font-sans: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    [data-theme="light"] {
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --surface-raised: #F1F5F9;
+      --border: rgba(0,0,0,0.08);
+      --border-strong: rgba(0,0,0,0.16);
+      --text-primary: #0F172A;
+      --text-secondary: #475569;
+      --text-tertiary: #94A3B8;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* Layout */
+    .container { max-width: 720px; margin: 0 auto; padding: 48px 24px 80px; }
+
+    /* Header */
+    .header { border-bottom: 1px solid var(--border); padding-bottom: 28px; margin-bottom: 32px; }
+    .header-top { display: flex; align-items: center; justify-content: space-between; }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--success); animation: pulse 2s infinite; }
+    @keyframes pulse {
+      0%,100% { opacity: 1; box-shadow: 0 0 0 0 rgba(61,220,151,0.4); }
+      50% { opacity: 0.85; box-shadow: 0 0 0 6px rgba(61,220,151,0); }
+    }
+    .brand-name { font-size: 15px; font-weight: 700; }
+    .brand-sub { font-size: 11px; color: var(--text-secondary); font-family: var(--font-mono); margin-top: 1px; }
+    .header-actions { display: flex; gap: 8px; }
+    .btn-sm {
+      font-size: 11px; font-weight: 600; padding: 5px 12px; border-radius: var(--radius-sm);
+      border: 1px solid var(--border-strong); background: transparent; color: var(--text-secondary);
+      cursor: pointer; transition: all 0.15s; font-family: var(--font-sans);
+    }
+    .btn-sm:hover { color: var(--text-primary); border-color: var(--accent); }
+    .header-bottom { margin-top: 16px; }
+    .overall-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 13px; font-weight: 600;
+    }
+    .overall-badge .dot { width: 8px; height: 8px; border-radius: 50%; }
+    .updated-at { font-size: 11px; color: var(--text-secondary); font-family: var(--font-mono); margin-top: 4px; }
+
+    /* Metrics strip */
+    .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 32px; }
+    @media (max-width: 480px) { .metrics { grid-template-columns: 1fr 1fr; } }
+    .metric-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+    }
+    .metric-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); }
+    .metric-value { font-size: 28px; font-weight: 700; line-height: 1.2; margin-top: 6px; }
+    .metric-sub { font-size: 10px; color: var(--text-tertiary); margin-top: 2px; }
+
+    /* Platform rows */
+    .section-title {
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 12px;
+    }
+    .platform-list { display: flex; flex-direction: column; gap: 1px; border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; margin-bottom: 32px; }
+    .platform-row {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--surface); padding: 14px 18px; transition: background 0.1s;
+    }
+    .platform-row:hover { background: var(--surface-raised); }
+    .platform-row + .platform-row { border-top: 1px solid var(--border); }
+    .platform-info { display: flex; align-items: center; gap: 10px; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .platform-name { font-size: 13px; font-weight: 600; }
+    .platform-meta { font-size: 11px; color: var(--text-secondary); font-family: var(--font-mono); }
+    .platform-right { display: flex; align-items: center; gap: 16px; }
+    .pct-badge {
+      font-size: 12px; font-weight: 600; font-family: var(--font-mono);
+      padding: 3px 10px; border-radius: var(--radius-sm);
+    }
+    .pct-green { color: var(--success); background: var(--success-bg); }
+    .pct-amber { color: var(--warning); background: var(--warning-bg); }
+    .pct-red   { color: var(--danger);  background: var(--danger-bg); }
+    .dot-green { background: var(--success); }
+    .dot-amber { background: var(--warning); }
+    .dot-red   { background: var(--danger); }
+    .dot-grey  { background: var(--text-tertiary); }
+
+    /* Incident box */
+    .incident-box {
+      border: 1px solid var(--border); border-radius: var(--radius-md);
+      overflow: hidden; margin-bottom: 32px;
+    }
+    .incident-header {
+      background: var(--surface); padding: 12px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .incident-header h3 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); }
+    .incident-row {
+      background: var(--bg); padding: 14px 18px;
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+    }
+    .incident-ts { font-size: 11px; font-family: var(--font-mono); color: var(--text-secondary); white-space: nowrap; flex-shrink: 0; }
+    .incident-desc { font-size: 12px; color: var(--text-primary); line-height: 1.5; }
+    .incident-none { font-size: 12px; color: var(--text-secondary); padding: 14px 18px; background: var(--bg); }
+
+    /* Footer */
+    .footer { text-align: center; font-size: 11px; color: var(--text-secondary); font-family: var(--font-mono); border-top: 1px solid var(--border); padding-top: 24px; }
+    .footer a { color: var(--accent); }
+
+    /* Skeleton loading */
+    .skeleton { background: var(--surface-raised); border-radius: 4px; animation: shimmer 1.5s infinite; }
+    @keyframes shimmer { 0%,100%{opacity:0.6} 50%{opacity:1} }
+
+    /* Error state */
+    .error-msg { font-size: 12px; color: var(--danger); font-family: var(--font-mono); padding: 16px; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-top">
+        <div class="brand">
+          <div class="brand-dot" id="overallDot"></div>
+          <div>
+            <div class="brand-name">FourFrontLab · System Status</div>
+            <div class="brand-sub">Cross-Platform Social Publisher — Track 04</div>
+          </div>
+        </div>
+        <div class="header-actions">
+          <a href="/" class="btn-sm">← Back to App</a>
+          <button class="btn-sm" onclick="loadStatus()">↻ Refresh</button>
+        </div>
+      </div>
+      <div class="header-bottom">
+        <div class="overall-badge" id="overallBadge">
+          <span class="dot" id="overallBadgeDot" style="width:8px;height:8px;border-radius:50%;background:var(--text-tertiary)"></span>
+          <span id="overallBadgeText">Loading…</span>
+        </div>
+        <div class="updated-at" id="updatedAt">—</div>
+      </div>
+    </div>
+
+    <!-- Metrics strip -->
+    <div class="metrics">
+      <div class="metric-card">
+        <div class="metric-label">7-Day Uptime</div>
+        <div class="metric-value" id="uptime7d">—</div>
+        <div class="metric-sub">Published broadcasts</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Total Broadcasts</div>
+        <div class="metric-value" id="totalBroadcasts">—</div>
+        <div class="metric-sub">All-time dispatches</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Last 24h</div>
+        <div class="metric-value" id="last24h">—</div>
+        <div class="metric-sub" id="last24hSub">success / failed</div>
+      </div>
+    </div>
+
+    <!-- Platform rows -->
+    <div class="section-title">Platform Health</div>
+    <div class="platform-list" id="platformList">
+      <!-- Injected by JS -->
+      <div class="platform-row"><span class="platform-name skeleton" style="width:120px;height:14px;">&nbsp;</span></div>
+    </div>
+
+    <!-- Last Incident -->
+    <div class="section-title">Incident History</div>
+    <div class="incident-box">
+      <div class="incident-header">
+        <h3>Last Incident</h3>
+        <span id="incidentCount" style="font-size:11px;font-family:var(--font-mono);color:var(--text-secondary)"></span>
+      </div>
+      <div id="incidentContent" class="incident-none">Loading…</div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <span>FourFrontLab · <a href="https://fastn.ai" target="_blank">Fastn Track 04</a> · Powered by Fastn MCP Gateway <code>wf_6cfc644efb9d</code></span>
+    </div>
+  </div>
+
+  <script>
+    async function loadStatus() {
+      document.getElementById('overallBadgeText').textContent = 'Refreshing…';
+      try {
+        const res = await fetch('/api/status');
+        if (!res.ok) throw new Error('API returned ' + res.status);
+        const data = await res.json();
+        renderStatus(data);
+      } catch (err) {
+        document.getElementById('overallBadgeText').textContent = 'Failed to load status';
+        document.getElementById('platformList').innerHTML = `<div class="error-msg">⚠ Could not reach /api/status: ${err.message}</div>`;
+      }
+    }
+
+    function renderStatus(data) {
+      // Updated at
+      const ts = data.generatedAt ? new Date(data.generatedAt).toLocaleString() : '—';
+      document.getElementById('updatedAt').textContent = `Last updated: ${ts}`;
+
+      // Metrics
+      const uptimePct = (data.uptime7d ?? 100) + '%';
+      document.getElementById('uptime7d').textContent = uptimePct;
+      document.getElementById('totalBroadcasts').textContent = data.totalBroadcasts ?? 0;
+      const s24 = data.last24h?.success ?? 0;
+      const f24 = data.last24h?.failed ?? 0;
+      document.getElementById('last24h').textContent = `${s24} / ${f24}`;
+      document.getElementById('last24hSub').textContent = 'success / failed';
+
+      // Overall status badge
+      const uptime = data.uptime7d ?? 100;
+      let overallColor, overallText;
+      if (uptime >= 99) {
+        overallColor = 'var(--success)'; overallText = '✅ All Systems Operational';
+      } else if (uptime >= 80) {
+        overallColor = 'var(--warning)'; overallText = '⚠ Degraded Performance';
+      } else {
+        overallColor = 'var(--danger)'; overallText = '🔴 Major Outage';
+      }
+      document.getElementById('overallBadgeDot').style.background = overallColor;
+      document.getElementById('overallBadgeText').textContent = overallText;
+      document.getElementById('overallBadgeText').style.color = overallColor;
+      document.getElementById('overallDot').style.background = overallColor;
+
+      // Platform rows
+      const platformList = document.getElementById('platformList');
+      if (!data.platforms || data.platforms.length === 0) {
+        platformList.innerHTML = '<div class="platform-row"><span class="platform-name" style="color:var(--text-secondary)">No platform data available yet</span></div>';
+      } else {
+        platformList.innerHTML = data.platforms.map(p => {
+          const dotClass = `dot-${p.statusColor}`;
+          const pctClass = `pct-${p.statusColor}`;
+          const statusText = p.statusColor === 'green' ? 'Operational' : p.statusColor === 'amber' ? 'Degraded' : 'Outage';
+          return `
+            <div class="platform-row">
+              <div class="platform-info">
+                <span class="status-dot ${dotClass}"></span>
+                <div>
+                  <div class="platform-name">${p.label}</div>
+                  <div class="platform-meta">${p.success} ok / ${p.failed} failed</div>
+                </div>
+              </div>
+              <div class="platform-right">
+                <span class="pct-badge ${pctClass}">${p.successRate}%</span>
+                <span style="font-size:11px;color:var(--text-secondary);font-family:var(--font-mono)">${statusText}</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Last incident
+      const incidentBox = document.getElementById('incidentContent');
+      if (data.lastIncident) {
+        const iTs = data.lastIncident.timestamp ? new Date(data.lastIncident.timestamp).toLocaleString() : '—';
+        incidentBox.className = 'incident-row';
+        incidentBox.innerHTML = `
+          <div>
+            <div class="incident-desc" style="color:var(--danger);font-weight:600">${escapeHtml(data.lastIncident.title || 'Unknown')}</div>
+            <div class="incident-desc" style="margin-top:4px">${escapeHtml(data.lastIncident.error || 'No error details')}</div>
+          </div>
+          <div class="incident-ts">${iTs}</div>
+        `;
+      } else {
+        incidentBox.className = 'incident-none';
+        incidentBox.style.color = 'var(--success)';
+        incidentBox.textContent = '✓ No incidents recorded';
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+    }
+
+    window.addEventListener('DOMContentLoaded', loadStatus);
+  </script>
+</body>
+</html>

@@ -265,6 +265,52 @@
     .btn-ghost:hover {
       color: var(--text-primary);
     }
+
+    /* ========================================================================= */
+    /* FEATURE 1: PLATFORM-SPECIFIC IMAGE CROP CONTAINERS                         */
+    /* Each platform gets its native aspect ratio. The img inside is              */
+    /* object-fit:cover so it fills the box without distortion.                   */
+    /* ========================================================================= */
+    .platform-img-crop {
+      width: 100%;
+      overflow: hidden;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      position: relative;
+    }
+    .platform-img-crop img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .platform-img-crop.ratio-16-9    { aspect-ratio: 16 / 9; }
+    .platform-img-crop.ratio-1-1     { aspect-ratio: 1 / 1; }
+    .platform-img-crop.ratio-discord { aspect-ratio: 16 / 9; }
+    .platform-img-crop.ratio-slack   { aspect-ratio: 16 / 9; }
+    .platform-img-crop.ratio-2-1     { aspect-ratio: 2 / 1; }
+
+    /* ========================================================================= */
+    /* FEATURE 2: BEST TIME TO POST CAPTION                                       */
+    /* ========================================================================= */
+    .best-time-caption {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--text-secondary);
+      padding: 6px 10px;
+      background: var(--surface-raised);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      margin-top: 8px;
+    }
+    .best-time-caption .bt-icon {
+      font-size: 13px;
+      flex-shrink: 0;
+      line-height: 1.5;
+    }
   </style>
 
   <script>
@@ -708,13 +754,19 @@
                       <p id="prevSlackTags" class="italic font-mono text-[11px]">*Tags:* _#fastn #hackathon #ai #automation_</p>
                     </div>
 
-                    <!-- Slack Image Block -->
+                    <!-- Slack Image Block (Feature 1: 16:9 crop) -->
                     <div id="prevSlackImgWrap" class="pt-2">
-                      <img id="prevSlackImg" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" alt="slack media" class="rounded-lg max-h-48 w-full object-cover border border-[var(--border)]" />
+                      <div class="platform-img-crop ratio-slack">
+                        <img id="prevSlackImg" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" alt="slack media" />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+                <!-- Feature 2: Best time to post -->
+                <div class="best-time-caption" id="bestTime-slack">
+                  <span class="bt-icon">💡</span>
+                  <span>Post now — internal channels have no real engagement curve</span>
+                </div>
 
             <!-- 2. DISCORD EMBED CARD PREVIEW (Requirement 4 & 5) -->
             <div id="cardPrev-discord" class="hidden space-y-3 rounded-xl p-5 theme-transition" style="background-color: var(--preview-discord-bg); border: 1px solid var(--preview-discord-border);">
@@ -746,14 +798,22 @@
                   </div>
                 </div>
 
+                <!-- Discord Image Block (Feature 1: 16:9 wide banner crop) -->
                 <div id="prevDiscordImgWrap" class="pt-2">
-                  <img id="prevDiscordImg" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" alt="discord media" class="rounded max-h-48 w-full object-cover" />
+                  <div class="platform-img-crop ratio-discord">
+                    <img id="prevDiscordImg" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" alt="discord media" />
+                  </div>
                 </div>
 
                 <div class="text-[10px] text-[var(--text-secondary)] pt-1 border-t border-[var(--border)]">
                   Published via Fastn Cross-Platform Engine • Track 04
                 </div>
               </div>
+            </div>
+            <!-- Feature 2: Best time to post (Discord) -->
+            <div class="best-time-caption" id="bestTime-discord">
+              <span class="bt-icon">💡</span>
+              <span>Post now — community channels peak in evenings/weekends</span>
             </div>
 
             <!-- 3. TWITTER / X CARD PREVIEW (Requirement 4 & 5) -->
@@ -780,8 +840,11 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
 https://fastn.ai
 #fastn #hackathon #ai</p>
 
+                  <!-- Twitter Image Block (Feature 1: 16:9 crop) -->
                   <div id="prevTwitterImgWrap" class="pt-2">
-                    <img id="prevTwitterImg" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" alt="tweet media" class="rounded-xl max-h-48 w-full object-cover border border-[var(--border)]" />
+                    <div class="platform-img-crop ratio-16-9">
+                      <img id="prevTwitterImg" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" alt="tweet media" />
+                    </div>
                   </div>
 
                   <!-- Twitter Mock Action Bar -->
@@ -793,6 +856,11 @@ https://fastn.ai
                   </div>
                 </div>
               </div>
+            </div>
+            <!-- Feature 2: Best time to post (Twitter/X) -->
+            <div class="best-time-caption" id="bestTime-twitter">
+              <span class="bt-icon">💡</span>
+              <span>Best engagement 9–11am or 7–9pm local time</span>
             </div>
 
             <!-- 4. FACEBOOK CARD PREVIEW (Requirement 4 & 5) -->
@@ -821,9 +889,17 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
                 </a>
               </div>
 
+              <!-- Facebook Image Block (Feature 1: 1:1 square crop) -->
               <div id="prevFbImgWrap" class="pt-1">
-                <img id="prevFbImg" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" alt="fb media" class="rounded max-h-48 w-full object-cover border border-[var(--border)]" />
+                <div class="platform-img-crop ratio-1-1">
+                  <img id="prevFbImg" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" alt="fb media" />
+                </div>
               </div>
+            </div>
+            <!-- Feature 2: Best time to post (Facebook) -->
+            <div class="best-time-caption" id="bestTime-facebook">
+              <span class="bt-icon">💡</span>
+              <span>Best engagement early afternoon, 1–3pm</span>
             </div>
 
             <!-- 5. MAILCHIMP HTML EMAIL PREVIEW (Requirement 2) -->
@@ -862,9 +938,11 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
                 <div class="p-4 space-y-3 text-xs">
                   <h4 id="prevMailchimpTitle" class="font-bold text-base leading-snug text-[var(--text-primary)]">FourFrontLab Hackathon Broadcast: Track 04 Live!</h4>
 
-                  <!-- Email Image -->
+                  <!-- Email Image (Feature 1: 2:1 wide banner crop) -->
                   <div id="prevMailchimpImgWrap" class="pt-1">
-                    <img id="prevMailchimpImg" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" alt="email media" class="rounded-lg max-h-48 w-full object-cover border border-[var(--border)]" />
+                    <div class="platform-img-crop ratio-2-1">
+                      <img id="prevMailchimpImg" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" alt="email media" />
+                    </div>
                   </div>
 
                   <div id="prevMailchimpContent" class="leading-relaxed whitespace-pre-wrap opacity-90 text-xs text-[var(--text-primary)]">FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unified Context Layer! One post fans out to Slack, Discord, Facebook, Mailchimp, and Google Sheets simultaneously with zero-drop fault isolation.</div>
@@ -884,6 +962,11 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
                   </div>
                 </div>
               </div>
+            </div>
+            <!-- Feature 2: Best time to post (Mailchimp) -->
+            <div class="best-time-caption" id="bestTime-mailchimp">
+              <span class="bt-icon">💡</span>
+              <span>Tuesday–Thursday, 10am send time has the highest open rates</span>
             </div>
 
           </div>
@@ -1143,6 +1226,7 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
                   <th class="py-3 px-4">Tags</th>
                   <th class="py-3 px-4">Image</th>
                   <th class="py-3 px-4">Status</th>
+                  <th class="py-3 px-4">Trigger</th>
                   <th class="py-3 px-4">Slack_ID</th>
                   <th class="py-3 px-4">Social_ID</th>
                   <th class="py-3 px-4">Error_Log</th>
@@ -1362,12 +1446,18 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
         if (el) el.classList.add('hidden');
         const btn = document.getElementById(`tabBtn-${t}`);
         if (btn) btn.className = 'pb-2 px-1 font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] border-b-2 border-transparent transition';
+        // Feature 2: hide all best-time captions
+        const bt = document.getElementById(`bestTime-${t}`);
+        if (bt) bt.style.display = 'none';
       });
 
       const targetEl = document.getElementById(`cardPrev-${tab}`);
       if (targetEl) targetEl.classList.remove('hidden');
       const activeBtn = document.getElementById(`tabBtn-${tab}`);
       if (activeBtn) activeBtn.className = 'pb-2 px-1 font-semibold text-[var(--text-primary)] border-b-2 border-[var(--accent)] transition';
+      // Feature 2: show best-time caption for active tab
+      const activeBt = document.getElementById(`bestTime-${tab}`);
+      if (activeBt) activeBt.style.display = 'flex';
       updateCharCounter();
       lucide.createIcons();
     }
@@ -1771,7 +1861,8 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
           Status: data.status,
           Slack_ID: data.results?.slack?.id || (data.status === 'Skipped' ? 'DEDUP' : 'FAILED'),
           Social_ID: data.results?.discord?.id || data.results?.facebook?.id || data.results?.mailchimp?.id || 'None',
-          Error_Log: data.auditLog?.errors || 'None'
+          Error_Log: data.auditLog?.errors || 'None',
+          triggeredVia: data.triggeredVia || 'Manual'  // Feature 3: propagate trigger source
         };
 
         matrixData.unshift(newRow);
@@ -1952,6 +2043,12 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
           .replace('T', ' ')
           .substring(0, 19);
 
+        // Feature 3: triggeredVia badge — defaults to "Manual" for legacy rows
+        const via = row.triggeredVia || 'Manual';
+        const triggerBadge = via === 'Webhook'
+          ? `<span class="h-5 px-2 rounded text-[10px] font-mono font-semibold inline-flex items-center" style="background:rgba(245,166,35,0.12);color:var(--accent);border:1px solid rgba(245,166,35,0.3)">⚡ Webhook</span>`
+          : `<span class="h-5 px-2 rounded text-[10px] font-mono font-semibold inline-flex items-center" style="background:var(--surface-raised);color:var(--text-secondary);border:1px solid var(--border)">Manual</span>`;
+
         return `
           <tr class="hover:bg-[var(--surface-raised)] transition">
             <td class="py-3.5 px-4 font-mono text-[var(--text-secondary)] text-[11px] whitespace-nowrap">${formattedTime}</td>
@@ -1962,6 +2059,7 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
               ${row.Image_URL ? `<img src="${row.Image_URL}" alt="thumb" class="w-7 h-7 object-cover rounded-[var(--radius-sm)] border border-[var(--border)]">` : `<span class="text-[var(--text-secondary)] text-[10px]">None</span>`}
             </td>
             <td class="py-3.5 px-4">${statusBadge}</td>
+            <td class="py-3.5 px-4">${triggerBadge}</td>
             <td class="py-3.5 px-4">${slackCell}</td>
             <td class="py-3.5 px-4 font-mono text-[11px] text-[var(--text-primary)]">${escapeHtml(row.Social_ID || 'None')}</td>
             <td class="py-3.5 px-4 font-mono text-[var(--text-secondary)] text-[11px] max-w-xs truncate" title="${escapeHtml(row.Error_Log || 'None')}">${escapeHtml(row.Error_Log || 'None')}</td>
@@ -2083,6 +2181,11 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
       handleContentChange();
       renderTable();
       loadGoogleSheetsTable();
+      // Feature 2: hide all best-time captions except the initially active tab (slack)
+      ['discord', 'twitter', 'facebook', 'mailchimp'].forEach(t => {
+        const bt = document.getElementById(`bestTime-${t}`);
+        if (bt) bt.style.display = 'none';
+      });
       lucide.createIcons();
     });
   </script>

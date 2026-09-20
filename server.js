@@ -922,6 +922,220 @@ async function handleReset(req, res) {
   return res.end(JSON.stringify({ ok: true, posts: googleSheetsDb }));
 }
 
+// =========================================================================
+// FEATURE 3: Webhook-Triggered Mode
+// Accepts POST { title, content, link?, tags?, image_url? } and internally
+// calls handlePublish. The incoming post gets a triggeredVia:'Webhook' flag.
+// ADDITIVE — handlePublish is not modified.
+// =========================================================================
+async function handleWebhookTrigger(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204);
+    return res.end();
+  }
+
+  if (req.method !== 'POST') {
+    res.writeHead(405, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify({ error: 'Method Not Allowed. Use POST.' }));
+  }
+
+  let body;
+  try {
+    body = await getRequestBody(req);
+  } catch (err) {
+    res.writeHead(400, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify({ error: 'Invalid JSON body: ' + err.message }));
+  }
+
+  const { title, content, link, tags, image_url } = body;
+  if (!title || !content) {
+    res.writeHead(400, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify({ error: 'Missing required fields: title and content' }));
+  }
+
+  // Build a synthetic req/res to reuse handlePublish without modifying it
+  const fakeBody = {
+    Title: title,
+    Content: content,
+    Tags: tags || '',
+    Link: link || '',
+    Image_URL: image_url || '',
+    Status: 'Ready',
+    fault: 'none',
+    force: false,
+    simulator: false,
+    TWITTER_ENABLED: true,
+    triggeredVia: 'Webhook'   // this field is additive; handlePublish ignores unknown fields
+  };
+
+  // Collect the full response from handlePublish, then relay it
+  const chunks = [];
+  let statusCode = 200;
+  const headers = {};
+
+  const fakeReq = Object.assign(Object.create(req), {
+    method: 'POST',
+    url: '/api/publish',
+    headers: { 'content-type': 'application/json' },
+    body: fakeBody
+  });
+
+  const fakeRes = {
+    statusCode: 200,
+    _headers: {},
+    setHeader(k, v) { this._headers[k] = v; },
+    writeHead(code, hdrs) { this.statusCode = code; if (hdrs) Object.assign(this._headers, hdrs); },
+    write(chunk) { chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : chunk); },
+    end(chunk) {
+      if (chunk) chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : chunk);
+      const rawText = Buffer.concat(chunks).toString();
+      let data;
+      try { data = JSON.parse(rawText); } catch { data = { raw: rawText }; }
+
+      // Additive: stamp triggeredVia onto the most-recently-added googleSheetsDb row
+      if (googleSheetsDb.length > 0 && !googleSheetsDb[0].triggeredVia) {
+        googleSheetsDb[0].triggeredVia = 'Webhook';
+      }
+
+      res.setHeader('Content-Type', 'application/json');
+      res.writeHead(this.statusCode);
+      res.end(JSON.stringify({ triggeredVia: 'Webhook', ...data }));
+    }
+  };
+
+  try {
+    await handlePublish(fakeReq, fakeRes);
+  } catch (err) {
+    if (!res.headersSent) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Webhook trigger failed: ' + err.message }));
+    }
+  }
+}
+
+// =========================================================================
+// FEATURE 4: Public Read-Only Status Page API
+// Computes per-platform uptime from the in-memory audit log.
+// Read-only — cannot affect publish flow.
+// =========================================================================
+async function handleStatus(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204);
+    return res.end();
+  }
+
+  if (req.method !== 'GET') {
+    res.writeHead(405, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify({ error: 'Method Not Allowed' }));
+  }
+
+  try {
+    // Pull latest rows (try live sheets, fall back to in-memory)
+    const rows = await fetchGoogleSheetsRows();
+    const total = rows.length;
+    const now = Date.now();
+    const ms24h = 24 * 60 * 60 * 1000;
+    const ms7d  = 7  * 24 * 60 * 60 * 1000;
+
+    // Per-platform success tracking based on audit rows
+    const platforms = ['slack', 'discord', 'facebook', 'mailchimp', 'google_sheets'];
+    const platformLabels = {
+      slack: 'Slack', discord: 'Discord', facebook: 'Facebook',
+      mailchimp: 'Mailchimp', google_sheets: 'Google Sheets'
+    };
+
+    let successTotal = 0;
+    let failedTotal = 0;
+    let last24hSuccess = 0;
+    let last24hFailed = 0;
+    let lastIncident = null;
+
+    const platformStats = {};
+    platforms.forEach(p => {
+      platformStats[p] = { success: 0, failed: 0, lastFailed: null };
+    });
+
+    rows.forEach(row => {
+      const ts = row.Timestamp ? new Date(row.Timestamp).getTime() : 0;
+      const isSuccess = row.Status === 'Published';
+      const isPartial = row.Status === 'Partially Published';
+      const isFailed  = row.Status === 'Failed';
+
+      if (isSuccess) {
+        successTotal++;
+        if (now - ts <= ms24h) last24hSuccess++;
+      } else if (isFailed) {
+        failedTotal++;
+        if (now - ts <= ms24h) last24hFailed++;
+        if (!lastIncident || ts > new Date(lastIncident.timestamp).getTime()) {
+          lastIncident = { timestamp: row.Timestamp, title: row.Title, error: row.Error_Log };
+        }
+      }
+
+      // Parse per-platform from Social_ID and Error_Log
+      const errorLog = (row.Error_Log || '').toLowerCase();
+      const slackId  = row.Slack_ID;
+      const isSlackOk = slackId && slackId !== 'FAILED' && slackId !== 'None' && !errorLog.includes('slack');
+      platformStats.slack[isSlackOk ? 'success' : 'failed']++;
+
+      const isDiscordOk = !errorLog.includes('discord') && (row.Social_ID || '').includes('DC:') && !(row.Social_ID || '').includes('DC:ERR');
+      platformStats.discord[isDiscordOk ? 'success' : 'failed']++;
+
+      const isFbOk = !errorLog.includes('facebook') && (row.Social_ID || '').includes('FB:') && !(row.Social_ID || '').includes('FB:ERR');
+      platformStats.facebook[isFbOk ? 'success' : 'failed']++;
+
+      const isMcOk = !errorLog.includes('mailchimp') && (row.Social_ID || '').includes('MC:') && !(row.Social_ID || '').includes('MC:ERR');
+      platformStats.mailchimp[isMcOk ? 'success' : 'failed']++;
+
+      // Google Sheets is always considered ok if row exists
+      platformStats.google_sheets.success++;
+    });
+
+    const totalBroadcasts = successTotal + failedTotal;
+    const uptime7d = totalBroadcasts > 0 ? Math.round((successTotal / totalBroadcasts) * 100) : 100;
+
+    const platformResults = platforms.map(p => {
+      const s = platformStats[p];
+      const t = s.success + s.failed;
+      const pct = t > 0 ? Math.round((s.success / t) * 100) : 100;
+      let statusColor = 'green';
+      if (pct < 50) statusColor = 'red';
+      else if (pct < 90) statusColor = 'amber';
+      return {
+        id: p,
+        label: platformLabels[p],
+        successRate: pct,
+        success: s.success,
+        failed: s.failed,
+        statusColor
+      };
+    });
+
+    const statusPayload = {
+      generatedAt: new Date().toISOString(),
+      totalBroadcasts,
+      uptime7d,
+      last24h: { success: last24hSuccess, failed: last24hFailed },
+      platforms: platformResults,
+      lastIncident
+    };
+
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify(statusPayload));
+  } catch (err) {
+    res.writeHead(500, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify({ error: err.message }));
+  }
+}
+
 // Master HTTP Server
 const server = http.createServer(async (req, res) => {
   const host = req.headers.host || 'localhost';
@@ -946,6 +1160,9 @@ const server = http.createServer(async (req, res) => {
   if (pathname === '/api/publish') return handlePublish(req, res);
   if (pathname === '/api/reset') return handleReset(req, res);
   if (pathname === '/api/fastn-proxy') return handleFastnProxy(req, res);
+  if (pathname === '/api/status') return handleStatus(req, res);
+  // Feature 3: Webhook trigger route
+  if (pathname === '/api/webhook-trigger') return handleWebhookTrigger(req, res);
 
   // Static File Serving
   let filePath = path.join(PUBLIC_DIR, pathname === '/' ? 'index.html' : pathname.replace(/^\//, ''));
@@ -1003,5 +1220,7 @@ module.exports.handlePosts = handlePosts;
 module.exports.handleAdaptContent = handleAdaptContent;
 module.exports.handleReset = handleReset;
 module.exports.handleFastnProxy = handleFastnProxy;
+module.exports.handleStatus = handleStatus;
+module.exports.handleWebhookTrigger = handleWebhookTrigger;
 module.exports.adaptContentForPlatforms = adaptContentForPlatforms;
 module.exports.googleSheetsDb = googleSheetsDb;
