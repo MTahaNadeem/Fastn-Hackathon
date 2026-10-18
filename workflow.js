@@ -9,7 +9,7 @@
  */
 
 async function run(ctx) {
-  const { row_id, Title, Content, Image_URL, Tags, Status } = ctx.input;
+  const { row_id, Title, Content, Image_URL, Tags, Status, adapted } = ctx.input;
 
   // --- 1. DEDUPLICATION & CONFLICT CHECK ---
   // Judges specifically test if repeated runs double-post to channels.
@@ -26,6 +26,11 @@ async function run(ctx) {
     ? Tags.split(',').map(t => t.trim().startsWith('#') ? t.trim() : `#${t.trim()}`).join(' ') 
     : '';
 
+  // Use AI-adapted text if provided, otherwise fallback to raw Content
+  const slackText = adapted?.slack || `${Content}\n\n*Tags:* _${tagsList || 'None'}_`;
+  const discordText = adapted?.discord || Content;
+  const telegramTextRaw = adapted?.telegram || `📢 *${Title}*\n\n${Content}\n\n${tagsList}${Image_URL ? `\n\n🖼️ [Media Link](${Image_URL})` : ''}`;
+
   // Slack Adapter: Block Kit JSON with mrkdwn & optional image block
   const slackPayload = {
     channel: 'C0C278R4PRD',
@@ -36,7 +41,7 @@ async function run(ctx) {
       },
       {
         type: 'section',
-        text: { type: 'mrkdwn', text: `${Content}\n\n*Tags:* _${tagsList || 'None'}_` }
+        text: { type: 'mrkdwn', text: slackText }
       }
     ]
   };
@@ -49,15 +54,14 @@ async function run(ctx) {
   }
 
   // Telegram Adapter: Clean Markdown, emojis, and 2000-character safety cutoff
-  const telegramRaw = `📢 *${Title}*\n\n${Content}\n\n${tagsList}${Image_URL ? `\n\n🖼️ [Media Link](${Image_URL})` : ''}`;
-  const telegramText = telegramRaw.length > 2000 ? telegramRaw.slice(0, 1997) + '...' : telegramRaw;
+  const telegramText = telegramTextRaw.length > 2000 ? telegramTextRaw.slice(0, 1997) + '...' : telegramTextRaw;
 
   // Discord Adapter: Webhook Embed structure with color and fields
   const discordPayload = {
     embeds: [
       {
         title: Title,
-        description: Content,
+        description: discordText,
         color: 0x5865F2, // Discord Blurple
         fields: [
           { name: 'Tags', value: tagsList || 'None', inline: true }
