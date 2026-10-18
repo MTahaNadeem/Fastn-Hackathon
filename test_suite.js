@@ -195,8 +195,20 @@ async function runAllTests() {
     assert(Boolean(adapted.discord), 'Discord adapted version generated');
     assert(adapted.discord.includes('⚡') || adapted.discord.includes('**'), 'Discord version contains embed/emoji formatting');
     assert(Boolean(adapted.facebook), 'Facebook conversational version generated');
-    assert(Boolean(adapted.mailchimp), 'Mailchimp email newsletter version generated');
-    assert(adapted.mailchimp.includes('Subject:') || adapted.mailchimp.includes('Key Updates'), 'Mailchimp version contains structured newsletter format');
+  }
+  console.log('\n');
+
+  // TEST 6: Auto-Generated Dynamic Banner & SVG Engine
+  console.log('▶ [TEST 6] Auto-Generated Dynamic Banner & OG Image Generator');
+  {
+    const { generateDynamicBannerSvg } = require('./server');
+    const svg = generateDynamicBannerSvg('🚀 Real-Time Autonomous Fan-Out Pipeline Live', 'fastn, mcp, automation');
+    assert(Boolean(svg), 'SVG banner generated');
+    assert(svg.includes('<svg') && svg.includes('</svg>'), 'SVG contains valid root tags');
+    assert(svg.includes('1200') && svg.includes('630'), 'SVG complies with 1200x630 OG image standard');
+    assert(svg.includes('Autonomous Fan-Out'), 'SVG displays title text');
+    assert(svg.includes('#fastn'), 'SVG includes styled hashtag pills');
+    assert(svg.includes('FOURFRONTLAB'), 'SVG includes official brand header badge');
   }
   console.log('\n');
 

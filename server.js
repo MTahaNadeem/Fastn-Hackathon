@@ -200,6 +200,133 @@ async function adaptContentForPlatforms({ title, content, link, tags, platforms 
   return { adapted, engine: 'claude-sonnet-4-6 (Native Synthesis Engine)' };
 }
 
+// =========================================================================
+// DYNAMIC OG BANNER / ANNOUNCEMENT IMAGE GENERATOR
+// Generates a 1200x630 pixel SVG announcement banner with gradient styling,
+// word-wrapped title, tags, and FourFrontLab / Fastn branding.
+// =========================================================================
+function generateDynamicBannerSvg(title, tags) {
+  const safeTitle = (title || 'Official Announcement')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+
+  const tagList = (tags || 'fastn, ai, automation')
+    .split(',')
+    .map(t => t.trim().startsWith('#') ? t.trim() : '#' + t.trim())
+    .filter(t => t && t !== '#');
+
+  // Word wrap title to fit nicely across maximum 3 lines
+  const words = safeTitle.split(' ');
+  const lines = [];
+  let currentLine = '';
+  for (const word of words) {
+    if ((currentLine + ' ' + word).trim().length > 34) {
+      if (currentLine) lines.push(currentLine.trim());
+      currentLine = word;
+    } else {
+      currentLine = (currentLine + ' ' + word).trim();
+    }
+  }
+  if (currentLine) lines.push(currentLine.trim());
+
+  const displayLines = lines.slice(0, 3);
+  if (lines.length > 3 && displayLines[2]) {
+    displayLines[2] = displayLines[2].replace(/\.*$/, '') + '...';
+  }
+
+  const titleSvg = displayLines.map((l, i) => {
+    return `<text x="80" y="${250 + (i * 54)}" fill="#FFFFFF" font-size="42" font-weight="800" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">${l}</text>`;
+  }).join('\n    ');
+
+  let currentX = 80;
+  const tagsSvg = tagList.slice(0, 4).map((t) => {
+    const pillWidth = Math.max(120, Math.min(220, t.length * 11 + 28));
+    const pill = `
+      <g transform="translate(${currentX}, 455)">
+        <rect width="${pillWidth}" height="38" rx="19" fill="rgba(245, 166, 35, 0.15)" stroke="rgba(245, 166, 35, 0.45)" stroke-width="1.5"/>
+        <text x="${pillWidth / 2}" y="24" fill="#F5A623" font-size="15" font-weight="700" font-family="'JetBrains Mono', monospace" text-anchor="middle">${t}</text>
+      </g>`;
+    currentX += pillWidth + 14;
+    return pill;
+  }).join('');
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+    <defs>
+      <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#0B0E11" />
+        <stop offset="50%" stop-color="#14181F" />
+        <stop offset="100%" stop-color="#1C212B" />
+      </linearGradient>
+      <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#F5A623" />
+        <stop offset="100%" stop-color="#FF8A00" />
+      </linearGradient>
+      <linearGradient id="glowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#5865F2" stop-opacity="0.12" />
+        <stop offset="100%" stop-color="#F5A623" stop-opacity="0.08" />
+      </linearGradient>
+    </defs>
+
+    <!-- Background Canvas -->
+    <rect width="1200" height="630" fill="url(#bgGrad)"/>
+    <rect width="1200" height="630" fill="url(#glowGrad)"/>
+
+    <!-- Decorative Top & Bottom Accents -->
+    <rect x="0" y="0" width="1200" height="5" fill="url(#accentGrad)"/>
+    <circle cx="1080" cy="110" r="320" fill="#F5A623" opacity="0.06"/>
+    <circle cx="120" cy="540" r="260" fill="#5865F2" opacity="0.05"/>
+
+    <!-- Brand Badge Header -->
+    <g transform="translate(80, 75)">
+      <rect width="215" height="36" rx="18" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.14)"/>
+      <circle cx="20" cy="18" r="6" fill="#F5A623"/>
+      <text x="36" y="23" fill="#E6EDF3" font-size="13" font-weight="700" font-family="system-ui, sans-serif" letter-spacing="1.5">FOURFRONTLAB</text>
+    </g>
+
+    <!-- Category Pill -->
+    <g transform="translate(80, 140)">
+      <rect width="6" height="54" rx="3" fill="url(#accentGrad)"/>
+      <text x="24" y="36" fill="#8B949E" font-size="19" font-weight="700" font-family="system-ui, sans-serif" letter-spacing="3">OFFICIAL BROADCAST</text>
+    </g>
+
+    <!-- Dynamic Title Lines -->
+    ${titleSvg}
+
+    <!-- Dynamic Tags -->
+    ${tagsSvg}
+
+    <!-- Footer Bar -->
+    <line x1="80" y1="535" x2="1120" y2="535" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+    <text x="80" y="575" fill="#8B949E" font-size="15" font-family="'JetBrains Mono', monospace">Fastn Unified Context Layer • Governed MCP Gateway</text>
+    <text x="1120" y="575" fill="#F5A623" font-size="15" font-weight="700" font-family="'JetBrains Mono', monospace" text-anchor="end">connect.fastn.dev</text>
+  </svg>`;
+}
+
+async function handleBanner(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204);
+    return res.end();
+  }
+
+  const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+  const title = url.searchParams.get('title') || 'FourFrontLab Broadcast';
+  const tags = url.searchParams.get('tags') || 'fastn, ai, automation';
+
+  const svg = generateDynamicBannerSvg(title, tags);
+  res.writeHead(200, {
+    'Content-Type': 'image/svg+xml; charset=utf-8',
+    'Cache-Control': 'public, max-age=3600'
+  });
+  return res.end(svg);
+}
+
 async function getRequestBody(req) {
   if (req.body) {
     if (typeof req.body === 'object') return req.body;
@@ -480,12 +607,18 @@ async function handlePublish(req, res) {
     const Content = data.Content || data.content || '';
     const Tags = data.Tags || data.tags || '';
     const Link = data.Link || data.link || '';
-    const Image_URL = data.Image_URL || data.image_url || data.imageUrl || '';
+    const rawImage = (data.Image_URL || data.image_url || data.imageUrl || '').trim();
+    // Dynamic Banner Fallback: If no image provided, generate an automated OG banner
+    const host = req.headers.host || 'localhost:3456';
+    const protocol = req.headers['x-forwarded-proto'] || (host.includes('localhost') ? 'http' : 'https');
+    const autoBannerUrl = `${protocol}://${host}/api/banner?title=${encodeURIComponent(Title)}&tags=${encodeURIComponent(Tags)}`;
+    const Image_URL = rawImage || autoBannerUrl;
+    const isAutoGeneratedBanner = !rawImage;
     const Status = data.Status || data.status || 'Ready';
     const force = data.force === true;
     const fault = data.fault || data.failurePlatform || 'none';
 
-    console.log(`[SERVER /api/publish] Received broadcast request: "${Title}" (force=${force}, simulator=${data.simulator === true}, fault=${fault})`);
+    console.log(`[SERVER /api/publish] Received broadcast request: "${Title}" (image=${isAutoGeneratedBanner ? 'Auto-Generated Banner' : 'Custom URL'}, force=${force}, simulator=${data.simulator === true}, fault=${fault})`);
 
     // Handle Simulator Mode (Mock testing without real API calls)
     if (data.simulator === true) {
@@ -1244,6 +1377,7 @@ const server = http.createServer(async (req, res) => {
   // API Endpoints
   if (pathname === '/api/posts') return handlePosts(req, res);
   if (pathname === '/api/adapt-content') return handleAdaptContent(req, res);
+  if (pathname === '/api/banner') return handleBanner(req, res);
   if (pathname === '/api/publish') return handlePublish(req, res);
   if (pathname === '/api/reset') return handleReset(req, res);
   if (pathname === '/api/fastn-proxy') return handleFastnProxy(req, res);
@@ -1305,6 +1439,8 @@ module.exports.server = server;
 module.exports.handlePublish = handlePublish;
 module.exports.handlePosts = handlePosts;
 module.exports.handleAdaptContent = handleAdaptContent;
+module.exports.handleBanner = handleBanner;
+module.exports.generateDynamicBannerSvg = generateDynamicBannerSvg;
 module.exports.handleReset = handleReset;
 module.exports.handleFastnProxy = handleFastnProxy;
 module.exports.handleStatus = handleStatus;

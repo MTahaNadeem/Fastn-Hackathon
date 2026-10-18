@@ -571,19 +571,35 @@
                 </div>
               </div>
 
-              <!-- Image URL with Instant Preview -->
+              <!-- Image URL with Instant Preview & Auto Dynamic Banner -->
               <div class="space-y-1.5">
-                <label class="text-xs font-medium text-[var(--text-primary)]">Media Attachment (Image URL)</label>
+                <div class="flex items-center justify-between">
+                  <label class="text-xs font-medium text-[var(--text-primary)]">Media Attachment (Image URL or Auto-Banner)</label>
+                  <span id="bannerModeBadge" class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[var(--accent)]/15 text-[var(--accent)] border border-[var(--accent)]/30 font-semibold flex items-center space-x-1">
+                    <i data-lucide="image" class="w-2.5 h-2.5"></i>
+                    <span id="bannerModeText">Custom URL</span>
+                  </span>
+                </div>
                 <div class="flex items-center space-x-2">
                   <input 
                     id="composerImage" 
                     type="url" 
-                    placeholder="https://images.unsplash.com/..." 
+                    placeholder="Leave empty for Auto-Generated Dynamic OG Banner..." 
                     value="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" 
                     oninput="handleContentChange()" 
                     class="flex-1 bg-[var(--bg)] border border-[var(--border)] focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] rounded-[var(--radius-sm)] px-3 py-2 text-xs text-[var(--text-primary)] placeholder-slate-400 font-mono transition theme-transition"
                   />
-                  <div id="thumbPreviewBox" class="w-9 h-9 rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--bg)] overflow-hidden flex-shrink-0 flex items-center justify-center theme-transition">
+                  <button 
+                    type="button" 
+                    id="btnToggleAutoBanner" 
+                    onclick="toggleAutoBanner()" 
+                    class="h-9 px-2.5 rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--border)] text-[var(--text-primary)] text-xs font-semibold flex items-center space-x-1.5 transition theme-transition flex-shrink-0"
+                    title="Toggle between Custom Image URL and Dynamic Auto-Generated SVG Banner"
+                  >
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[var(--accent)]"></i>
+                    <span id="btnBannerLabel">Auto Banner</span>
+                  </button>
+                  <div id="thumbPreviewBox" class="w-9 h-9 rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--bg)] overflow-hidden flex-shrink-0 flex items-center justify-center theme-transition" title="Active Media Card Preview">
                     <img id="thumbImg" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" alt="thumb" class="w-full h-full object-cover" />
                   </div>
                 </div>
@@ -1523,13 +1539,43 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
       return { twitter, slack, discord, facebook, mailchimp };
     }
 
+    // Toggle Auto-Generated Dynamic SVG Banner vs Custom URL
+    function toggleAutoBanner() {
+      const imgInput = document.getElementById('composerImage');
+      const btnLabel = document.getElementById('btnBannerLabel');
+      if (imgInput.value.trim()) {
+        imgInput.dataset.savedCustom = imgInput.value;
+        imgInput.value = '';
+        showToast('Switched to Dynamic Auto-Generated OG Banner', 'info');
+      } else {
+        imgInput.value = imgInput.dataset.savedCustom || 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80';
+        showToast('Switched to Custom Media URL', 'info');
+      }
+      handleContentChange();
+    }
+
     // 3. Live Preview & Raw Character Counter Handler (Requirements 4, 5, 6)
     function handleContentChange() {
       const title = document.getElementById('composerTitle').value || 'Untitled Broadcast';
       const content = document.getElementById('composerContent').value || '';
       const link = document.getElementById('composerLink').value || 'https://fastn.ai';
       const tags = document.getElementById('composerTags').value || '';
-      const image = document.getElementById('composerImage').value || '';
+      const rawImage = (document.getElementById('composerImage').value || '').trim();
+
+      // Dynamic Banner URL generation when rawImage is empty
+      const autoBannerUrl = `/api/banner?title=${encodeURIComponent(title)}&tags=${encodeURIComponent(tags || 'fastn, ai, automation')}`;
+      const effectiveImage = rawImage || autoBannerUrl;
+      const isAutoBanner = !rawImage;
+
+      // Update badge & toggle button state
+      const bannerBadge = document.getElementById('bannerModeText');
+      if (bannerBadge) {
+        bannerBadge.innerText = isAutoBanner ? '✨ Auto Banner' : 'Custom URL';
+      }
+      const btnLabel = document.getElementById('btnBannerLabel');
+      if (btnLabel) {
+        btnLabel.innerText = isAutoBanner ? 'Use Custom URL' : 'Auto Banner';
+      }
 
       const tagsFormatted = tags.split(',').map(t => t.trim().startsWith('#') ? t.trim() : `#${t.trim()}`).filter(t => t !== '#').join(' ');
       
@@ -1538,8 +1584,8 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
 
       // Thumbnail
       const thumbImg = document.getElementById('thumbImg');
-      if (image) {
-        thumbImg.src = image;
+      if (effectiveImage) {
+        thumbImg.src = effectiveImage;
         thumbImg.classList.remove('hidden');
       } else {
         thumbImg.classList.add('hidden');
@@ -1587,25 +1633,25 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
       const mcTags = document.getElementById('prevMailchimpTags');
       if (mcTags) mcTags.innerText = tagsFormatted ? `Tags: ${tagsFormatted}` : 'Tags: #fastn #hackathon #ai #automation';
 
-      // Image sync across previews
+      // Image sync across previews (Always displays effective image, either custom or auto-banner)
       const slackImg = document.getElementById('prevSlackImg');
-      if (image) { slackImg.src = image; document.getElementById('prevSlackImgWrap').classList.remove('hidden'); }
+      if (effectiveImage) { slackImg.src = effectiveImage; document.getElementById('prevSlackImgWrap').classList.remove('hidden'); }
       else { document.getElementById('prevSlackImgWrap').classList.add('hidden'); }
 
       const discordImg = document.getElementById('prevDiscordImg');
-      if (image) { discordImg.src = image; document.getElementById('prevDiscordImgWrap').classList.remove('hidden'); }
+      if (effectiveImage) { discordImg.src = effectiveImage; document.getElementById('prevDiscordImgWrap').classList.remove('hidden'); }
       else { document.getElementById('prevDiscordImgWrap').classList.add('hidden'); }
 
       const twitterImg = document.getElementById('prevTwitterImg');
-      if (image) { twitterImg.src = image; document.getElementById('prevTwitterImgWrap').classList.remove('hidden'); }
+      if (effectiveImage) { twitterImg.src = effectiveImage; document.getElementById('prevTwitterImgWrap').classList.remove('hidden'); }
       else { document.getElementById('prevTwitterImgWrap').classList.add('hidden'); }
 
       const fbImg = document.getElementById('prevFbImg');
-      if (image) { fbImg.src = image; document.getElementById('prevFbImgWrap').classList.remove('hidden'); }
+      if (effectiveImage) { fbImg.src = effectiveImage; document.getElementById('prevFbImgWrap').classList.remove('hidden'); }
       else { document.getElementById('prevFbImgWrap').classList.add('hidden'); }
 
       const mcImg = document.getElementById('prevMailchimpImg');
-      if (image) { if (mcImg) mcImg.src = image; document.getElementById('prevMailchimpImgWrap')?.classList.remove('hidden'); }
+      if (effectiveImage) { if (mcImg) mcImg.src = effectiveImage; document.getElementById('prevMailchimpImgWrap')?.classList.remove('hidden'); }
       else { document.getElementById('prevMailchimpImgWrap')?.classList.add('hidden'); }
 
       // Default platform-native synthesis if AI has not adapted yet
@@ -1768,7 +1814,8 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
       const Content = document.getElementById('composerContent').value.trim();
       const Link = document.getElementById('composerLink').value.trim();
       const Tags = document.getElementById('composerTags').value.trim();
-      const Image_URL = document.getElementById('composerImage').value.trim();
+      const rawImage = document.getElementById('composerImage').value.trim();
+      const Image_URL = rawImage; // If empty, server automatically synthesizes the dynamic SVG banner
       const fault = document.getElementById('composerFault')?.value || 'none';
       const force = document.getElementById('forcePublishToggle')?.checked || false;
       const btn = document.getElementById('btnPublishEverywhere');
@@ -1804,6 +1851,7 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
       setChannelCardState('Sheets', 'Delivering', 'Appending row to Sheet1...');
 
       logEvent(`[DISPATCH] Initiating parallel broadcast: "${Title}" (mode=${currentMode}, force=${force})`, 'cyan');
+      logEvent(`[MEDIA] ${rawImage ? 'Using Custom Media URL' : 'Auto-generating 1200x630 Dynamic SVG Announcement Banner'}`, 'amber');
       logEvent(`[AI] Dispatching platform-native adapted payloads (Slack mrkdwn, Discord embed, FB narrative, Mailchimp HTML)`, 'amber');
       logEvent(`[TARGETS] Slack (#social), Discord (Embed), Facebook (Relay), Mailchimp (HTML), Sheets (Audit Log)`, 'slate');
 
