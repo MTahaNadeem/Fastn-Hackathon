@@ -212,6 +212,114 @@ async function runAllTests() {
   }
   console.log('\n');
 
+  // TEST 7: Instant "Clickable Receipt" Live Post Notification (Option A)
+  console.log('▶ [TEST 7] Option A: Instant "Clickable Receipt" Live Post Notification');
+  {
+    const { sendSlackReceiptConfirmation } = require('./server');
+    const receiptRes = await sendSlackReceiptConfirmation({
+      title: 'Automated Test Verification Receipt',
+      row_id: '101',
+      results: {
+        slack: { success: true, id: '1726709999.123456', permalink: 'https://fourfrontlab.slack.com/archives/C0C278R4PRD' },
+        discord: { success: true, id: '987654321', permalink: 'https://discord.com' },
+        facebook: { success: true, id: 'fb_123', permalink: 'https://facebook.com/1288938340978227' },
+        mailchimp: { success: true, id: 'mc_123', permalink: 'https://mailchimp.com' },
+        google_sheets: { success: true, permalink: 'https://docs.google.com/spreadsheets/d/1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s' }
+      },
+      elapsed: 138,
+      imageUrl: 'http://localhost:3456/api/banner?title=Test',
+      isAutoBanner: true
+    });
+
+    assert(Boolean(receiptRes), 'Receipt function returned response');
+    assert(receiptRes.ok === true, `Slack Block Kit receipt card posted successfully (TS: ${receiptRes.ts})`);
+  }
+  console.log('\n');
+
+  // Helper for mock HTTP dispatch
+  function mockHttp(body, method = 'POST') {
+    let statusCode = 200;
+    let headers = {};
+    let rawBody = '';
+    const res = {
+      setHeader: (k, v) => { headers[k] = v; },
+      writeHead: (code, hdrs) => {
+        statusCode = code;
+        if (hdrs) Object.assign(headers, hdrs);
+      },
+      end: (str) => {
+        rawBody = str;
+      }
+    };
+    const req = { method, body, headers: {} };
+    return {
+      req,
+      res,
+      getStatusCode: () => statusCode,
+      getBody: () => {
+        try { return JSON.parse(rawBody); } catch (e) { return rawBody; }
+      }
+    };
+  }
+
+  // TEST 8: Option B - Cross-Platform Broadcast Retract (Emergency Delete Everywhere)
+  console.log('▶ [TEST 8] Option B: Cross-Platform Broadcast Retract (Emergency Delete Everywhere)');
+  {
+    const { handleRetractBroadcast, googleSheetsDb } = require('./server');
+
+    // 1. Successful retraction on valid row
+    const { req: r1, res: s1, getStatusCode: code1, getBody: b1 } = mockHttp({ row_id: '101' });
+    await handleRetractBroadcast(r1, s1);
+    assert(code1() === 200, 'Retract returns HTTP 200 OK');
+    assert(b1().success === true, 'Retract payload indicates success: true');
+    assert(b1().status === 'Retracted', 'Status updated to Retracted');
+    assert(b1().updatedRow?.Status === 'Retracted', 'Target DB row marked as Retracted');
+    assert(Boolean(b1().results?.slack) && Boolean(b1().results?.discord), 'Slack and Discord retraction results present');
+
+    // 2. 404 for unknown record
+    const { req: r2, res: s2, getStatusCode: code2 } = mockHttp({ row_id: '99999' });
+    await handleRetractBroadcast(r2, s2);
+    assert(code2() === 404, 'Retract returns 404 for non-existent row_id');
+
+    // 3. 400 for missing row_id
+    const { req: r3, res: s3, getStatusCode: code3 } = mockHttp({});
+    await handleRetractBroadcast(r3, s3);
+    assert(code3() === 400, 'Retract returns 400 when row_id is missing');
+  }
+  console.log('\n');
+
+  // TEST 9: Option B - Cross-Platform Broadcast Update (In-Place Edit)
+  console.log('▶ [TEST 9] Option B: Cross-Platform Broadcast Update (In-Place Edit)');
+  {
+    const { handleUpdateBroadcast } = require('./server');
+
+    // 1. Successful in-place update
+    const updatedTitle = '⚡ Fastn UCL 2.0 (Live In-Place Edit)';
+    const updatedContent = 'Verified content synchronization across Slack and audit matrix.';
+    const { req: r1, res: s1, getStatusCode: code1, getBody: b1 } = mockHttp({
+      row_id: '102',
+      Title: updatedTitle,
+      Content: updatedContent
+    });
+    await handleUpdateBroadcast(r1, s1);
+    assert(code1() === 200, 'Update returns HTTP 200 OK');
+    assert(b1().success === true, 'Update payload indicates success: true');
+    assert(b1().updatedRow?.Title === updatedTitle, 'Target DB row Title updated in-place');
+    assert(b1().updatedRow?.Content === updatedContent, 'Target DB row Content updated in-place');
+    assert(b1().updatedRow?.Status === 'Published', 'Target DB row Status restored to Published');
+
+    // 2. 404 for unknown record
+    const { req: r2, res: s2, getStatusCode: code2 } = mockHttp({ row_id: '99999', Title: 'New' });
+    await handleUpdateBroadcast(r2, s2);
+    assert(code2() === 404, 'Update returns 404 for non-existent row_id');
+
+    // 3. 400 for missing title and content
+    const { req: r3, res: s3, getStatusCode: code3 } = mockHttp({ row_id: '102' });
+    await handleUpdateBroadcast(r3, s3);
+    assert(code3() === 400, 'Update returns 400 when Title and Content are omitted');
+  }
+  console.log('\n');
+
   console.log('================================================================');
   console.log(`📊 TEST RESULTS: ${passed}/${total} assertions passed (${Math.round((passed/total)*100)}%)`);
   console.log('================================================================');
@@ -222,4 +330,5 @@ async function runAllTests() {
 }
 
 runAllTests().catch(console.error);
+
 

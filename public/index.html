@@ -1009,6 +1009,88 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
           <span id="monExecTimeBadge" class="font-mono text-xs px-2.5 py-1 rounded bg-[var(--bg)] border border-[var(--border)] text-[var(--text-secondary)]">Awaiting Broadcast</span>
         </div>
 
+        <!-- OPTION A: Live Clickable Receipt Card (Direct Post Jump Matrix) -->
+        <div id="liveReceiptCard" class="hidden p-5 rounded-xl border border-[var(--accent)]/40 bg-[var(--surface)] shadow-lg space-y-4 theme-transition">
+          <div class="flex items-center justify-between pb-3 border-b border-[var(--border)]">
+            <div class="flex items-center space-x-2">
+              <span class="text-base">🚀</span>
+              <div>
+                <h4 class="font-bold text-sm text-[var(--text-primary)]">Instant Execution Receipt</h4>
+                <p class="text-[11px] text-[var(--text-secondary)]">Live direct clickable links sent to your channels</p>
+              </div>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-[var(--success-bg)] text-[var(--success)] font-semibold border border-[var(--success)]/30">Delivered Everywhere</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <a id="receiptLinkSlack" href="#" target="_blank" class="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-raised)] hover:border-[var(--accent)] transition flex items-center justify-between group">
+              <div class="flex items-center space-x-2.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-[var(--success)]"></span>
+                <div>
+                  <div class="font-bold text-xs text-[var(--text-primary)] group-hover:text-[var(--accent)]">Slack Message</div>
+                  <div id="receiptSubSlack" class="text-[10px] font-mono text-[var(--text-secondary)]">Channel #social</div>
+                </div>
+              </div>
+              <i data-lucide="external-link" class="w-3.5 h-3.5 text-[var(--text-secondary)] group-hover:text-[var(--accent)]"></i>
+            </a>
+
+            <a id="receiptLinkDiscord" href="#" target="_blank" class="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-raised)] hover:border-[var(--accent)] transition flex items-center justify-between group">
+              <div class="flex items-center space-x-2.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-[var(--success)]"></span>
+                <div>
+                  <div class="font-bold text-xs text-[var(--text-primary)] group-hover:text-[var(--accent)]">Discord Embed</div>
+                  <div id="receiptSubDiscord" class="text-[10px] font-mono text-[var(--text-secondary)]">Rich Embed Card</div>
+                </div>
+              </div>
+              <i data-lucide="external-link" class="w-3.5 h-3.5 text-[var(--text-secondary)] group-hover:text-[var(--accent)]"></i>
+            </a>
+
+            <a id="receiptLinkFacebook" href="#" target="_blank" class="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-raised)] hover:border-[var(--accent)] transition flex items-center justify-between group">
+              <div class="flex items-center space-x-2.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-[var(--success)]"></span>
+                <div>
+                  <div class="font-bold text-xs text-[var(--text-primary)] group-hover:text-[var(--accent)]">Facebook Post</div>
+                  <div id="receiptSubFacebook" class="text-[10px] font-mono text-[var(--text-secondary)]">Page Feed Relay</div>
+                </div>
+              </div>
+              <i data-lucide="external-link" class="w-3.5 h-3.5 text-[var(--text-secondary)] group-hover:text-[var(--accent)]"></i>
+            </a>
+
+            <a id="receiptLinkMailchimp" href="#" target="_blank" class="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-raised)] hover:border-[var(--accent)] transition flex items-center justify-between group">
+              <div class="flex items-center space-x-2.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-[var(--success)]"></span>
+                <div>
+                  <div class="font-bold text-xs text-[var(--text-primary)] group-hover:text-[var(--accent)]">Mailchimp Campaign</div>
+                  <div id="receiptSubMailchimp" class="text-[10px] font-mono text-[var(--text-secondary)]">Campaign Archive</div>
+                </div>
+              </div>
+              <i data-lucide="external-link" class="w-3.5 h-3.5 text-[var(--text-secondary)] group-hover:text-[var(--accent)]"></i>
+            </a>
+
+            <a id="receiptLinkSheets" href="https://docs.google.com/spreadsheets/d/1wquYVUl_EBAUjixTCV-rXPLH4pth7j5OJ0okZRzgD5s" target="_blank" class="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-raised)] hover:border-[var(--accent)] transition flex items-center justify-between group">
+              <div class="flex items-center space-x-2.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-[var(--success)]"></span>
+                <div>
+                  <div class="font-bold text-xs text-[var(--text-primary)] group-hover:text-[var(--accent)]">Google Sheets Matrix</div>
+                  <div class="text-[10px] font-mono text-[var(--text-secondary)]">Audit Row Appended</div>
+                </div>
+              </div>
+              <i data-lucide="external-link" class="w-3.5 h-3.5 text-[var(--text-secondary)] group-hover:text-[var(--accent)]"></i>
+            </a>
+
+            <a id="receiptLinkMedia" href="#" target="_blank" class="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-raised)] hover:border-[var(--accent)] transition flex items-center justify-between group">
+              <div class="flex items-center space-x-2.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-[var(--accent)]"></span>
+                <div>
+                  <div class="font-bold text-xs text-[var(--text-primary)] group-hover:text-[var(--accent)]">Generated OG Banner</div>
+                  <div id="receiptSubMedia" class="text-[10px] font-mono text-[var(--text-secondary)]">1200x630 Media Card</div>
+                </div>
+              </div>
+              <i data-lucide="external-link" class="w-3.5 h-3.5 text-[var(--text-secondary)] group-hover:text-[var(--accent)]"></i>
+            </a>
+          </div>
+        </div>
+
         <!-- Top Metrics Summary Strip (Spec 4: 4 columns, 16px gap, 20px padding, --radius-md, 32px/700 number, 11px/600 uppercase label) -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div class="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--radius-md)] p-5 theme-transition">
@@ -1247,6 +1329,7 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
                   <th class="py-3 px-4">Slack_ID</th>
                   <th class="py-3 px-4">Social_ID</th>
                   <th class="py-3 px-4">Error_Log</th>
+                  <th class="py-3 px-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody id="auditTableBody" class="divide-y divide-[var(--border)] font-sans theme-transition">
@@ -2056,6 +2139,73 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
       const rate = totalDispatched > 0 ? Math.round((deliveredCount / totalDispatched) * 100) : 0;
       document.getElementById('statSuccessRate').innerText = `${rate}%`;
       document.getElementById('statFailuresIsolated').innerText = isolatedCount;
+
+      // Populate Option A: Instant Live Receipt Card Jump-Links
+      const receiptCard = document.getElementById('liveReceiptCard');
+      if (receiptCard) {
+        receiptCard.classList.remove('hidden');
+
+        // Slack
+        const linkSlack = document.getElementById('receiptLinkSlack');
+        const subSlack = document.getElementById('receiptSubSlack');
+        const slackUrl = data.results?.slack?.permalink || (data.results?.slack?.id ? `https://fourfrontlab.slack.com/archives/C0C278R4PRD/p${String(data.results.slack.id).replace('.', '')}` : 'https://fourfrontlab.slack.com/archives/C0C278R4PRD');
+        if (linkSlack) {
+          linkSlack.href = slackUrl;
+          if (data.results?.slack?.success) {
+            subSlack.innerText = `Delivered to #social (${data.results.slack.id || '200 OK'})`;
+          } else {
+            subSlack.innerText = `Dispatch issue: ${data.results?.slack?.error || 'Failed'}`;
+          }
+        }
+
+        // Discord
+        const linkDiscord = document.getElementById('receiptLinkDiscord');
+        const subDiscord = document.getElementById('receiptSubDiscord');
+        const discordUrl = data.results?.discord?.permalink || (data.results?.discord?.id ? `https://discord.com/channels/@me/${data.results.discord.id}` : 'https://discord.com');
+        if (linkDiscord) {
+          linkDiscord.href = discordUrl;
+          if (data.results?.discord?.success) {
+            subDiscord.innerText = `Rich Embed (${data.results.discord.id || '200 OK'})`;
+          } else {
+            subDiscord.innerText = `Dispatch issue: ${data.results?.discord?.error || 'Failed'}`;
+          }
+        }
+
+        // Facebook
+        const linkFb = document.getElementById('receiptLinkFacebook');
+        const subFb = document.getElementById('receiptSubFacebook');
+        const fbUrl = data.results?.facebook?.permalink || 'https://facebook.com/1288938340978227';
+        if (linkFb) {
+          linkFb.href = fbUrl;
+          subFb.innerText = data.results?.facebook?.id ? `Post ID: ${data.results.facebook.id}` : 'Page Feed Relay';
+        }
+
+        // Mailchimp
+        const linkMc = document.getElementById('receiptLinkMailchimp');
+        const subMc = document.getElementById('receiptSubMailchimp');
+        const mcUrl = data.results?.mailchimp?.permalink || (data.results?.mailchimp?.id ? `https://us16.campaign-archive.com/?id=${data.results.mailchimp.id}` : 'https://mailchimp.com');
+        if (linkMc) {
+          linkMc.href = mcUrl;
+          subMc.innerText = data.results?.mailchimp?.id ? `Campaign: ${data.results.mailchimp.id}` : 'Newsletter Archive';
+        }
+
+        // Sheets
+        const linkSheets = document.getElementById('receiptLinkSheets');
+        if (linkSheets && data.results?.google_sheets?.permalink) {
+          linkSheets.href = data.results.google_sheets.permalink;
+        }
+
+        // Media Banner
+        const linkMedia = document.getElementById('receiptLinkMedia');
+        const subMedia = document.getElementById('receiptSubMedia');
+        const mediaUrl = data.Image_URL || (document.getElementById('composerImage')?.value.trim()) || `/api/banner?title=${encodeURIComponent(document.getElementById('composerTitle')?.value || 'Broadcast')}`;
+        if (linkMedia) {
+          linkMedia.href = mediaUrl;
+          subMedia.innerText = (data.Image_URL && data.Image_URL.includes('/api/banner')) ? 'Auto Dynamic SVG Banner' : '1200x630 Media Card';
+        }
+
+        if (window.lucide) lucide.createIcons();
+      }
     }
 
     // 6. Table Renderer (Spec 9)
@@ -2095,6 +2245,8 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
           statusBadge = `<span class="${badgeBase} text-[var(--success)]" style="background-color: var(--success-bg); border: none;">Published</span>`;
         } else if (status === 'Partially Published') {
           statusBadge = `<span class="${badgeBase} text-[var(--accent)]" style="background-color: var(--warning-bg); border: none;">Partially Published</span>`;
+        } else if (status === 'Retracted') {
+          statusBadge = `<span class="${badgeBase} text-[var(--danger)]" style="background-color: var(--danger-bg); border: none;">Retracted</span>`;
         } else {
           statusBadge = `<span class="${badgeBase} text-[var(--text-secondary)] border border-[var(--border-strong)]" style="background-color: transparent;">${escapeHtml(status)}</span>`;
         }
@@ -2116,6 +2268,31 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
           ? `<span class="h-5 px-2 rounded text-[10px] font-mono font-semibold inline-flex items-center" style="background:rgba(245,166,35,0.12);color:var(--accent);border:1px solid rgba(245,166,35,0.3)">⚡ Webhook</span>`
           : `<span class="h-5 px-2 rounded text-[10px] font-mono font-semibold inline-flex items-center" style="background:var(--surface-raised);color:var(--text-secondary);border:1px solid var(--border)">Manual</span>`;
 
+        const rowId = String(row?.row_id || '');
+        const isRetracted = status === 'Retracted';
+        const actionsCell = `
+          <div class="flex items-center justify-end space-x-1.5 whitespace-nowrap">
+            <button 
+              type="button" 
+              onclick="promptEditBroadcast('${escapeHtml(rowId)}')" 
+              ${isRetracted ? 'disabled' : ''} 
+              class="px-2 py-1 rounded text-[10px] font-semibold border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--border)] text-[var(--text-primary)] transition ${isRetracted ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}"
+              title="Edit announcement text across live channels"
+            >
+              Update
+            </button>
+            <button 
+              type="button" 
+              onclick="retractBroadcast('${escapeHtml(rowId)}')" 
+              ${isRetracted ? 'disabled' : ''} 
+              class="px-2 py-1 rounded text-[10px] font-semibold border border-[var(--danger)]/30 bg-[var(--danger-bg)] text-[var(--danger)] hover:bg-[var(--danger)] hover:text-white transition ${isRetracted ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}"
+              title="Emergency retract from Slack, Discord, and Facebook"
+            >
+              ${isRetracted ? 'Retracted' : 'Retract'}
+            </button>
+          </div>
+        `;
+
         return `
           <tr class="hover:bg-[var(--surface-raised)] transition">
             <td class="py-3.5 px-4 font-mono text-[var(--text-secondary)] text-[11px] whitespace-nowrap">${formattedTime}</td>
@@ -2130,6 +2307,7 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
             <td class="py-3.5 px-4">${slackCell}</td>
             <td class="py-3.5 px-4 font-mono text-[11px] text-[var(--text-primary)]">${escapeHtml(row?.Social_ID ?? 'None')}</td>
             <td class="py-3.5 px-4 font-mono text-[var(--text-secondary)] text-[11px] max-w-xs truncate" title="${escapeHtml(row?.Error_Log ?? 'None')}">${escapeHtml(row?.Error_Log ?? 'None')}</td>
+            <td class="py-3.5 px-4 text-right">${actionsCell}</td>
           </tr>
         `;
       }).join('');
@@ -2239,6 +2417,75 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
         }
       } catch (e) {
         console.warn('Failed to load live sheets data:', e);
+      }
+    }
+
+    // Retract Broadcast (Emergency Delete Everywhere)
+    async function retractBroadcast(rowId) {
+      if (!confirm(`Are you sure you want to retract broadcast #${rowId}? This will remove the message from Slack, Discord, and Facebook.`)) {
+        return;
+      }
+      try {
+        logEvent(`[RETRACT] Requesting emergency retraction for row #${rowId}...`, 'red');
+        const res = await fetch('/api/retract', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ row_id: rowId })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showToast(`Broadcast #${rowId} retracted across all channels`, 'warning');
+          logEvent(`[RETRACT] Successfully retracted row #${rowId} from Slack, Discord, Facebook`, 'red');
+          // Update local matrix data
+          const target = matrixData.find(r => String(r.row_id) === String(rowId));
+          if (target) {
+            target.Status = 'Retracted';
+            target.Error_Log = `Retracted at ${new Date().toISOString()}`;
+          }
+          renderTable();
+        } else {
+          showToast(`Retraction failed: ${data.error || 'Server error'}`, 'error');
+          logEvent(`[ERROR] Retraction failed: ${data.error || 'Unknown error'}`, 'red');
+        }
+      } catch (err) {
+        showToast(`Retraction error: ${err.message}`, 'error');
+      }
+    }
+
+    // In-Place Update Broadcast across live channels
+    async function promptEditBroadcast(rowId) {
+      const target = matrixData.find(r => String(r.row_id) === String(rowId));
+      if (!target) return;
+      const updatedTitle = prompt('Enter new Broadcast Title:', target.Title || '');
+      if (updatedTitle === null) return;
+      const updatedContent = prompt('Enter new Announcement Body Text:', target.Content || '');
+      if (updatedContent === null) return;
+
+      try {
+        logEvent(`[UPDATE] Pushing in-place update for broadcast #${rowId}...`, 'cyan');
+        const res = await fetch('/api/update', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            row_id: rowId,
+            Title: updatedTitle,
+            Content: updatedContent
+          })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showToast(`Broadcast #${rowId} updated in-place across channels`, 'success');
+          logEvent(`[UPDATE] Row #${rowId} updated cleanly. Title: "${updatedTitle}"`, 'green');
+          target.Title = updatedTitle;
+          target.Content = updatedContent;
+          target.Status = 'Published';
+          renderTable();
+        } else {
+          showToast(`Update failed: ${data.error || 'Server error'}`, 'error');
+          logEvent(`[ERROR] Update failed: ${data.error || 'Unknown error'}`, 'red');
+        }
+      } catch (err) {
+        showToast(`Update error: ${err.message}`, 'error');
       }
     }
 
