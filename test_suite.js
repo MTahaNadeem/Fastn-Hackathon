@@ -320,6 +320,66 @@ async function runAllTests() {
   }
   console.log('\n');
 
+  // TEST 10: Feature 1 - AI Viral Hook & A/B Multi-Angle Splitter
+  console.log('▶ [TEST 10] Feature 1: AI Viral Hook & A/B Multi-Angle Splitter');
+  {
+    const { generateViralHooks } = require('./server');
+    const result = generateViralHooks({
+      title: 'FourFrontLab Launch',
+      content: 'Launching our real-time social publisher across channels.'
+    });
+    assert(result.success === true, 'Viral hooks generation succeeded');
+    assert(result.variants.length === 3, 'Returns exactly 3 distinct strategic angles (FOMO, Metric, Story)');
+    assert(result.variants[0].strategy.includes('FOMO'), 'Variant A strategy is FOMO / Problem-Solution');
+    assert(result.variants[1].strategy.includes('Data-Driven'), 'Variant B strategy is Data-Driven Authority');
+    assert(result.variants[2].strategy.includes('Storyteller'), 'Variant C strategy is Storyteller & Community');
+  }
+  console.log('\n');
+
+  // TEST 11: Feature 2 - Smart Best-Time Scheduler & Queue
+  console.log('▶ [TEST 11] Feature 2: Smart Best-Time Scheduler & Queue');
+  {
+    const { handleSchedule, scheduledQueue } = require('./server');
+
+    // GET /api/schedule
+    const { req: r1, res: s1, getStatusCode: code1, getBody: b1 } = mockHttp(null, 'GET');
+    r1.url = '/api/schedule';
+    await handleSchedule(r1, s1);
+    assert(code1() === 200, 'GET /api/schedule returns 200 OK');
+    assert(b1().success === true && Array.isArray(b1().queue), 'Returns array of queued broadcasts');
+
+    // POST /api/schedule (create scheduled post)
+    const { req: r2, res: s2, getStatusCode: code2, getBody: b2 } = mockHttp({
+      Title: 'Scheduled Community Post',
+      Content: 'Scheduled for optimal engagement window.',
+      scheduledFor: new Date(Date.now() + 3600000).toISOString()
+    }, 'POST');
+    r2.url = '/api/schedule';
+    await handleSchedule(r2, s2);
+    assert(code2() === 201, 'POST /api/schedule returns 201 Created');
+    assert(b2().success === true && Boolean(b2().schedule_id), 'Scheduled item created with unique ID');
+  }
+  console.log('\n');
+
+  // TEST 12: Feature 3 - Live Engagement Telemetry & Sentiment Pulse
+  console.log('▶ [TEST 12] Feature 3: Live Engagement Telemetry & Sentiment Pulse');
+  {
+    const { getEngagementTelemetry } = require('./server');
+    // Active published row (row 102)
+    const tele = getEngagementTelemetry('102');
+    assert(Boolean(tele), 'Telemetry object returned');
+    assert(typeof tele.viralReachScore === 'number' && tele.viralReachScore >= 70, `Viral reach score computed (${tele.viralReachScore}/100)`);
+    assert(Boolean(tele.platforms?.slack?.reactions), `Slack reactions telemetry present (${tele.platforms?.slack?.reactions} reactions)`);
+    assert(Boolean(tele.platforms?.discord?.impressions), `Discord impressions telemetry present (${tele.platforms?.discord?.impressions} impressions)`);
+    assert(Boolean(tele.sentiment?.positive), `Positive sentiment percentage present (${tele.sentiment?.positive}%)`);
+
+    // Retracted row (row 101): verify signals are frozen
+    const teleRetracted = getEngagementTelemetry('101');
+    assert(teleRetracted.status === 'Retracted', 'Retracted broadcast signals state identified');
+    assert(teleRetracted.viralReachScore === 0, 'Retracted broadcast viral score frozen to 0');
+  }
+  console.log('\n');
+
   console.log('================================================================');
   console.log(`📊 TEST RESULTS: ${passed}/${total} assertions passed (${Math.round((passed/total)*100)}%)`);
   console.log('================================================================');
@@ -329,6 +389,8 @@ async function runAllTests() {
   }
 }
 
-runAllTests().catch(console.error);
+runAllTests().catch((err) => {
+  console.error(err);
+});
 
 
