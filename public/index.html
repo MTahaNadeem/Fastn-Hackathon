@@ -1201,67 +1201,161 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
 
         <!-- FEATURE 3: Live Post-Broadcast Engagement & Sentiment Pulse -->
         <div id="engagementPulseCard" class="hidden p-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] shadow-md space-y-4 theme-transition">
-          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-3 border-b border-[var(--border)] gap-2">
-            <div class="flex items-center space-x-2">
-              <span class="text-base">📈</span>
+          <!-- Card Header & Post Selector -->
+          <div class="flex flex-col md:flex-row items-start md:items-center justify-between pb-3 border-b border-[var(--border)] gap-3">
+            <div class="flex items-center space-x-2.5">
+              <div class="w-8 h-8 rounded-lg bg-[var(--accent)]/10 border border-[var(--accent)]/25 flex items-center justify-center text-base">📈</div>
               <div>
-                <h4 class="font-bold text-sm text-[var(--text-primary)]">Live Audience Engagement & Sentiment Pulse</h4>
-                <p class="text-[11px] text-[var(--text-secondary)]">Real-time aggregated engagement signals across active channels</p>
+                <div class="flex items-center gap-2">
+                  <h4 class="font-bold text-sm text-[var(--text-primary)]">Live Audience Engagement & Sentiment Pulse</h4>
+                  <span id="telemetryToneBadge" class="text-[10px] font-mono px-2 py-0.5 rounded font-semibold bg-indigo-500/15 text-indigo-400 border border-indigo-500/30">NLP Tone: Analyzing...</span>
+                </div>
+                <p class="text-[11px] text-[var(--text-secondary)]">Real-time content-driven NLP sentiment analysis and authentic cross-channel signals</p>
               </div>
             </div>
-            <div class="flex items-center space-x-2">
-              <span id="sentimentIndexBadge" class="text-[11px] font-mono px-2.5 py-0.5 rounded font-semibold bg-emerald-500/15 text-emerald-500 border border-emerald-500/30">94% Positive Sentiment</span>
-              <span id="engagementVelocityBadge" class="text-[11px] font-mono px-2.5 py-0.5 rounded font-semibold bg-amber-500/15 text-amber-500 border border-amber-500/30">🔥 High Velocity</span>
+
+            <!-- Interactive Post Selector & Refresh Controls -->
+            <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+              <div class="flex items-center gap-1.5 flex-1 md:flex-initial">
+                <label for="telemetryRowSelector" class="text-[11px] font-medium text-[var(--text-secondary)] whitespace-nowrap">Broadcast Record:</label>
+                <select id="telemetryRowSelector" onchange="loadEngagementTelemetry(this.value)" class="bg-[var(--surface-raised)] border border-[var(--border)] text-[var(--text-primary)] text-xs rounded-lg px-2.5 py-1.5 font-medium focus:outline-none focus:border-[var(--accent)] transition-all cursor-pointer">
+                  <option value="101">Loading broadcast records...</option>
+                </select>
+              </div>
+              <button id="btnRefreshTelemetry" onclick="loadEngagementTelemetry(document.getElementById('telemetryRowSelector')?.value || '101', true)" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-[var(--surface-raised)] border border-[var(--border)] text-[var(--text-primary)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-all cursor-pointer" title="Refresh live engagement telemetry">
+                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                <span>Refresh</span>
+              </button>
             </div>
           </div>
 
-          <!-- Viral Reach Score Gauge -->
-          <div class="bg-[var(--surface-raised)] border border-[var(--border)] rounded-lg p-3.5 space-y-2">
-            <div class="flex items-center justify-between text-xs">
-              <span class="font-semibold text-[var(--text-primary)]">Aggregate Viral Reach Index</span>
-              <span id="viralScoreValue" class="font-bold font-mono text-[var(--accent)] text-sm">94 / 100</span>
+          <!-- Retraction Alert Banner -->
+          <div id="telemetryRetractedAlert" class="hidden p-3 rounded-lg border border-rose-500/30 bg-rose-500/10 text-rose-400 text-xs flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-base">⚠️</span>
+              <span><strong>Broadcast Retracted:</strong> Audience signals across Slack, Discord, and Facebook are frozen.</span>
             </div>
-            <div class="w-full h-2 rounded-full bg-[var(--bg)] overflow-hidden">
-              <div id="viralScoreBar" class="h-full bg-gradient-to-r from-amber-500 to-amber-400 rounded-full transition-all duration-700" style="width: 94%;"></div>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold uppercase">SIGNALS FROZEN</span>
+          </div>
+
+          <!-- Active Post Information Bar -->
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs p-2.5 rounded-lg bg-[var(--surface-raised)] border border-[var(--border)]">
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-[var(--bg)] text-[var(--text-tertiary)] border border-[var(--border)] font-semibold" id="telemetryPostIdPill">POST #--</span>
+              <span id="telemetryPostTitle" class="font-semibold text-[var(--text-primary)] truncate max-w-sm sm:max-w-md">Loading post...</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span id="sentimentIndexBadge" class="text-[11px] font-mono px-2.5 py-0.5 rounded font-semibold bg-emerald-500/15 text-emerald-500 border border-emerald-500/30">--% Positive Sentiment</span>
+              <span id="engagementVelocityBadge" class="text-[11px] font-mono px-2.5 py-0.5 rounded font-semibold bg-amber-500/15 text-amber-500 border border-amber-500/30">--</span>
+            </div>
+          </div>
+
+          <!-- NLP Sentiment & Virality Gauges Grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
+            <!-- Viral Reach Score Gauge -->
+            <div class="bg-[var(--surface-raised)] border border-[var(--border)] rounded-lg p-3.5 space-y-2">
+              <div class="flex items-center justify-between text-xs">
+                <div>
+                  <span class="font-semibold text-[var(--text-primary)] block">Aggregate Viral Reach Index</span>
+                  <span class="text-[10px] text-[var(--text-secondary)]">Calculated from length, hook strength, emojis & link velocity</span>
+                </div>
+                <span id="viralScoreValue" class="font-bold font-mono text-[var(--accent)] text-sm">-- / 100</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-[var(--bg)] overflow-hidden">
+                <div id="viralScoreBar" class="h-full bg-gradient-to-r from-amber-500 to-amber-400 rounded-full transition-all duration-700" style="width: 0%;"></div>
+              </div>
+              <div class="flex items-center justify-between text-[10px] font-mono text-[var(--text-tertiary)] pt-1">
+                <span>Benchmark: 65</span>
+                <span id="viralVelocitySubtext">Dynamic Virality Potential</span>
+                <span>Peak: 99</span>
+              </div>
+            </div>
+
+            <!-- Real NLP Sentiment Distribution & Keyword Signals -->
+            <div class="bg-[var(--surface-raised)] border border-[var(--border)] rounded-lg p-3.5 space-y-2">
+              <div class="flex items-center justify-between text-xs">
+                <div>
+                  <span class="font-semibold text-[var(--text-primary)] block">NLP Sentiment Breakdown</span>
+                  <span class="text-[10px] text-[var(--text-secondary)]">Lexicon-based content classification</span>
+                </div>
+                <div class="flex items-center gap-2 text-[10px] font-mono">
+                  <span class="text-emerald-400"><span id="telemetryPosPct">--</span>% Pos</span>
+                  <span class="text-slate-400"><span id="telemetryNeuPct">--</span>% Neu</span>
+                  <span class="text-rose-400"><span id="telemetryNegPct">--</span>% Neg</span>
+                </div>
+              </div>
+              <!-- Multi-Segment Sentiment Bar -->
+              <div class="w-full h-2 rounded-full bg-[var(--bg)] overflow-hidden flex">
+                <div id="sentimentPosBar" class="h-full bg-emerald-500 transition-all duration-500" style="width: 0%;"></div>
+                <div id="sentimentNeuBar" class="h-full bg-slate-400 transition-all duration-500" style="width: 100%;"></div>
+                <div id="sentimentNegBar" class="h-full bg-rose-500 transition-all duration-500" style="width: 0%;"></div>
+              </div>
+              <!-- Detected Keywords Pills -->
+              <div class="flex flex-wrap items-center gap-1.5 pt-1">
+                <span class="text-[10px] text-[var(--text-tertiary)] font-mono">Detected Signals:</span>
+                <div id="telemetryKeywordsList" class="flex flex-wrap items-center gap-1">
+                  <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-[var(--bg)] border border-[var(--border)] text-[var(--text-secondary)]">Analyzing content...</span>
+                </div>
+              </div>
             </div>
           </div>
 
           <!-- Channel Telemetry Grid -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-            <div class="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-raised)] space-y-1">
+            <!-- Slack -->
+            <div class="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-raised)] space-y-1.5">
               <div class="font-semibold text-[var(--text-primary)] flex items-center justify-between">
-                <span>Slack #social</span>
-                <span class="text-[10px] font-mono text-[var(--success)]">Live</span>
+                <span class="flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500" id="slackPulseDot"></span>
+                  <span>Slack #social</span>
+                </span>
+                <span id="telemetrySlackStatus" class="text-[10px] font-mono text-[var(--success)]">Live</span>
               </div>
-              <div id="telemetrySlackReplies" class="text-[11px] font-mono text-[var(--text-secondary)]">💬 7 Thread Replies</div>
-              <div id="telemetrySlackReactions" class="text-[11px] font-mono text-[var(--text-primary)]">🚀 9 • 🔥 15 • 👏 11</div>
+              <div id="telemetrySlackReactions" class="text-[11px] font-mono text-[var(--text-primary)]">-- Live Reactions</div>
+              <div id="telemetrySlackReplies" class="text-[11px] font-mono text-[var(--text-secondary)]">💬 -- Thread Replies</div>
+              <div id="telemetrySlackViewers" class="text-[10px] font-mono text-[var(--text-tertiary)]">👥 -- Active Viewers</div>
             </div>
 
-            <div class="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-raised)] space-y-1">
+            <!-- Discord -->
+            <div class="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-raised)] space-y-1.5">
               <div class="font-semibold text-[var(--text-primary)] flex items-center justify-between">
-                <span>Discord Embed</span>
-                <span class="text-[10px] font-mono text-[var(--success)]">Live</span>
+                <span class="flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500" id="discordPulseDot"></span>
+                  <span>Discord Embed</span>
+                </span>
+                <span id="telemetryDiscordStatus" class="text-[10px] font-mono text-[var(--success)]">Live</span>
               </div>
-              <div id="telemetryDiscordViews" class="text-[11px] font-mono text-[var(--text-secondary)]">👥 140 Active Viewers</div>
-              <div id="telemetryDiscordReactions" class="text-[11px] font-mono text-[var(--text-primary)]">⚡ 24 • 💎 12 • 🎉 18</div>
+              <div id="telemetryDiscordReactions" class="text-[11px] font-mono text-[var(--text-primary)]">⚡ -- Guild Reactions</div>
+              <div id="telemetryDiscordViews" class="text-[11px] font-mono text-[var(--text-secondary)]">👥 -- Active Viewers</div>
+              <div id="telemetryDiscordDiscussions" class="text-[10px] font-mono text-[var(--text-tertiary)]">💬 -- Discussions</div>
             </div>
 
-            <div class="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-raised)] space-y-1">
+            <!-- Facebook -->
+            <div class="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-raised)] space-y-1.5">
               <div class="font-semibold text-[var(--text-primary)] flex items-center justify-between">
-                <span>Facebook Feed</span>
-                <span class="text-[10px] font-mono text-[var(--success)]">Live</span>
+                <span class="flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500" id="fbPulseDot"></span>
+                  <span>Facebook Feed</span>
+                </span>
+                <span id="telemetryFbStatus" class="text-[10px] font-mono text-[var(--success)]">Live</span>
               </div>
-              <div id="telemetryFbReach" class="text-[11px] font-mono text-[var(--text-secondary)]">👥 720 Total Reach</div>
-              <div id="telemetryFbReactions" class="text-[11px] font-mono text-[var(--text-primary)]">👍 45 • ❤️ 18 • 🔁 8 Shares</div>
+              <div id="telemetryFbReactions" class="text-[11px] font-mono text-[var(--text-primary)]">👍 -- Reactions • -- Shares</div>
+              <div id="telemetryFbReach" class="text-[11px] font-mono text-[var(--text-secondary)]">👥 -- Total Reach</div>
+              <div id="telemetryFbOrganic" class="text-[10px] font-mono text-[var(--text-tertiary)]">📊 100% Organic Delivery</div>
             </div>
 
-            <div class="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-raised)] space-y-1">
+            <!-- Mailchimp -->
+            <div class="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-raised)] space-y-1.5">
               <div class="font-semibold text-[var(--text-primary)] flex items-center justify-between">
-                <span>Mailchimp Campaign</span>
-                <span class="text-[10px] font-mono text-[var(--success)]">Live</span>
+                <span class="flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500" id="mcPulseDot"></span>
+                  <span>Mailchimp Campaign</span>
+                </span>
+                <span id="telemetryMcStatus" class="text-[10px] font-mono text-[var(--success)]">Live</span>
               </div>
-              <div id="telemetryMcOpen" class="text-[11px] font-mono text-[var(--text-secondary)]">📬 46.2% Open Rate</div>
-              <div id="telemetryMcCtr" class="text-[11px] font-mono text-[var(--text-primary)]">🎯 13.8% Click-Through</div>
+              <div id="telemetryMcOpen" class="text-[11px] font-mono text-[var(--text-secondary)]">📬 -- Open Rate</div>
+              <div id="telemetryMcCtr" class="text-[11px] font-mono text-[var(--text-primary)]">🎯 -- Click-Through</div>
+              <div id="telemetryMcDeliveries" class="text-[10px] font-mono text-[var(--text-tertiary)]">✉️ 1,250 Deliveries (0 Unsub)</div>
             </div>
           </div>
         </div>
@@ -1939,7 +2033,7 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
 
     // 1. Navigation Switcher
     // 1. Navigation Switcher
-    function switchMainView(viewName) {
+    function switchMainView(viewName, targetRowId = null) {
       ['composer', 'monitor', 'sheets', 'judges'].forEach(v => {
         const el = document.getElementById(`view-${v}`);
         if (el) el.classList.add('hidden');
@@ -1952,7 +2046,9 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
       const activeBtn = document.getElementById(`navBtn-${viewName}`);
       if (activeBtn) activeBtn.className = 'nav-link-btn active';
       if (viewName === 'monitor') {
-        loadEngagementTelemetry('101');
+        populateTelemetrySelector();
+        const rowToLoad = targetRowId || currentTelemetryRowId || (matrixData[0] ? matrixData[0].row_id : '101');
+        loadEngagementTelemetry(rowToLoad);
       }
       lucide.createIcons();
     }
@@ -2429,7 +2525,7 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
           showToast(`Broadcast failed: ${data.error || res.statusText}`, 'error');
           logEvent(`[ERROR] HTTP ${res.status}: ${data.error || res.statusText}`, 'red');
           updateMonitorView(data, elapsed);
-          switchMainView('monitor');
+          switchMainView('monitor', data.row_id);
           return;
         }
 
@@ -2659,6 +2755,7 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
 
     // 6. Table Renderer (Spec 9)
     function renderTable() {
+      populateTelemetrySelector(); // update telemetry dropdown
       const tbody = document.getElementById('auditTableBody');
       const emptyState = document.getElementById('tableEmptyState');
       const searchVal = (document.getElementById('sheetSearchInput')?.value || '').toLowerCase().trim();
@@ -3138,50 +3235,236 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
     }
 
     // =========================================================================
-    // FEATURE 3: LIVE ENGAGEMENT TELEMETRY & SENTIMENT PULSE
     // =========================================================================
-    async function loadEngagementTelemetry(rowId) {
+    // FEATURE 3: LIVE ENGAGEMENT TELEMETRY & REAL NLP SENTIMENT ENGINE
+    // =========================================================================
+    let currentTelemetryRowId = '101';
+
+    function populateTelemetrySelector() {
+      const selector = document.getElementById('telemetryRowSelector');
+      if (!selector) return;
+      if (!matrixData || matrixData.length === 0) return;
+
+      const currentVal = selector.value || currentTelemetryRowId;
+      selector.innerHTML = '';
+      matrixData.forEach(row => {
+        const opt = document.createElement('option');
+        opt.value = row.row_id;
+        const cleanTitle = (row.Title || 'Announcement').replace(/^[^\w\s]+/, '').trim();
+        opt.textContent = `Post #${row.row_id}: ${cleanTitle.slice(0, 32)}... (${row.Status || 'Active'})`;
+        selector.appendChild(opt);
+      });
+
+      if (matrixData.some(r => String(r.row_id) === String(currentVal))) {
+        selector.value = currentVal;
+      } else if (matrixData[0]) {
+        selector.value = matrixData[0].row_id;
+      }
+    }
+
+    async function loadEngagementTelemetry(rowId, isManualRefresh = false) {
       const card = document.getElementById('engagementPulseCard');
       if (!card) return;
+
+      const targetId = rowId || currentTelemetryRowId || (matrixData[0] ? matrixData[0].row_id : '101');
+      currentTelemetryRowId = targetId;
+
+      populateTelemetrySelector();
+      const selector = document.getElementById('telemetryRowSelector');
+      if (selector && selector.value !== String(targetId)) {
+        selector.value = String(targetId);
+      }
+
+      const refreshBtn = document.getElementById('btnRefreshTelemetry');
+      if (isManualRefresh && refreshBtn) {
+        refreshBtn.classList.add('opacity-50');
+      }
+
       try {
-        const res = await fetch(`/api/engagement?row_id=${encodeURIComponent(rowId || '101')}`);
+        const res = await fetch(`/api/engagement?row_id=${encodeURIComponent(targetId)}`);
         const data = await res.json();
         if (data.success && data.telemetry) {
           const t = data.telemetry;
           card.classList.remove('hidden');
 
+          // Active post info
+          const titleEl = document.getElementById('telemetryPostTitle');
+          const idPill = document.getElementById('telemetryPostIdPill');
+          const toneBadge = document.getElementById('telemetryToneBadge');
+          const retractedAlert = document.getElementById('telemetryRetractedAlert');
+
+          if (titleEl) titleEl.innerText = t.title || 'Announcement';
+          if (idPill) idPill.innerText = `POST #${t.row_id}`;
+
+          const isRetracted = t.status === 'Retracted';
+          if (retractedAlert) {
+            if (isRetracted) retractedAlert.classList.remove('hidden');
+            else retractedAlert.classList.add('hidden');
+          }
+
+          // Tone
+          if (toneBadge) {
+            toneBadge.innerText = `Tone: ${t.sentiment?.tone || t.analysis?.tone || 'Balanced'}`;
+          }
+
+          // Virality Index
           const scoreVal = document.getElementById('viralScoreValue');
           const scoreBar = document.getElementById('viralScoreBar');
           const velocityBadge = document.getElementById('engagementVelocityBadge');
           const sentimentBadge = document.getElementById('sentimentIndexBadge');
 
           if (scoreVal) scoreVal.innerText = `${t.viralReachScore} / 100`;
-          if (scoreBar) scoreBar.style.width = `${t.viralReachScore}%`;
-          if (velocityBadge) velocityBadge.innerText = t.velocity;
-          if (sentimentBadge && t.sentiment) sentimentBadge.innerText = `${t.sentiment.positive}% Positive Sentiment`;
+          if (scoreBar) {
+            scoreBar.style.width = `${Math.min(100, t.viralReachScore)}%`;
+            if (isRetracted) {
+              scoreBar.className = 'h-full bg-slate-500 rounded-full transition-all duration-700';
+            } else {
+              scoreBar.className = 'h-full bg-gradient-to-r from-amber-500 to-amber-400 rounded-full transition-all duration-700';
+            }
+          }
 
+          if (velocityBadge) {
+            velocityBadge.innerText = t.velocity;
+            if (isRetracted) {
+              velocityBadge.className = 'text-[11px] font-mono px-2.5 py-0.5 rounded font-semibold bg-rose-500/15 text-rose-400 border border-rose-500/30';
+            } else {
+              velocityBadge.className = 'text-[11px] font-mono px-2.5 py-0.5 rounded font-semibold bg-amber-500/15 text-amber-500 border border-amber-500/30';
+            }
+          }
+
+          if (sentimentBadge && t.sentiment) {
+            if (isRetracted) {
+              sentimentBadge.innerText = 'Frozen / Retracted';
+              sentimentBadge.className = 'text-[11px] font-mono px-2.5 py-0.5 rounded font-semibold bg-slate-500/15 text-slate-400 border border-slate-500/30';
+            } else {
+              sentimentBadge.innerText = `${t.sentiment.positive}% Positive Sentiment`;
+              sentimentBadge.className = 'text-[11px] font-mono px-2.5 py-0.5 rounded font-semibold bg-emerald-500/15 text-emerald-500 border border-emerald-500/30';
+            }
+          }
+
+          // Sentiment Breakdown Bar & Percentages
+          const posPctEl = document.getElementById('telemetryPosPct');
+          const neuPctEl = document.getElementById('telemetryNeuPct');
+          const negPctEl = document.getElementById('telemetryNegPct');
+          const posBar = document.getElementById('sentimentPosBar');
+          const neuBar = document.getElementById('sentimentNeuBar');
+          const negBar = document.getElementById('sentimentNegBar');
+
+          const posVal = t.sentiment?.positive || 0;
+          const neuVal = t.sentiment?.neutral || 0;
+          const negVal = t.sentiment?.negative || 0;
+
+          if (posPctEl) posPctEl.innerText = posVal;
+          if (neuPctEl) neuPctEl.innerText = neuVal;
+          if (negPctEl) negPctEl.innerText = negVal;
+
+          if (posBar) posBar.style.width = `${posVal}%`;
+          if (neuBar) neuBar.style.width = `${neuVal}%`;
+          if (negBar) negBar.style.width = `${negVal}%`;
+
+          // Keywords list
+          const kwContainer = document.getElementById('telemetryKeywordsList');
+          if (kwContainer) {
+            kwContainer.innerHTML = '';
+            const kwList = t.analysis?.detectedKeywords || [];
+            if (kwList.length > 0) {
+              kwList.forEach(kw => {
+                const pill = document.createElement('span');
+                pill.className = 'text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 font-medium';
+                pill.textContent = `#${kw}`;
+                kwContainer.appendChild(pill);
+              });
+            } else {
+              const pill = document.createElement('span');
+              pill.className = 'text-[10px] font-mono px-2 py-0.5 rounded bg-[var(--bg)] border border-[var(--border)] text-[var(--text-secondary)]';
+              pill.textContent = isRetracted ? 'Signals Frozen' : 'Standard Broadcast Tone';
+              kwContainer.appendChild(pill);
+            }
+            if (t.analysis?.wordCount) {
+              const wPill = document.createElement('span');
+              wPill.className = 'text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+              wPill.textContent = `${t.analysis.wordCount} words`;
+              kwContainer.appendChild(wPill);
+            }
+          }
+
+          // Channels Telemetry
+          const slStatus = document.getElementById('telemetrySlackStatus');
+          const slDot = document.getElementById('slackPulseDot');
           const slReplies = document.getElementById('telemetrySlackReplies');
           const slReactions = document.getElementById('telemetrySlackReactions');
-          if (slReplies) slReplies.innerText = `💬 ${t.platforms?.slack?.replies || 0} Thread Replies`;
-          if (slReactions) slReactions.innerText = `🚀 ${t.platforms?.slack?.reactions || 0} Live Reactions`;
+          const slViewers = document.getElementById('telemetrySlackViewers');
 
+          if (slStatus) {
+            slStatus.innerText = isRetracted ? 'Retracted' : 'Live';
+            slStatus.className = isRetracted ? 'text-[10px] font-mono text-rose-400' : 'text-[10px] font-mono text-[var(--success)]';
+          }
+          if (slDot) slDot.className = isRetracted ? 'w-2 h-2 rounded-full bg-rose-500' : 'w-2 h-2 rounded-full bg-emerald-500';
+          if (slReplies) slReplies.innerText = `💬 ${t.platforms?.slack?.replies || 0} Thread Replies`;
+          if (slReactions) {
+            const topEmojis = (t.platforms?.slack?.topEmojis || ['🚀', '🔥', '👏']).join(' ');
+            slReactions.innerText = `${topEmojis} ${t.platforms?.slack?.reactions || 0} Live Reactions`;
+          }
+          if (slViewers) slViewers.innerText = `👥 ${t.platforms?.slack?.activeViewers || 0} Active Viewers`;
+
+          // Discord
+          const dcStatus = document.getElementById('telemetryDiscordStatus');
+          const dcDot = document.getElementById('discordPulseDot');
           const dcViews = document.getElementById('telemetryDiscordViews');
           const dcReactions = document.getElementById('telemetryDiscordReactions');
-          if (dcViews) dcViews.innerText = `👥 ${t.platforms?.discord?.impressions || 0} Active Viewers`;
-          if (dcReactions) dcReactions.innerText = `⚡ ${t.platforms?.discord?.reactions || 0} Guild Reactions`;
+          const dcDisc = document.getElementById('telemetryDiscordDiscussions');
 
+          if (dcStatus) {
+            dcStatus.innerText = isRetracted ? 'Retracted' : 'Live';
+            dcStatus.className = isRetracted ? 'text-[10px] font-mono text-rose-400' : 'text-[10px] font-mono text-[var(--success)]';
+          }
+          if (dcDot) dcDot.className = isRetracted ? 'w-2 h-2 rounded-full bg-rose-500' : 'w-2 h-2 rounded-full bg-emerald-500';
+          if (dcViews) dcViews.innerText = `👥 ${t.platforms?.discord?.impressions || 0} Guild Impressions`;
+          if (dcReactions) {
+            const dcEmojis = (t.platforms?.discord?.topEmojis || ['⚡', '💎', '🎉']).join(' ');
+            dcReactions.innerText = `${dcEmojis} ${t.platforms?.discord?.reactions || 0} Guild Reactions`;
+          }
+          if (dcDisc) dcDisc.innerText = `💬 ${t.platforms?.discord?.discussions || 0} Discussions`;
+
+          // Facebook
+          const fbStatus = document.getElementById('telemetryFbStatus');
+          const fbDot = document.getElementById('fbPulseDot');
           const fbReach = document.getElementById('telemetryFbReach');
           const fbReactions = document.getElementById('telemetryFbReactions');
+
+          if (fbStatus) {
+            fbStatus.innerText = isRetracted ? 'Retracted' : 'Live';
+            fbStatus.className = isRetracted ? 'text-[10px] font-mono text-rose-400' : 'text-[10px] font-mono text-[var(--success)]';
+          }
+          if (fbDot) fbDot.className = isRetracted ? 'w-2 h-2 rounded-full bg-rose-500' : 'w-2 h-2 rounded-full bg-emerald-500';
           if (fbReach) fbReach.innerText = `👥 ${t.platforms?.facebook?.reach || 0} Total Reach`;
           if (fbReactions) fbReactions.innerText = `👍 ${t.platforms?.facebook?.reactions || 0} • 🔁 ${t.platforms?.facebook?.shares || 0} Shares`;
 
+          // Mailchimp
+          const mcStatus = document.getElementById('telemetryMcStatus');
+          const mcDot = document.getElementById('mcPulseDot');
           const mcOpen = document.getElementById('telemetryMcOpen');
           const mcCtr = document.getElementById('telemetryMcCtr');
+          const mcDeliv = document.getElementById('telemetryMcDeliveries');
+
+          if (mcStatus) {
+            mcStatus.innerText = isRetracted ? 'Retracted' : 'Live';
+            mcStatus.className = isRetracted ? 'text-[10px] font-mono text-rose-400' : 'text-[10px] font-mono text-[var(--success)]';
+          }
+          if (mcDot) mcDot.className = isRetracted ? 'w-2 h-2 rounded-full bg-rose-500' : 'w-2 h-2 rounded-full bg-emerald-500';
           if (mcOpen) mcOpen.innerText = `📬 ${t.platforms?.mailchimp?.openRate || '0.0%'} Open Rate`;
           if (mcCtr) mcCtr.innerText = `🎯 ${t.platforms?.mailchimp?.ctr || '0.0%'} Click-Through`;
+          if (mcDeliv) mcDeliv.innerText = `✉️ ${t.platforms?.mailchimp?.deliveries || 0} Deliveries (0 Unsub)`;
+
+          if (isManualRefresh) {
+            showToast(`Refreshed engagement pulse for post #${targetId}`, 'success');
+          }
+          lucide.createIcons();
         }
       } catch (e) {
         console.warn('Error loading engagement telemetry:', e);
+      } finally {
+        if (refreshBtn) refreshBtn.classList.remove('opacity-50');
       }
     }
 
