@@ -2499,12 +2499,19 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
         adapted: currentAdapted
       };
 
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => {
+        controller.abort(new Error('Broadcast request timed out after 15 seconds.'));
+      }, 15000);
+
       try {
         const res = await fetch('/api/publish', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(requestPayload)
+          body: JSON.stringify(requestPayload),
+          signal: controller.signal
         });
+        clearTimeout(timeoutId);
 
         const rawText = await res.text();
 
@@ -2543,8 +2550,10 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
           logEvent(`[AUDIT] Logged to Google Sheet 1wquYVUl_...`, 'slate');
         }
 
-        // Update Matrix dataset
+        // Update Matrix dataset with guaranteed row_id
+        const assignedRowId = String(data.row_id || Date.now()).slice(-4);
         const newRow = {
+          row_id: assignedRowId,
           Timestamp: data.auditLog?.Updated_At || new Date().toISOString(),
           Title,
           Content,
@@ -2554,7 +2563,7 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
           Slack_ID: data.results?.slack?.id || (data.status === 'Skipped' ? 'DEDUP' : 'FAILED'),
           Social_ID: data.results?.discord?.id || data.results?.facebook?.id || data.results?.mailchimp?.id || 'None',
           Error_Log: data.auditLog?.errors || 'None',
-          triggeredVia: data.triggeredVia || 'Manual'  // Feature 3: propagate trigger source
+          triggeredVia: data.triggeredVia || 'Manual'
         };
 
         matrixData.unshift(newRow);
@@ -2572,12 +2581,23 @@ FourFrontLab has launched the Cross-Platform Social Publisher on the Fastn Unifi
         }
 
         // Orchestrated reveal: switch to monitor view
-        switchMainView('monitor');
+        switchMainView('monitor', assignedRowId);
 
       } catch (err) {
-        showToast(`Network error: ${err.message}`, 'error');
-        logEvent(`[ERROR] Network failure: ${err.message}`, 'red');
+        clearTimeout(timeoutId);
+        const isTimeout = err.name === 'AbortError' || (err.message && err.message.includes('aborted')) || (err.message && err.message.includes('timed out'));
+        const userMsg = isTimeout 
+          ? 'Broadcast request timed out after 15s. The server is still processing or connectors are slow.' 
+          : `Network error: ${err.message}`;
+        showToast(userMsg, 'error');
+        logEvent(`[ERROR] ${userMsg}`, 'red');
+
+        // Reset in-flight card state if failed
+        ['Slack', 'Discord', 'Facebook', 'Mailchimp', 'Sheets'].forEach(ch => {
+          setChannelCardState(ch, 'Failed', isTimeout ? 'Timed out after 15s' : err.message, null, 'Retry');
+        });
       } finally {
+        clearTimeout(timeoutId);
         btn.disabled = false;
         btn.className = 'btn-primary';
         btn.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i><span>Publish Everywhere (Fastn Parallel Fan-Out)</span>`;
